@@ -5,42 +5,42 @@ triggers:
       - input_boolean.bouton_test
     trigger: state
     id: test_random
-  - alias: 10 Min Before School Start
+  - value_template: >-
+      {{ (now().timestamp() | timestamp_custom('%H:%M')) ==
+      (today_at(states('input_datetime.school_start_today')) - timedelta(minutes=10)).strftime('%H:%M') }}
+    alias: 10 Minutes Before School Start
     id: start_10min
-    trigger: time
-    at: >-
-      {{ (today_at(states('input_datetime.school_start_today')) -
-      timedelta(minutes=10)).strftime('%H:%M:%S') }}
-  - alias: 5 Min Before School Start
+    trigger: template
+  - value_template: >-
+      {{ (now().timestamp() | timestamp_custom('%H:%M')) ==
+      (today_at(states('input_datetime.school_start_today')) - timedelta(minutes=5)).strftime('%H:%M') }}
+    alias: 5 Minutes Before School Start
     id: start_5min
-    trigger: time
-    at: >-
-      {{ (today_at(states('input_datetime.school_start_today')) -
-      timedelta(minutes=5)).strftime('%H:%M:%S') }}
-  - alias: Timer Before School Start
+    trigger: template
+  - value_template: |-
+      {{ (now().timestamp() | timestamp_custom('%H:%M')) ==
+      (strptime(states('input_datetime.school_start_today'), '%H:%M:%S') - strptime(states('input_datetime.school_start_timer'), '%H:%M:%S')).total_seconds() | timestamp_custom('%H:%M', false) }}
+    alias: Timer Before School Start
     id: start_timer
-    trigger: time
-    at: |-
-      {{ (strptime(states('input_datetime.school_start_today'), '%H:%M:%S') -
-          strptime(states('input_datetime.school_start_timer'), '%H:%M:%S')).strftime('%H:%M:%S') }}
-  - alias: 10 Min Before School End
+    trigger: template
+  - value_template: >-
+      {{ (now().timestamp() | timestamp_custom('%H:%M')) ==
+      (today_at(states('input_datetime.school_end_today')) - timedelta(minutes=10)).strftime('%H:%M') }}
+    alias: 10 Minutes Before School End
     id: end_10min
-    trigger: time
-    at: >-
-      {{ (today_at(states('input_datetime.school_end_today')) -
-      timedelta(minutes=10)).strftime('%H:%M:%S') }}
-  - alias: 5 Min Before School End
+    trigger: template
+  - value_template: >-
+      {{ (now().timestamp() | timestamp_custom('%H:%M')) ==
+      (today_at(states('input_datetime.school_end_today')) - timedelta(minutes=5)).strftime('%H:%M') }}
+    alias: 5 Minutes Before School End
     id: end_5min
-    trigger: time
-    at: >-
-      {{ (today_at(states('input_datetime.school_end_today')) -
-      timedelta(minutes=5)).strftime('%H:%M:%S') }}
-  - alias: Timer Before School End
+    trigger: template
+  - value_template: |-
+      {{ (now().timestamp() | timestamp_custom('%H:%M')) ==
+      (strptime(states('input_datetime.school_end_today'), '%H:%M:%S') - strptime(states('input_datetime.school_end_timer'), '%H:%M:%S')).total_seconds() | timestamp_custom('%H:%M', false) }}
+    alias: Timer Before School End
     id: end_timer
-    trigger: time
-    at: |-
-      {{ (strptime(states('input_datetime.school_end_today'), '%H:%M:%S') -
-          strptime(states('input_datetime.school_end_timer'), '%H:%M:%S')).strftime('%H:%M:%S') }}
+    trigger: template
 conditions:
   - condition: state
     entity_id: input_boolean.school
