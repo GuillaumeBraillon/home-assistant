@@ -1,0 +1,60 @@
+alias: "[TTS] Sleeping Time"
+description: ""
+triggers:
+  - entity_id:
+      - input_boolean.bouton_test
+    trigger: state
+    id: StoryTime
+  - at: input_datetime.sleeping_time
+    alias: Brossage des dents
+    id: ToothTime
+    trigger: time
+  - value_template: |-
+      {{ (now().timestamp() | timestamp_custom('%H:%M')) ==
+         (strptime(states('input_datetime.sleeping_time'), '%H:%M:%S') -
+          strptime(states('input_datetime.sleeping_time_timer'), '%H:%M:%S')).total_seconds() | timestamp_custom('%H:%M', false) }}
+    alias: Histoire du soir
+    id: StoryTime
+    trigger: template
+conditions:
+  - condition: and
+    conditions:
+      - condition: state
+        entity_id: input_boolean.sleeping
+        state: "on"
+      - condition: state
+        entity_id: group.persons
+        state: home
+actions:
+  - action: script.facts_fun_fact_aleatoire
+    data: {}
+    response_variable: fact_result
+  - variables:
+      time: "{{ now().strftime('%H:%M') }}"
+      message: |-
+        {% if trigger.id == 'ToothTime'%}
+          {{ [
+            "Et maintenant qu'on a appris quelque chose, il est " ~ time ~ ", on va se brosser les dents.",
+            "Allez, on passe au brossage des dents. Il est " ~ time ~ ".",
+            "C'est le moment de se laver les dents, il est " ~ time ~ ".",
+            "On garde le sourire propre ! Il est " ~ time ~ ", on brosse les dents."
+          ] | random }}
+        {% elif trigger.id == 'StoryTime' %}
+          {{ [
+            "Et maintenant place à l'histoire du soir. Il est " ~ time ~ ", choisis un livre.",
+            "On choisit un livre pour l'histoire. Il est " ~ time ~ ".",
+            "C'est l'heure de l'histoire du soir, il est " ~ time ~ ". Quel livre tu prends ?",
+            "Installe-toi, il est " ~ time ~ ": on choisit un livre pour l'histoire."
+          ] | random }}
+        {% else %}
+          {{ "Il est " ~ time ~ "." }}
+        {% endif %}
+  - alias: Script TTS toutes_les_pieces
+    data:
+      media_player: media_player.toutes_les_enceintes
+      message: |
+        {{ fact_result.fun_fact }}.
+
+        {{ message }}.
+    action: script.tts_send_tts
+mode: single

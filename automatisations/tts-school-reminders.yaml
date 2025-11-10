@@ -89,7 +89,7 @@ actions:
   - alias: Send TTS message
     action: script.tts_send_tts
     data:
-      media_player: media_player.google_home_parents
+      media_player: media_player.ni_oscar_ni_parents
       message: Il est {{ time }}. {{ message }}
       sncf: "{{ sncf }}"
 mode: single
