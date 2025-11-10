@@ -1,17 +1,5 @@
 alias: "[TTS] Send TTS"
 sequence:
-  - if:
-      - condition: state
-        entity_id: media_player.nest_hub
-        state: Home Assistant Lovelace
-        attribute: app_name
-    then:
-      - target:
-          entity_id:
-            - media_player.nest_hub
-        data: {}
-        action: media_player.turn_off
-    enabled: true
   - alias: A media_player in Séjour is already Playing
     if:
       - alias: If a media_player in Salon
@@ -39,20 +27,6 @@ sequence:
         target:
           entity_id: "{{ media_player }}"
         action: media_player.volume_set
-      - data:
-          entity_id: "{{ media_player }}"
-          message: "{{ message }}"
-          language: fr
-        alias: TTS on Google Home google_say
-        enabled: false
-        action: tts.google_say
-      - data:
-          cache: false
-          entity_id: "{{ media_player }}"
-          message: "{{ message }}"
-        alias: TTS on Google Home google_cloud_say
-        enabled: false
-        action: tts.google_cloud_say
       - alias: IF sncf true
         if:
           - condition: template
@@ -101,15 +75,5 @@ sequence:
           entity_id: "{{ media_player }}"
         alias: Turn off media player.
         action: media_player.turn_off
-  - data:
-      message: "{{ message }}"
-    alias: Write Notifications
-    action: script.notify_write_notifications
-  - data:
-      message: "{{ message }}"
-      title: "[TTS] {{ media_player.split('.')[-1] }}"
-    alias: Notification
-    enabled: false
-    action: notify.persistent_notification
 mode: queued
 icon: mdi:google-assistant

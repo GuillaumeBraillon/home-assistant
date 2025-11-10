@@ -1,0 +1,146 @@
+alias: "[Facts] Fun Fact Aléatoire"
+description: Retourne un fun fact aléatoire.
+mode: queued
+icon: mdi:bullhorn-variant-outline
+sequence:
+  - variables:
+      all_facts:
+        - >-
+          Eliott, tu savais qu’une voiture de Formule 1 colle à la piste grâce à
+          son aileron ?
+        - Eliott, info du jour: la lumière du Soleil met environ 8 minutes pour venir jusqu’à nous.
+        - Eliott, incroyable mais vrai: ton cœur bat environ 100 000 fois par jour !
+        - Eliott, anecdote rigolote: >-
+            certaines fourmis cultivent des champignons comme de petits
+            jardiniers.
+        - >-
+          Eliott, le savais-tu ? Un arc-en-ciel complet est un cercle, mais on
+          n’en voit souvent que la moitié !
+        - Eliott, incroyable mais vrai: >-
+            un bébé girafe peut marcher en moins d’une heure après sa naissance
+            !
+        - Eliott, c’est fou: les abeilles dansent pour dire à leurs amies où trouver les fleurs.
+        - Eliott, info du jour: l’eau recouvre environ 70 % de la Terre.
+        - Eliott, record du jour: un avion de ligne vole à plus de 900 km/h !
+        - Eliott, astuce du jour: se laver les mains 20 secondes chasse la plupart des microbes.
+        - Eliott, anecdote nature: une coccinelle mange des dizaines de pucerons chaque jour.
+        - Eliott, incroyable mais vrai: la Voie lactée contient des centaines de milliards d’étoiles.
+        - Eliott, info du jour: >-
+            les requins n’ont pas d’os, seulement du cartilage (comme ton
+            oreille) !
+        - Eliott, astuce du matin: boire un verre d’eau aide ton cerveau à bien démarrer la journée.
+        - >-
+          Eliott, impressionnant non ? Un nuage peut peser plusieurs tonnes tout
+          en restant dans l’air !
+        - Eliott, anecdote rigolote: un ingénieur a inventé le four micro-ondes par accident !
+        - Eliott, nature magique: >-
+            les plantes fabriquent l’oxygène que tu respires grâce à la lumière
+            du Soleil.
+        - Eliott, info du jour: un chat peut courir jusqu’à 50 km/h sur une courte distance !
+        - Eliott, détail marrant: >-
+            les moustaches d’un chat l’aident à savoir si un passage est assez
+            large.
+        - Eliott, incroyable mais vrai: un chat peut sauter jusqu’à six fois sa hauteur !
+        - >-
+          Eliott, le savais-tu ? La nuit, les yeux d’un chat brillent grâce à
+          une couche qui renvoie la lumière.
+        - Eliott, info du jour: >-
+            les coussinets sous les pattes d’un chat sentent les vibrations du
+            sol.
+        - Eliott, record du jour: la Bugatti Chiron dépasse 400 km/h !
+        - Eliott, incroyable mais vrai: les pieuvres ont trois cœurs et du sang bleu !
+        - Eliott, nature incroyable: les tortues peuvent vivre plus de 150 ans.
+        - >-
+          Eliott, le savais-tu ? Chaque flocon de neige a une forme unique,
+          aucun ne se ressemble !
+        - Eliott, info du jour: ton sang fait le tour de ton corps en moins d’une minute.
+        - Eliott, info du jour: la Lune fait bouger les marées en tirant sur l’océan.
+        - Eliott, incroyable mais vrai: sur la Lune tu pèserais six fois moins lourd !
+        - >-
+          Eliott, devine qui est le roi de la sieste ? Le koala ! Il dort
+          presque 20 heures par jour.
+        - Eliott, info du jour: >-
+            le Soleil est une étoile de taille moyenne parmi des milliards
+            d’autres.
+        - Eliott, info du jour: >-
+            les chats ont trente-deux muscles dans chaque oreille pour écouter
+            dans toutes les directions.
+        - Eliott, anecdote chat: >-
+            un chat noir comme Lewis a souvent été considéré comme porte-bonheur
+            dans plusieurs pays.
+        - Eliott, incroyable mais vrai: >-
+            un chat reconnaît la voix de son humain, même s’il fait semblant de
+            ne pas écouter !
+        - Eliott, info du jour: un chat passe presque la moitié de sa journée à se laver.
+        - >-
+          Eliott, le savais-tu ? Les chats communiquent entre eux avec plus de
+          cent sons différents !
+        - Eliott, incroyable mais vrai: >-
+            les chats voient mieux que nous dans le noir, mais moins bien les
+            couleurs.
+        - Eliott, anecdote sensorielle: les coussinets des chats sentent les vibrations du sol.
+        - Eliott, détail étonnant: >-
+            un chat peut bouger chaque oreille séparément pour repérer un son
+            précis.
+        - Eliott, info du jour: >-
+            quand un chat te regarde doucement et ferme les yeux, c’est sa façon
+            de te dire qu’il t’aime.
+        - Eliott, info du jour: >-
+            les chats noirs comme Lewis ont souvent une fourrure qui brille au
+            soleil, presque violette !
+        - Eliott, incroyable mais vrai: >-
+            les chats sont capables de retrouver leur maison à des kilomètres de
+            distance.
+        - >-
+          Eliott, le savais-tu ? Les chats ont une empreinte unique sur le nez,
+          comme nos empreintes digitales !
+        - Eliott, info du jour: >-
+            les chats n’ont pas de clavicule, c’est pour ça qu’ils peuvent se
+            faufiler presque partout.
+        - Eliott, anecdote rigolote: les chats préfèrent l’eau tiède, surtout pour boire ou jouer.
+        - Eliott, info du jour: >-
+            un moteur électrique donne son couple maximal dès 0 tour par minute
+            !
+        - Eliott, info du jour: ton squelette a plus de 200 os qui grandissent encore.
+        - Eliott, nature explosive: >-
+            les volcans transforment les roches en les faisant fondre puis
+            refroidir.
+        - Eliott, record du jour: >-
+            un avion de ligne vole à environ 10 kilomètres au-dessus de la
+            Terre.
+        - Eliott, record du jour: >-
+            le TGV roule jusqu’à 320 km/h et son record d’essai est de 574,8
+            km/h !
+        - Eliott, record du jour: la Bugatti Bolide va à 501 km/h, vitesse record en 2025 !
+        - >-
+          Eliott, le savais-tu ? La lumière d’une étoile lointaine voyage
+          parfois des millions d’années jusqu’à tes yeux.
+        - Eliott, astuce du jour: un cerveau détendu apprend plus vite qu’un cerveau stressé.
+        - Eliott, astuce santé: respirer profondément donne de l’énergie à tes muscles.
+        - Eliott, info du jour: tes dents sont plus dures que tes os.
+        - Eliott, nature forte: >-
+            un scarabée rhinocéros peut porter des charges énormes pour son
+            poids.
+        - Eliott, astuce écolo: certaines voitures récupèrent l’énergie du freinage.
+        - Eliott, info du jour: les satellites restent en orbite en tombant sans toucher la Terre.
+        - Eliott, astuce forme: faire du vélo renforce ton cœur.
+        - Eliott, le savais-tu ? Un papillon goûte avec ses pattes !
+        - Eliott, incroyable mais vrai: la foudre est plus chaude que la surface du Soleil.
+        - Eliott, info du jour: l’air que tu respires contient surtout de l’azote.
+        - Eliott, astuce bien-être: sourire aide ton cerveau à libérer des hormones de bonheur.
+        - Eliott, info du jour: >-
+            la première voiture à essence roulait moins vite qu’un enfant qui
+            court !
+        - Eliott, astuce du matin: boire un verre d’eau le matin réveille ton corps en douceur.
+        - Eliott, nature patiente: une graine peut rester endormie des années avant de pousser.
+        - Eliott, record d’énergie: >-
+            l’énergie solaire reçue en une heure dépasse la consommation humaine
+            d’une année !
+        - Eliott, info du jour: >-
+            le sang transporte l’oxygène grâce à l’hémoglobine qui contient du
+            fer.
+        - Eliott, info du jour: le Sahara s’étend sur plus de 9 millions de km² !
+      fact_result:
+        fun_fact: "{{ all_facts | random }}"
+  - stop: End
+    response_variable: fact_result
