@@ -1,0 +1,67 @@
+alias: "[TTS] Agenda Famille (Séjour)"
+description: "Agenda vocal séjour (48h famille + contexte scolaire/jours fériés étendu) généré via script IA puis lu sur enceinte séjour."
+triggers:
+  - entity_id:
+      - input_select.modes_maison
+    to: Journée
+    for:
+      hours: 0
+      minutes: 0
+      seconds: 30
+    from: Matin
+    trigger: state
+conditions: []
+actions:
+  - wait_for_trigger:
+      - entity_id:
+          - binary_sensor.motion_kitchen_occupancy
+        to: "on"
+        trigger: state
+    timeout:
+      hours: 0
+      minutes: "{{ states('input_number.now_light_delay_off')|int}}"
+      seconds: 0
+      milliseconds: 0
+    enabled: true
+  - alias: Calendar available
+    condition: template
+    value_template: >-
+      {{family_calendar_state != 'unavailable' and family_calendar_state !=
+      'unknown' and scolaire_calendar_state != 'unavailable' and
+      scolaire_calendar_state != 'unknown'}}
+  - action: calendar.get_events
+    data:
+      start_date_time: "{{ now().replace(hour=0, minute=0, second=0).isoformat() }}"
+      duration:
+        hours: 48
+        minutes: 0
+        seconds: 0
+    target:
+      entity_id:
+        - calendar.famille
+    response_variable: agenda_famille
+  - data:
+      duration:
+        hours: 1500
+        minutes: 0
+        seconds: 0
+    target:
+      entity_id:
+        - calendar.calendrier_scolaire_zone_a
+        - calendar.jours_feries_en_france
+    response_variable: agenda_holidays
+    action: calendar.get_events
+  - alias: Script Générateur Agenda Parents
+    action: script.tts_agenda_generateur_ia
+    data:
+      events_holidays: "{{ agenda_holidays['calendar.jours_feries_en_france']['events'] }}"
+      events_school: "{{ agenda_holidays['calendar.calendrier_scolaire_zone_a']['events'] }}"
+      events_family: "{{ agenda_famille['calendar.famille']['events'] }}"
+    response_variable: agenda_summary
+  - alias: Script TTS ni_oscar_ni_parents
+    data:
+      media_player: media_player.ni_oscar_ni_parents
+      message: "{{ agenda_summary.data }}"
+    action: script.tts_send_tts
+    enabled: true
+mode: single

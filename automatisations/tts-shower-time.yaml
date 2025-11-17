@@ -1,0 +1,46 @@
+alias: "[TTS] Shower Time"
+description: "Annonce vocale de l'heure de la douche avec un fun fact aléatoire (jours: dim, mar, jeu) si tout le monde est à la maison et l'interrupteur 'shower' activé."
+triggers:
+  - at: input_datetime.shower_time
+    alias: Shower Time
+    trigger: time
+conditions:
+  - condition: and
+    conditions:
+      - condition: state
+        entity_id: input_boolean.shower
+        state: "on"
+      - condition: state
+        entity_id: group.persons
+        state: home
+      - condition: time
+        weekday:
+          - sun
+          - thu
+          - tue
+actions:
+  - action: script.facts_fun_fact_aleatoire
+    data: {}
+    response_variable: fact_result
+  - variables:
+      time: "{{ now().strftime('%H:%M') }}"
+      message: |-
+        {{ [
+            "Il est " ~ time ~ ". C'est l'heure de la douche !",
+            "Qui c'est qui va prendre sa douche ?",
+            "A la douche. C'est indispensable..."
+          ] | random }}
+  - action: tts.speak
+    target:
+      entity_id: tts.google_cloud
+    data:
+      cache: true
+      media_player_entity_id: media_player.toutes_les_enceintes
+      message: |
+        {{ message }}.
+
+        Mais d'abord
+
+        {{ fact_result.fun_fact }}.
+    enabled: true
+mode: single
