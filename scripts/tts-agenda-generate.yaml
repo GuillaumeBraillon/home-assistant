@@ -1,67 +1,73 @@
-alias: "[TTS] Agenda Famille (Séjour)"
-description: "(Script IA) Construit prompt agenda multi-calendriers et renvoie agenda_summary sans notification ni TTS."
-triggers:
-  - entity_id:
-      - input_select.modes_maison
-    to: Journée
-    for:
-      hours: 0
-      minutes: 0
-      seconds: 30
-    from: Matin
-    trigger: state
-conditions: []
-actions:
-  - wait_for_trigger:
-      - entity_id:
-          - binary_sensor.motion_kitchen_occupancy
-        to: "on"
-        trigger: state
-    timeout:
-      hours: 0
-      minutes: "{{ states('input_number.now_light_delay_off')|int}}"
-      seconds: 0
-      milliseconds: 0
-    enabled: false
-  - alias: Calendar available
-    condition: template
-    value_template: >-
-      {{family_calendar_state != 'unavailable' and family_calendar_state !=
-      'unknown' and scolaire_calendar_state != 'unavailable' and
-      scolaire_calendar_state != 'unknown'}}
-  - action: calendar.get_events
+alias: "[TTS] Agenda Générateur IA"
+sequence:
+  - action: weather.get_forecasts
+    metadata: {}
     data:
-      start_date_time: "{{ now().replace(hour=0, minute=0, second=0).isoformat() }}"
-      duration:
-        hours: 48
-        minutes: 0
-        seconds: 0
+      type: hourly
     target:
-      entity_id:
-        - calendar.famille
-    response_variable: agenda_famille
-  - data:
-      duration:
-        hours: 1500
-        minutes: 0
-        seconds: 0
-    target:
-      entity_id:
-        - calendar.calendrier_scolaire_zone_a
-        - calendar.jours_feries_en_france
-    response_variable: agenda_holidays
-    action: calendar.get_events
-  - alias: Script Générateur Agenda Parents
-    action: script.tts_agenda_generateur_ia
+      entity_id: weather.lyon
+    response_variable: forecast_lyon
+  - variables:
+      forecast_summary: |
+        {% set hours_local = [10, 12, 18] %}
+        {% for hour in hours_local %}
+          {% set target_utc = (now().replace(hour=hour, minute=0, second=0, microsecond=0) - timedelta(hours=1)).isoformat()[:13] %}
+          {% for item in forecast_lyon['weather.lyon'].forecast %}
+            {% if target_utc in item.datetime %}
+              Prévisions pour {{ hour }}h00 (Lyon) : {{ item }}
+            {% endif %}
+          {% endfor %}
+        {% endfor %}
+      weather_now: |
+        Conditions maintenant : {
+          'condition': {{states('weather.lyon')}}, 
+          'wind_bearing': {{ state_attr('weather.lyon', 'wind_bearing') }}, 
+          'temperature': {{ state_attr('weather.lyon', 'temperature') }}, 
+          'wind_speed': {{ state_attr('weather.lyon', 'wind_speed') }}, 
+          'precipitation': {{ state_attr('weather.lyon', 'precipitation') }}, 
+          'humidity': {{ state_attr('weather.lyon', 'humidity') }}
+        }
+      agenda_instructions: >-
+        Tu produis un résumé vocal naturel des événements fournis. Commence par
+        une phrase indiquant la date du jour et une info météo avec temperature
+        et ciel. Mentionne le vent seulement  s'il est fort (>20 km/h) ou la
+        pluie si présente. Pour les prévisions, indique l'heure locale, les
+        températures et l'état du ciel.  {{ weather_now }} {{ forecast_summary
+        }}.
+
+        Événements : {% if events_holidays is defined and events_holidays|length
+        > 0 %} {{ events_holidays }} {% endif %} {% if events_school is defined
+        and events_school|length > 0 %} {{ events_school }} {% endif %} {% if
+        events_guillaume is defined and events_guillaume|length > 0 %} {{
+        events_guillaume }} {% endif %} {% if events_family is defined and
+        events_family|length > 0 %} {{ events_family }} {% endif %}
+
+        Mentionne : température actuelle + min/max si disponibles, état du ciel,
+        petit commentaire utile (vent, pluie…). Ignore les événements de 15
+        minutes ou moins.
+
+        Dates : • aujourd’hui → "Aujourd’hui" • demain → "Demain" Style :
+        fluide, naturel, adapté à une synthèse vocale. Pas de listes, pas de
+        commentaires, seulement le texte final.
+
+        Formulation : Événements importants : Donne l’heure (format 24h). Ajoute
+        le lieu seulement si pertinent. Petits événements : Pas d’heure, mention
+        courte. Événements dans plusieurs semaines : Indique  un compte à
+        rebours ("dans 15 jours", "dans 3 semaines") au lieu de la date exacte. 
+        Médicaments (Metoject, Humira) : Pas d’heure. Formulation discrète : "et
+        il y a le Metoject en fin de journée", "et il y a l’Humira en début de
+        soirée". Ne pas dire que c’est un traitement. Style naturel : Varie les
+        connecteurs : "ensuite", "plus tard", "à noter…", "et aussi…". Évite les
+        répétitions.
+  - action: ai_task.generate_data
     data:
-      events_holidays: "{{ agenda_holidays['calendar.jours_feries_en_france']['events'] }}"
-      events_school: "{{ agenda_holidays['calendar.calendrier_scolaire_zone_a']['events'] }}"
-      events_family: "{{ agenda_famille['calendar.famille']['events'] }}"
+      task_name: agenda famille Today
+      instructions: "{{ agenda_instructions }}"
+      entity_id: ai_task.google_ai_task_2
     response_variable: agenda_summary
-  - alias: Script TTS ni_oscar_ni_parents
-    data:
-      media_player: media_player.ni_oscar_ni_parents
-      message: "{{ agenda_summary.data }}"
-    action: script.tts_send_tts
-    enabled: false
-mode: single
+    enabled: true
+  - stop: Return
+    response_variable: agenda_summary
+mode: queued
+icon: mdi:calendar-text
+description: ""
