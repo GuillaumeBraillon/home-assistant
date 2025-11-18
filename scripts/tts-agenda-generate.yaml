@@ -8,57 +8,43 @@ sequence:
       entity_id: weather.lyon
     response_variable: forecast_lyon
   - variables:
-      forecast_summary: |
-        {% set hours_local = [10, 12, 18] %}
-        {% for hour in hours_local %}
-          {% set target_utc = (now().replace(hour=hour, minute=0, second=0, microsecond=0) - timedelta(hours=1)).isoformat()[:13] %}
-          {% for item in forecast_lyon['weather.lyon'].forecast %}
-            {% if target_utc in item.datetime %}
-              Prévisions pour {{ hour }}h00 (Lyon) : {{ item }}
-            {% endif %}
-          {% endfor %}
-        {% endfor %}
-      weather_now: |
-        Conditions maintenant : {
-          'condition': {{states('weather.lyon')}}, 
-          'wind_bearing': {{ state_attr('weather.lyon', 'wind_bearing') }}, 
-          'temperature': {{ state_attr('weather.lyon', 'temperature') }}, 
-          'wind_speed': {{ state_attr('weather.lyon', 'wind_speed') }}, 
-          'precipitation': {{ state_attr('weather.lyon', 'precipitation') }}, 
-          'humidity': {{ state_attr('weather.lyon', 'humidity') }}
-        }
+      forecast_summary: >
+        {%- set hours_local = [10,12,18] -%} {%- set fc =
+        forecast_lyon['weather.lyon'].forecast -%} {%- for hour in hours_local
+        -%}
+          {%- set key = (now().replace(hour=hour, minute=0, second=0, microsecond=0) - timedelta(hours=1)).isoformat()[:13] -%}
+          {%- for item in fc if key in item.datetime -%}
+            Prévision {{ hour }}h00 : {{ item.condition|default('?') }}, {{ item.temperature|default('?') }}°C, {%- if item.precipitation|default(0) > 0 %}, pluie {{ item.precipitation }}mm, {%- endif %}
+          {%- endfor -%}
+        {%- endfor -%}
+      weather_now: >
+        {%- set cond = states('weather.lyon') -%} {%- set temp =
+        state_attr('weather.lyon','temperature') | float(0) -%} {%- set wind =
+        state_attr('weather.lyon','wind_speed') | float(0) -%} {%- set rain =
+        state_attr('weather.lyon','precipitation') | float(0) -%} Conditions
+        maintenant : {{ cond }}, {{ temp|round(0) }}°C{%- if wind > 25 %}, vent
+        {{ wind|round(0) }}km/h{%- endif %}{%- if rain > 0 %}, pluie {{ rain
+        }}mm{%- endif %}
       agenda_instructions: >-
-        Tu produis un résumé vocal naturel des événements fournis. Commence par
-        une phrase indiquant la date du jour et une info météo avec temperature
-        et ciel. Mentionne le vent seulement  s'il est fort (>20 km/h) ou la
-        pluie si présente. Pour les prévisions, indique l'heure locale, les
-        températures et l'état du ciel.  {{ weather_now }} {{ forecast_summary
-        }}.
+        Tu produis un résumé vocal naturel des événements. Commence par une
+        phrase indiquant la date du jour et une info météo. Pour les prévisions,
+        indique l'heure locale, les températures et l'état du ciel. {{
+        weather_now }}, {{ forecast_summary }}.
 
-        Événements : {% if events_holidays is defined and events_holidays|length
-        > 0 %} {{ events_holidays }} {% endif %} {% if events_school is defined
-        and events_school|length > 0 %} {{ events_school }} {% endif %} {% if
-        events_guillaume is defined and events_guillaume|length > 0 %} {{
-        events_guillaume }} {% endif %} {% if events_family is defined and
-        events_family|length > 0 %} {{ events_family }} {% endif %}
+        Événements : {{ events_holidays }}{{ events_school }}{{ events_guillaume }}{{ events_family }}
 
-        Mentionne : température actuelle + min/max si disponibles, état du ciel,
-        petit commentaire utile (vent, pluie…). Ignore les événements de 15
-        minutes ou moins.
+        Style : fluide, naturel, adapté à une synthèse vocale.
+        Pas de listes, pas de commentaires, seulement le texte final.
+        Varie les connecteurs : "ensuite", "plus tard", "à noter…", "et aussi…".
+        Évite les répétitions.
 
-        Dates : • aujourd’hui → "Aujourd’hui" • demain → "Demain" Style :
-        fluide, naturel, adapté à une synthèse vocale. Pas de listes, pas de
-        commentaires, seulement le texte final.
+        Ignore les événements de 15 minutes ou moins.
 
-        Formulation : Événements importants : Donne l’heure (format 24h). Ajoute
-        le lieu seulement si pertinent. Petits événements : Pas d’heure, mention
-        courte. Événements dans plusieurs semaines : Indique  un compte à
-        rebours ("dans 15 jours", "dans 3 semaines") au lieu de la date exacte. 
-        Médicaments (Metoject, Humira) : Pas d’heure. Formulation discrète : "et
-        il y a le Metoject en fin de journée", "et il y a l’Humira en début de
-        soirée". Ne pas dire que c’est un traitement. Style naturel : Varie les
-        connecteurs : "ensuite", "plus tard", "à noter…", "et aussi…". Évite les
-        répétitions.
+        Événements importants : Donne l’heure (format 24h), ajoute le lieu seulement si pertinent.
+        Petits événements : Pas d’heure, mention courte.
+        Événements dans plusieurs semaines : Indique  un compte à rebours ("dans 15 jours", "dans 3 semaines") au lieu de la date exacte. 
+        Médicaments (Metoject, Humira) : Formulation discrète : "et il y a le Metoject en fin de journée".
+
   - action: ai_task.generate_data
     data:
       task_name: agenda famille Today
