@@ -5,6 +5,7 @@ triggers:
       - input_boolean.bouton_test
     trigger: state
     id: StoryTime
+    enabled: false
   - at: input_datetime.sleeping_time
     alias: Brossage des dents
     id: ToothTime
@@ -49,6 +50,15 @@ actions:
         {% else %}
           {{ "Il est " ~ time ~ "." }}
         {% endif %}
+  - action: notify.persistent_notification
+    metadata: {}
+    data:
+      message: |-
+        {{ fact_result.fun_fact }}.
+
+        {{ message }}.
+      title: "[TTS] Sleeping Time"
+    enabled: false
   - alias: Script TTS toutes_les_pieces
     data:
       media_player: media_player.toutes_les_enceintes
@@ -57,4 +67,5 @@ actions:
 
         {{ message }}.
     action: script.tts_send_tts
+    enabled: true
 mode: single
