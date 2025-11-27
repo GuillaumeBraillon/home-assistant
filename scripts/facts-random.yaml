@@ -143,41 +143,52 @@ sequence:
         - Eliott, record du jour: le Sahara s’étend sur plus de 9 millions de km² !
       fact_index: >
         {% set list_length = all_facts | length %}
-
-        {# *** CORRECTION DU ZERO DIVISION ERROR *** #} {% if list_length == 0
-        %}
+         {% if list_length == 0 %}
           {% set safe_length = 1 %}
         {% else %}
           {% set safe_length = list_length %}
         {% endif %}
 
-        {% set day_of_year = now().timetuple().tm_yday %} {% set hour_seed =
-        now().hour * 12 %} {% set minute_group = (now().minute // 5) %}
+        {# 1. Variables temporelles #} 
+        {% set day = now().timetuple().tm_yday %}
+        {% set hour = now().hour %} {% set group = (now().minute // 5) %}
 
-        {% set seed = (day_of_year * 1000) + hour_seed + minute_group %}
+        {# 2. FORMULE NON-LINÉAIRE #} 
+        {% set seed = (day *
+        487) + (hour * 79) + (group * 19) + (day * hour) %}
 
         {{ seed % safe_length }}
       fact_result:
         fun_fact: |
-          {% set list_length = all_facts | length %} {% if list_length == 0 %}
+          {% set list_length = all_facts | length %}
+          {% if list_length == 0 %}
             {{ 'Erreur : La liste all_facts est vide.' }}
           {% else %}
-            {% set minute_group = (now().minute // 5) %}
-            {% set index = ((now().timetuple().tm_yday * 1000) + (now().hour * 12) + minute_group) % list_length %}
+            {% set day = now().timetuple().tm_yday %}
+            {% set hour = now().hour %}
+            {% set group = (now().minute // 5) %}
+            
+            {# Calcul de la graine avec anti-collision #}
+            {% set seed = (day * 487) + (hour * 79) + (group * 19) + (day * hour) %}
+            
+            {# Calcul de l'index final #}
+            {% set index = seed % list_length %}
+            
+            {# --- Récupération et Formatage --- #}
             {% set fact_item = all_facts[index] %}
             
             {% if fact_item is mapping %}
-              {# CAS 1: C'est un Dictionnaire {'clé': 'valeur'} #}
+              {# CAS 1: Dictionnaire #}
               {% set key = fact_item.keys() | list | first %}
               {% set value = fact_item.values() | list | first %}
               {{ key }}: {{ value }}
             
             {% elif fact_item is string %}
-              {# CAS 2: C'est une simple Chaîne de caractères (comme l'index 55) #}
+              {# CAS 2: Chaîne simple #}
               {{ fact_item }}
               
             {% else %}
-              {{ 'Erreur de format inattendu. La donnée n\'est ni un dictionnaire, ni une chaîne.' }}
+              {{ 'Erreur de format inattendu.' }}
             {% endif %}
           {% endif %}
   - action: notify.persistent_notification
