@@ -1,0 +1,197 @@
+alias: "[TTS] Poids Guillaume IA"
+description: >-
+  Annonce TTS et SMS lors d’une nouvelle mesure de poids de Guillaume, historise
+  min/max/diff, et génère un texte motivant via IA.
+triggers:
+  - entity_id: sensor.poids_guillaume
+    trigger: state
+    enabled: true
+conditions:
+  - condition: template
+    value_template: "{{ trigger.to_state.state | float > 0 }}"
+    enabled: true
+actions:
+  - variables:
+      poids_actuel: "{{ states('sensor.poids_guillaume') | float }}"
+      poids_precedent: "{{ trigger.from_state.state | float }}"
+      poids_difference: "{{ (poids_actuel - poids_precedent) | round(2) }}"
+      poids_min: "{{ states('input_number.poids_guillaume_min') | float }}"
+      poids_max: "{{ states('input_number.poids_guillaume_max') | float }}"
+      perte_guillaume: "{{ states('sensor.poids_guillaume_perte') | float }}"
+      prise_guillaume: "{{ states('sensor.poids_guillaume_prise') | float }}"
+      imc: "{{ (poids_actuel / (1.80 * 1.80)) | round(1) }}"
+      tendance: >-
+        {% if poids_difference < -0.01 %}baisse{% elif poids_difference > 0.01
+        %}hausse{% else %}stable{% endif %}
+  - data:
+      entity_id: input_number.poids_guillaume_difference
+      value: "{{ poids_difference }}"
+    action: input_number.set_value
+    enabled: true
+  - alias: Mise à jour du Poids Min / Max
+    choose:
+      - conditions:
+          - condition: template
+            value_template: "{{ poids_actuel > poids_max }}"
+        sequence:
+          - data:
+              entity_id: input_number.poids_guillaume_max
+              value: "{{ poids_actuel }}"
+            action: input_number.set_value
+      - conditions:
+          - condition: template
+            value_template: "{{ poids_actuel < poids_min }}"
+        sequence:
+          - data:
+              entity_id: input_number.poids_guillaume_min
+              value: "{{ poids_actuel }}"
+            action: input_number.set_value
+    enabled: true
+  - action: sql.query
+    metadata: {}
+    data:
+      query: |-
+        SELECT
+            COUNT(*) as nb_mesures,
+            ROUND(AVG((t1.min + t1.max) / 2), 1) as poids_moyen,
+            ROUND(MIN(t1.min), 1) as poids_min,
+            ROUND(MAX(t1.max), 1) as poids_max,
+            ROUND(MAX(t1.max) - MIN(t1.min), 1) as amplitude
+        FROM
+            statistics AS t1
+        INNER JOIN
+            statistics_meta AS t2 ON t1.metadata_id = t2.id
+        WHERE
+            t2.statistic_id = 'sensor.poids_guillaume'
+            -- Filtrer sur les 3 derniers mois
+            AND t1.start_ts >= strftime('%s', datetime('now', '-3 months'))
+            -- Filtrer où la valeur a changé durant la période
+            AND t1.min != t1.max;
+    response_variable: result_statistics
+    alias: SQL GET HISTO 3 MOIS
+  - variables:
+      stats_poids: >-
+        {%- set data = result_statistics.result -%} {%- if data | length > 0 and
+        data[0]['nb_mesures'] > 0 -%}
+          {%- set s = data[0] -%}
+          {{ {
+            'nb_mesures': s['nb_mesures'],
+            'poids_moyen': s['poids_moyen'],
+            'poids_min': s['poids_min'],
+            'poids_max': s['poids_max'],
+            'amplitude': s['amplitude']
+          } }}
+        {%- else -%}
+          {{ {'nb_mesures': 0, 'poids_moyen': 0, 'poids_min': 0, 'poids_max': 0, 'amplitude': 0} }}
+        {%- endif -%}
+  - action: ai_task.generate_data
+    metadata: {}
+    data:
+      instructions: >-
+        Tu vas analyser les données fournies et TU NE DOIS RETOURNER QUE LE
+        MESSAGE FINAL, sans aucune phrase avant ou après, sans commentaire, sans
+        explication.
+
+        Pas de texte du type “Voici ton message :”, “Ok :”, “D’accord :”, etc.
+
+        La sortie doit commencer directement par la première phrase du message
+        destiné à Guillaume.
+
+        Analyse ces données de poids et génère un message oral, naturel et
+        encourageant destiné à Guillaume.
+
+
+        Utilise strictement les valeurs fournies sans en modifier aucune.
+
+
+        Données :
+
+        poids_actuel: {{ poids_actuel }}
+
+        poids_precedent: {{ poids_precedent }}
+
+        poids_difference: {{ poids_difference }}
+
+        poids_min: {{ poids_min }}
+
+        poids_max: {{ poids_max }}
+
+        perte_guillaume: {{ perte_guillaume }}
+
+        prise_guillaume: {{ prise_guillaume }}
+
+        imc: {{ imc }}
+
+        tendance: {{ tendance }}
+
+        statistiques_3_mois: {{ stats_poids }}
+          - nb_mesures: nombre de pesées sur 3 mois
+          - poids_moyen: poids moyen sur 3 mois (stabilisation)
+          - poids_min: poids minimum atteint
+          - poids_max: poids maximum atteint
+          - amplitude: différence entre max et min (fluctuation totale)
+
+
+        Objectif :
+
+        Créer un message court, fluide et bienveillant, adapté à une synthèse
+        vocale.
+
+        Parle à Guillaume à la deuxième personne, sans utiliser « Salut
+        Guillaume » ni « Aujourd’hui ».
+
+
+        Directives :
+
+        - Mentionne son poids actuel et la différence avec la dernière mesure de
+        manière simple et naturelle.
+
+        - Parle en termes de dynamique ou de tendance ({{ tendance }}), pas de
+        phrases évidentes.
+
+        - Utilise les statistiques sur 3 mois pour contextualiser l'évolution :
+          * Si amplitude < 2 kg : poids stable/stabilisé autour de poids_moyen
+          * Si amplitude >= 2 kg : poids fluctuant entre poids_min et poids_max
+          * Mentionne si le poids actuel est proche du min, du max ou du moyen
+
+        - Mets en valeur la perte totale ({{ perte_guillaume }} kg) de manière
+        naturelle, sans enchaîner plusieurs chiffres.
+
+        - Utilise l'IMC calculé ({{ imc }}) uniquement si utile au ton
+        bienveillant, jamais comme diagnostic.
+
+        - Interdiction de conseils génériques ou banals (ex: "continue comme
+        ça", "n'oublie pas de t'hydrater", "mange équilibré").
+
+        - Si encouragement, il doit être spécifique aux données fournies (lié à
+        {{ tendance }} ou {{ poids_difference }} ou statistiques 3 mois) et en
+        une seule phrase courte; sinon, ne pas ajouter d'encouragement.
+
+        - Pas de listes, pas de bullet points, pas de ton médical.
+
+        - Style très oral, chaleureux, comme un coach bienveillant.
+
+        - La sortie doit être uniquement le message final, rien d'autre.
+      task_name: Poids Guillaume
+    response_variable: response_variable
+    enabled: true
+  - data:
+      media_player: media_player.salle_de_bain
+      message: "{{response_variable.data}}"
+    action: script.tts_send_tts
+    enabled: true
+  - alias: Message SMS
+    data:
+      action: sendSms
+      number: "TELEPHONE_SUPPRIME"
+      message: >-
+        [Santé] du {{ now().strftime('%d/%m/%Y') }} pour Guillaume. Poids : {{
+        poids_actuel }} Kg. Différence : {{ poids_difference }} Kg. Cette année
+        :
+          - Perte : {{ perte_guillaume }} Kg.
+          - Prise : {{ prise_guillaume }} Kg.
+          - Min : {{ poids_min }} Kg.
+          - Max : {{ poids_max }} Kg.
+    action: script.mqtt_send_topics
+    enabled: true
+mode: single
