@@ -27,27 +27,31 @@ sequence:
         actuelles : {{ cond }}, {{ temp }}°C {%- if rain > 0 %}, pluie {{ rain
         }}mm{%- endif %}{%- if wind > 25 %}, vent {{ wind }}km/h{%- endif %}
       agenda_instructions: >-
-        Tu produis un résumé vocal naturel des événements. Commence par une phrase indiquant la date du jour et une info météo. Pour les prévisions, indique l'heure locale, les températures et l'état du ciel.
+        Tu produis un résumé vocal naturel des événements. Commence par une
+        phrase indiquant la date du jour et la météo actuelle, suivie d'une
+        tendance générale pour la journée (évolution du temps, températures
+        globales). Ne détaille pas chaque heure, synthétise de manière fluide.
 
-        DONNÉES ENTRANTES:
-        Date et Heure: {{ now().strftime('%A %d %B, il est %H:%M') }}
-        Météo Actuelle: {{ weather_now }}
-        Prévisions: {{ forecast_summary }}
-        Événements: {{ events_holidays }}{{ events_school }}{{ events_guillaume }}{{ events_family }}
+        DONNÉES ENTRANTES: Date et Heure: {{ now().strftime('%A %d %B, il est
+        %H:%M') }} Météo Actuelle: {{ weather_now }} Prévisions: {{
+        forecast_summary }} Événements: {{ events_holidays }}{{ events_school
+        }}{{ events_guillaume }}{{ events_family }}
 
-        Style:
-        - Fluide, naturel, adapté à une synthèse vocale.
-        - Pas de listes explicites ou commentaires hors contenu, seulement le texte final.
-        - Varie les connecteurs: "ensuite", "plus tard", "à noter…", "et aussi…".
-        - Évite les répétitions.
-        - Médicaments (Metoject, Humira): formulation discrète, cite toujours le nom du produit.
-        - Ignore les événements de 15 minutes ou moins.
-        - Ignore les événements "Départ pour...".
-        - Regroupe ce qui se passe en même temps.
-        - Événements importants: donne l’heure (24h), ajoute le lieu seulement si pertinent.
-        - Petits événements: pas d’heure, mention courte.
-        - Événements dans plusieurs semaines: utiliser un compte à rebours ("dans 15 jours", "dans 3 semaines") sans date exacte.
-        - Dates de fin exclusives: si un événement commence un jour (ex: 19) et finit le lendemain (ex: 20) sans heure précise, le considérer comme UNE SEULE JOURNÉE (le 19 uniquement) et ne jamais dire "et le lendemain" ou "après-demain".
+        Style: - Fluide, naturel, adapté à une synthèse vocale. - Pas de listes
+        explicites ou commentaires hors contenu, seulement le texte final. -
+        Varie les connecteurs: "ensuite", "plus tard", "à noter…", "et aussi…".
+        - Évite les répétitions. - Météo: résumé synthétique et naturel, pas
+        d'énumération horaire détaillée. - Médicaments (Metoject, Humira):
+        formulation discrète, cite toujours le nom du produit. - Ignore les
+        événements de 15 minutes ou moins. - Ignore les événements "Départ
+        pour...". - Regroupe ce qui se passe en même temps. - Événements importants: donne l’heure
+        (24h), ajoute le lieu seulement si pertinent. - Petits événements: pas
+        d’heure, mention courte. - Événements dans plusieurs semaines: utiliser
+        un compte à rebours ("dans 15 jours", "dans 3 semaines") sans date
+        exacte. - Dates de fin exclusives: si un événement commence un jour (ex:
+        19) et finit le lendemain (ex: 20) sans heure précise, le considérer
+        comme UNE SEULE JOURNÉE (le 19 uniquement) et ne jamais dire "et le
+        lendemain" ou "après-demain".
   - action: ai_task.generate_data
     data:
       task_name: agenda famille Today
