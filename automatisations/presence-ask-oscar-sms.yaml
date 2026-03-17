@@ -1,0 +1,101 @@
+alias: "[Presence] ASK SMS Oscar"
+description: "Gestion alarme selon présence d'Oscar et ses clés"
+mode: queued
+max: 10
+trigger:
+  - platform: state
+    entity_id:
+      - person.guillaume
+      - person.nelly
+      - person.oscar
+
+variables:
+  sms_number: "TELEPHONE_SUPPRIME;TELEPHONE_SUPPRIME;REMOVED"
+  parents_home: "{{ is_state('person.guillaume', 'home') or is_state('person.nelly', 'home') }}"
+  oscar_home: "{{ is_state('person.oscar', 'home') }}"
+  oscar_keys: "{{ is_state('input_boolean.oscar_active', 'on') }}"
+
+action:
+  - choose:
+      - conditions:
+          - condition: template
+            value_template: "{{ oscar_keys and oscar_home and not parents_home }}"
+        sequence:
+          - service: script.mqtt_send_topics
+            data:
+              action: sendSms
+              number: "{{ sms_number }}"
+              message: "[Présence] Oscar est-il seul à la maison ?"
+              askData: AskOscar
+          - wait_for_trigger:
+              - platform: mqtt
+                topic: "JPI/ask/AskOscar"
+            timeout: "00:05:00"
+            continue_on_timeout: true
+          - variables:
+              payload_message: >-
+                {% if wait.trigger is not none %}
+                  {{ wait.trigger.payload.split(',')[0].split(':')[1].strip().lower() }}
+                {% else %}
+                  none
+                {% endif %}
+              payload_number: >-
+                {% if wait.trigger is not none %}
+                  {{ wait.trigger.payload.split(',')[1].split(':')[1].strip() }}
+                {% else %}
+                  none
+                {% endif %}
+              Respondent: >-
+                {% if payload_number != 'none' %}
+                  {% if 'TELEPHONE_SUPPRIME' in payload_number %}Papa
+                  {% elif 'TELEPHONE_SUPPRIME' in payload_number %}Maman
+                  {% elif 'TELEPHONE_SUPPRIME' in payload_number %}Oscar
+                  {% else %}Inconnu{% endif %}
+                {% else %}
+                  Inconnu
+                {% endif %}
+          - choose:
+              - conditions:
+                  - condition: template
+                    value_template: "{{ wait.trigger is none }}"
+                sequence:
+                  - service: script.mqtt_send_topics
+                    data:
+                      action: sendSms
+                      number: "{{ sms_number }}"
+                      message: "[Présence] Sans réponse, j'active l'alarme."
+                  - service: input_boolean.turn_off
+                    target:
+                      entity_id: input_boolean.oscar_active
+              - conditions:
+                  - condition: template
+                    value_template: "{{ payload_message == 'oui' }}"
+                sequence:
+                  - service: script.mqtt_send_topics
+                    data:
+                      action: sendSms
+                      number: "{{ sms_number }}"
+                      message: "[Présence] {{ Respondent }} a répondu {{ payload_message }}, je n'active pas l'alarme."
+              - conditions:
+                  - condition: template
+                    value_template: "{{ payload_message == 'non' }}"
+                sequence:
+                  - service: script.mqtt_send_topics
+                    data:
+                      action: sendSms
+                      number: "{{ sms_number }}"
+                      message: "[Présence] {{ Respondent }} a dit qu'Oscar n'est pas à la maison, je désactive ses clés pour activer l'alarme."
+                  - service: input_boolean.turn_off
+                    target:
+                      entity_id: input_boolean.oscar_active
+                  - service: button.press
+                    target:
+                      entity_id: button.change_presence_nut_oscar
+
+      - conditions:
+          - condition: template
+            value_template: "{{ not oscar_keys }}"
+        sequence:
+          - service: input_boolean.turn_on
+            target:
+              entity_id: input_boolean.oscar_active
