@@ -1,7 +1,6 @@
 alias: "[Presence] ASK SMS Oscar"
 description: "Gestion alarme selon présence d'Oscar et ses clés"
-mode: queued
-max: 10
+mode: single
 trigger:
   - platform: state
     entity_id:
@@ -10,7 +9,10 @@ trigger:
       - person.oscar
 
 variables:
-  sms_number: "TELEPHONE_SUPPRIME;TELEPHONE_SUPPRIME;REMOVED"
+  notify_targets:
+    - guillaume
+    - nelly
+    - oscar
   parents_home: "{{ is_state('person.guillaume', 'home') or is_state('person.nelly', 'home') }}"
   oscar_home: "{{ is_state('person.oscar', 'home') }}"
   oscar_keys: "{{ is_state('input_boolean.oscar_active', 'on') }}"
@@ -19,72 +21,82 @@ action:
   - choose:
       - conditions:
           - condition: template
-            value_template: "{{ oscar_keys and oscar_home and not parents_home }}"
+            value_template: >-
+              {{
+                oscar_keys
+                and oscar_home
+                and not parents_home
+                and trigger.from_state is not none
+                and trigger.to_state is not none
+                and trigger.from_state.state != trigger.to_state.state
+              }}
         sequence:
-          - service: script.mqtt_send_topics
+          - action: script.notify_ask_mobile
             data:
-              action: sendSms
-              number: "{{ sms_number }}"
+              target: "guillaume;nelly;oscar"
+              ask_tag: ask_oscar_presence
+              title: "[Présence]"
+              icon: mdi:account-question-outline
+              channel: presence
               message: "[Présence] Oscar est-il seul à la maison ?"
-              askData: AskOscar
-          - wait_for_trigger:
-              - platform: mqtt
-                topic: "JPI/ask/AskOscar"
-            timeout: "00:05:00"
-            continue_on_timeout: true
+              yes_title: "Oui"
+              no_title: "Non"
+              timeout: 300
+            response_variable: ask_result
           - variables:
-              payload_message: >-
-                {% if wait.trigger is not none %}
-                  {{ wait.trigger.payload.split(',')[0].split(':')[1].strip().lower() }}
-                {% else %}
-                  none
-                {% endif %}
-              payload_number: >-
-                {% if wait.trigger is not none %}
-                  {{ wait.trigger.payload.split(',')[1].split(':')[1].strip() }}
-                {% else %}
-                  none
-                {% endif %}
-              Respondent: >-
-                {% if payload_number != 'none' %}
-                  {% if 'TELEPHONE_SUPPRIME' in payload_number %}Papa
-                  {% elif 'TELEPHONE_SUPPRIME' in payload_number %}Maman
-                  {% elif 'TELEPHONE_SUPPRIME' in payload_number %}Oscar
-                  {% else %}Inconnu{% endif %}
-                {% else %}
-                  Inconnu
+              respondent: "{{ ask_result.respondent | default('unknown') }}"
+              respondent_name: >-
+                {% if respondent == 'guillaume' %}Papa
+                {% elif respondent == 'nelly' %}Maman
+                {% elif respondent == 'oscar' %}Oscar
+                {% else %}Inconnu
                 {% endif %}
           - choose:
               - conditions:
                   - condition: template
-                    value_template: "{{ wait.trigger is none }}"
+                    value_template: "{{ ask_result.answer == 'timeout' }}"
                 sequence:
-                  - service: script.mqtt_send_topics
-                    data:
-                      action: sendSms
-                      number: "{{ sms_number }}"
-                      message: "[Présence] Sans réponse, j'active l'alarme."
+                  - repeat:
+                      for_each: "{{ notify_targets }}"
+                      sequence:
+                        - action: script.notify_send_notifications
+                          data:
+                            target: "{{ repeat.item }}"
+                            title: "[Présence]"
+                            message: "Sans réponse, j'active l'alarme."
+                            icon: mdi:account-alert-outline
+                            channel: presence
                   - service: input_boolean.turn_off
                     target:
                       entity_id: input_boolean.oscar_active
               - conditions:
                   - condition: template
-                    value_template: "{{ payload_message == 'oui' }}"
+                    value_template: "{{ ask_result.answer == 'yes' }}"
                 sequence:
-                  - service: script.mqtt_send_topics
-                    data:
-                      action: sendSms
-                      number: "{{ sms_number }}"
-                      message: "[Présence] {{ Respondent }} a répondu {{ payload_message }}, je n'active pas l'alarme."
+                  - repeat:
+                      for_each: "{{ notify_targets }}"
+                      sequence:
+                        - action: script.notify_send_notifications
+                          data:
+                            target: "{{ repeat.item }}"
+                            title: "[Présence]"
+                            message: "{{ respondent_name }} a répondu oui, je n'active pas l'alarme."
+                            icon: mdi:account-check-outline
+                            channel: presence
               - conditions:
                   - condition: template
-                    value_template: "{{ payload_message == 'non' }}"
+                    value_template: "{{ ask_result.answer == 'no' }}"
                 sequence:
-                  - service: script.mqtt_send_topics
-                    data:
-                      action: sendSms
-                      number: "{{ sms_number }}"
-                      message: "[Présence] {{ Respondent }} a dit qu'Oscar n'est pas à la maison, je désactive ses clés pour activer l'alarme."
+                  - repeat:
+                      for_each: "{{ notify_targets }}"
+                      sequence:
+                        - action: script.notify_send_notifications
+                          data:
+                            target: "{{ repeat.item }}"
+                            title: "[Présence]"
+                            message: "{{ respondent_name }} a dit qu'Oscar n'est pas à la maison, je désactive ses clés pour activer l'alarme."
+                            icon: mdi:account-cancel-outline
+                            channel: presence
                   - service: input_boolean.turn_off
                     target:
                       entity_id: input_boolean.oscar_active

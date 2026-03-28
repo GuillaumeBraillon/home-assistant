@@ -1,0 +1,140 @@
+alias: "[Notify] Ask Mobile"
+description: "Envoie une notification interactive aux mobiles ciblés, attend une réponse et la renvoie au caller."
+mode: parallel
+max: 10
+icon: mdi:message-question-outline
+sequence:
+  - variables:
+      allowed_targets:
+        - guillaume
+        - nelly
+        - oscar
+      target_names: >-
+        {% set ns = namespace(values=[]) %}
+        {% for raw_target in (target | default('', true) | string).split(';') %}
+          {% set cleaned = raw_target | trim | lower %}
+          {% if cleaned in allowed_targets and cleaned not in ns.values %}
+            {% set ns.values = ns.values + [cleaned] %}
+          {% endif %}
+        {% endfor %}
+        {{ ns.values }}
+      ask_key: >-
+        {{ (ask_tag | default('ask_mobile', true) | string | lower)
+        | regex_replace('[^a-z0-9_]', '_') }}
+      notification_tag: "{{ ask_key }}_{{ context.id }}"
+      timeout_seconds: "{{ timeout | default(300, true) | int(300) }}"
+      target_1: "{{ target_names[0] if target_names | count > 0 else '' }}"
+      target_2: "{{ target_names[1] if target_names | count > 1 else '' }}"
+      target_3: "{{ target_names[2] if target_names | count > 2 else '' }}"
+      yes_action_1: >-
+        {{ ('ASK_' ~ ask_key ~ '_YES_' ~ target_1 ~ '_' ~ context.id) | upper
+        | regex_replace('[^A-Z0-9_]', '_') }}
+      no_action_1: >-
+        {{ ('ASK_' ~ ask_key ~ '_NO_' ~ target_1 ~ '_' ~ context.id) | upper
+        | regex_replace('[^A-Z0-9_]', '_') }}
+      yes_action_2: >-
+        {{ ('ASK_' ~ ask_key ~ '_YES_' ~ target_2 ~ '_' ~ context.id) | upper
+        | regex_replace('[^A-Z0-9_]', '_') }}
+      no_action_2: >-
+        {{ ('ASK_' ~ ask_key ~ '_NO_' ~ target_2 ~ '_' ~ context.id) | upper
+        | regex_replace('[^A-Z0-9_]', '_') }}
+      yes_action_3: >-
+        {{ ('ASK_' ~ ask_key ~ '_YES_' ~ target_3 ~ '_' ~ context.id) | upper
+        | regex_replace('[^A-Z0-9_]', '_') }}
+      no_action_3: >-
+        {{ ('ASK_' ~ ask_key ~ '_NO_' ~ target_3 ~ '_' ~ context.id) | upper
+        | regex_replace('[^A-Z0-9_]', '_') }}
+  - repeat:
+      for_each: "{{ target_names }}"
+      sequence:
+        - variables:
+            yes_action: >-
+              {% if repeat.item == target_1 %}{{ yes_action_1 }}
+              {% elif repeat.item == target_2 %}{{ yes_action_2 }}
+              {% elif repeat.item == target_3 %}{{ yes_action_3 }}
+              {% endif %}
+            no_action: >-
+              {% if repeat.item == target_1 %}{{ no_action_1 }}
+              {% elif repeat.item == target_2 %}{{ no_action_2 }}
+              {% elif repeat.item == target_3 %}{{ no_action_3 }}
+              {% endif %}
+        - action: script.notify_send_notifications
+          data:
+            target: "{{ repeat.item }}"
+            title: "{{ title }}"
+            message: "{{ message }}"
+            icon: "{{ icon | default('mdi:message-question-outline', true) }}"
+            channel: "{{ channel | default('questions', true) }}"
+            mobile_data:
+              tag: "{{ notification_tag }}_{{ repeat.item }}"
+              timeout: "{{ timeout_seconds }}"
+              actions:
+                - action: "{{ yes_action }}"
+                  title: "{{ yes_title | default('Oui', true) }}"
+                - action: "{{ no_action }}"
+                  title: "{{ no_title | default('Non', true) }}"
+  - wait_for_trigger:
+      - trigger: event
+        event_type: mobile_app_notification_action
+        event_data:
+          action: "{{ yes_action_1 }}"
+      - trigger: event
+        event_type: mobile_app_notification_action
+        event_data:
+          action: "{{ no_action_1 }}"
+      - trigger: event
+        event_type: mobile_app_notification_action
+        event_data:
+          action: "{{ yes_action_2 }}"
+      - trigger: event
+        event_type: mobile_app_notification_action
+        event_data:
+          action: "{{ no_action_2 }}"
+      - trigger: event
+        event_type: mobile_app_notification_action
+        event_data:
+          action: "{{ yes_action_3 }}"
+      - trigger: event
+        event_type: mobile_app_notification_action
+        event_data:
+          action: "{{ no_action_3 }}"
+    timeout:
+      hours: 0
+      minutes: 0
+      seconds: "{{ timeout_seconds }}"
+      milliseconds: 0
+    continue_on_timeout: true
+  - repeat:
+      for_each: "{{ target_names }}"
+      sequence:
+        - action: script.notify_send_notifications
+          data:
+            target: "{{ repeat.item }}"
+            clear: true
+            clear_tag: "{{ notification_tag }}_{{ repeat.item }}"
+  - variables:
+      triggered_action: >-
+        {% if wait.trigger is not none %}
+          {{ wait.trigger.event.data.action }}
+        {% else %}
+          timeout
+        {% endif %}
+      ask_response:
+        answered: "{{ wait.trigger is not none }}"
+        answer: >-
+          {% if wait.trigger is none %}timeout
+          {% elif triggered_action in [yes_action_1, yes_action_2, yes_action_3] %}yes
+          {% elif triggered_action in [no_action_1, no_action_2, no_action_3] %}no
+          {% else %}unknown
+          {% endif %}
+        respondent: >-
+          {% if triggered_action in [yes_action_1, no_action_1] %}{{ target_1 }}
+          {% elif triggered_action in [yes_action_2, no_action_2] %}{{ target_2 }}
+          {% elif triggered_action in [yes_action_3, no_action_3] %}{{ target_3 }}
+          {% else %}unknown
+          {% endif %}
+        action: "{{ triggered_action }}"
+        timeout_seconds: "{{ timeout_seconds }}"
+        tag: "{{ notification_tag }}"
+  - stop: Ask mobile completed
+    response_variable: ask_response

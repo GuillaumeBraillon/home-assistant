@@ -1,34 +1,55 @@
 alias: "[Notify] Send notifications To Mobiles"
 sequence:
   - variables:
-      notify_device: >
-        {% if target | lower == 'guillaume' %} mobile_app_one_plus_8t  {% elif
-        target | lower == 'nelly' %} mobile_app_xiaomi_nelly {% elif target |
-        lower == 'oscar' %} mobile_app_iphone_de_oscar {% elif target | lower ==
-        'parents' %} parents_devices {% elif target | lower == 'all' %}
-        all_devices {% endif %}
+      notify_device: >-
+        {% set notify_map = {
+          'guillaume': 'guillaume_device',
+          'nelly': 'nelly_device',
+          'oscar': 'oscar_device',
+          'parents': 'parents_devices',
+          'all': 'all_devices'
+        } %}
+        {{ notify_map.get(target | lower, '') }}
 
       notify_service: notify.{{ notify_device | slugify}}
-  - data:
-      title: "{{ title }}"
-      message: "{{ message }}"
-      data:
-        notification_icon: "{{ icon }}"
-        channel: "{{ channel }}"
-        sticky: "true"
-        importance: high
-        persistent: true
-    alias: Send Notifications To Mobiles
-    action: "{{ notify_service }}"
-  - data:
-      message: "{{ message}} ({{ notify_device}})"
-      title: "[{{ channel.capitalize() }}] {{ title }}"
-    enabled: true
-    action: notify.persistent_notification
-  - data:
-      message: "{{ message }}"
-    alias: Write Notifications
-    action: script.notify_write_notifications
+      is_clear: "{{ clear | default(false) }}"
+      notify_data: >-
+        {% set base = {
+          'notification_icon': icon | default('', true),
+          'channel': channel | default('', true),
+          'sticky': 'true',
+          'importance': 'high',
+          'persistent': true
+        } %}
+        {% set extra = mobile_data | default({}, true) %}
+        {{ base | combine(extra, recursive=True) }}
+  - choose:
+      - conditions:
+          - condition: template
+            value_template: "{{ is_clear }}"
+        sequence:
+          - data:
+              message: clear_notification
+              data:
+                tag: "{{ clear_tag }}"
+            alias: Clear Notifications On Mobiles
+            action: "{{ notify_service }}"
+    default:
+      - data:
+          title: "{{ title }}"
+          message: "{{ message }}"
+          data: "{{ notify_data }}"
+        alias: Send Notifications To Mobiles
+        action: "{{ notify_service }}"
+      - data:
+          message: "{{ message}} ({{ notify_device}})"
+          title: "[{{ channel.capitalize() }}] {{ title }}"
+        enabled: true
+        action: notify.persistent_notification
+      - data:
+          message: "{{ message }}"
+        alias: Write Notifications
+        action: script.notify_write_notifications
 mode: queued
 icon: mdi:bell-circle-outline
 max: 10
