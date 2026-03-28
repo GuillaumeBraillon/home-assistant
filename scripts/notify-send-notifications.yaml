@@ -1,0 +1,35 @@
+alias: "[Notify] Send notifications To Mobiles"
+sequence:
+  - variables:
+      notify_device: >
+        {% if target | lower == 'guillaume' %} mobile_app_one_plus_8t  {% elif
+        target | lower == 'nelly' %} mobile_app_xiaomi_nelly {% elif target |
+        lower == 'oscar' %} mobile_app_iphone_de_oscar {% elif target | lower ==
+        'parents' %} parents_devices {% elif target | lower == 'all' %}
+        all_devices {% endif %}
+
+      notify_service: notify.{{ notify_device | slugify}}
+  - data:
+      title: "{{ title }}"
+      message: "{{ message }}"
+      data:
+        notification_icon: "{{ icon }}"
+        channel: "{{ channel }}"
+        sticky: "true"
+        importance: high
+        persistent: true
+    alias: Send Notifications To Mobiles
+    action: "{{ notify_service }}"
+  - data:
+      message: "{{ message}} ({{ notify_device}})"
+      title: "[{{ channel.capitalize() }}] {{ title }}"
+    enabled: true
+    action: notify.persistent_notification
+  - data:
+      message: "{{ message }}"
+    alias: Write Notifications
+    action: script.notify_write_notifications
+mode: queued
+icon: mdi:bell-circle-outline
+max: 10
+description: "Permet d'envoyer des notifications aux mobiles ciblés, avec un message, un titre, une icône et un canal de notification personnalisés."
