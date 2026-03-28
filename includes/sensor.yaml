@@ -1,0 +1,17 @@
+#Statistics
+- platform: history_stats
+  name: Xbox ON today
+  entity_id: binary_sensor.oscope4908
+  unique_id: sensor.xbox_on_today
+  state: "on"
+  type: time
+  start: "{{ now().replace(hour=0, minute=0, second=0) }}"
+  end: "{{ now() }}"
+
+- platform: statistics
+  unique_id: sensor.plug_bathroom_energy_today
+  entity_id: sensor.ikea_inspelning_smart_plug_energy
+  name: "Climatisation today"
+  state_characteristic: change
+  max_age:
+    days: 1

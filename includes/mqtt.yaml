@@ -1,0 +1,240 @@
+#MQTT Sensor
+sensor:
+  #Nuts Battery
+  - name: Nut Blanc Battery
+    state_topic: "homeassistant/blea/nutBlanc/battery"
+    unit_of_measurement: "%"
+    icon: mdi:battery-bluetooth-variant
+    unique_id: sensor.nut_blanc_battery
+    state_class: measurement
+
+  - name: Nut Rose Battery
+    state_topic: "homeassistant/blea/nutRose/battery"
+    unit_of_measurement: "%"
+    icon: mdi:battery-bluetooth-variant
+    unique_id: sensor.nut_rose_battery
+    state_class: measurement
+
+  - name: Nut Vert Battery
+    state_topic: "homeassistant/blea/nutVert/battery"
+    unit_of_measurement: "%"
+    icon: mdi:battery-bluetooth-variant
+    unique_id: sensor.nutVert_battery
+    state_class: measurement
+
+  - name: Nut 2 Battery
+    state_topic: "homeassistant/blea/nut2/battery"
+    unit_of_measurement: "%"
+    icon: mdi:battery-bluetooth-variant
+    unique_id: sensor.nut2_battery
+    state_class: measurement
+
+  #Température
+  - name: Température Salon
+    state_topic: "homeassistant/blea/xiaomi/temperature"
+    unit_of_measurement: "°C"
+    icon: mdi:thermometer
+    unique_id: sensor.xiaomi_temperature
+    state_class: measurement
+    device_class: temperature
+
+  - name: Humidité Salon
+    state_topic: "homeassistant/blea/xiaomi/humidity"
+    unit_of_measurement: "%"
+    icon: mdi:water-percent
+    unique_id: sensor.xiaomi_humidity
+    state_class: measurement
+    device_class: humidity
+
+  - name: Batterie Xiaomi Température Humidité Salon
+    state_topic: "homeassistant/blea/xiaomi/battery"
+    unit_of_measurement: "%"
+    icon: mdi:battery-bluetooth-variant
+    unique_id: sensor.xiaomi_battery_temperature_humidity
+
+  #Miscale2
+  - name: "Poids Lewis"
+    state_topic: "homeassistant/blea/MIScale2/poidsLewis"
+    unit_of_measurement: "kg"
+    icon: "mdi:weight-kilogram"
+    unique_id: "sensor.poids_Lewis"
+    state_class: measurement
+
+  - name: "IMC Eliott"
+    state_topic: "homeassistant/blea/MIScale2/imcEliott"
+    icon: "mdi:scale-bathroom"
+    unique_id: "sensor.imc_eliott"
+    state_class: measurement
+
+  - name: "IMC Label Eliott"
+    state_topic: "homeassistant/blea/MIScale2/imclabelEliott"
+    icon: "mdi:scale-bathroom"
+    unique_id: "sensor.imc_label_eliott"
+
+  - name: "Poids Eliott"
+    state_topic: "homeassistant/blea/MIScale2/poidsEliott"
+    unit_of_measurement: "kg"
+    icon: "mdi:weight-kilogram"
+    unique_id: "sensor.poids_eliott"
+    state_class: measurement
+
+  - name: "IMC Oscar"
+    state_topic: "homeassistant/blea/MIScale2/imcOscar"
+    icon: "mdi:scale-bathroom"
+    unique_id: "sensor.imc_oscar"
+    state_class: measurement
+
+  - name: "IMC Label Oscar"
+    state_topic: "homeassistant/blea/MIScale2/imclabelOscar"
+    icon: "mdi:scale-bathroom"
+    unique_id: "sensor.imc_label_oscar"
+
+  - name: "Poids Oscar"
+    state_topic: "homeassistant/blea/MIScale2/poidsOscar"
+    unit_of_measurement: "kg"
+    icon: "mdi:weight-kilogram"
+    unique_id: "sensor.poids_oscar"
+    state_class: measurement
+
+  - name: "IMC Nelly"
+    state_topic: "homeassistant/blea/MIScale2/imcNelly"
+    icon: "mdi:scale-bathroom"
+    unique_id: "sensor.imc_nelly"
+    state_class: measurement
+
+  - name: "IMC Label Nelly"
+    state_topic: "homeassistant/blea/MIScale2/imclabelNelly"
+    icon: "mdi:scale-bathroom"
+    unique_id: "sensor.imc_label_nelly"
+
+  - name: "Poids Nelly"
+    state_topic: "homeassistant/blea/MIScale2/poidsNelly"
+    unit_of_measurement: "kg"
+    icon: "mdi:weight-kilogram"
+    unique_id: "sensor.poids_nelly"
+    state_class: measurement
+
+  - name: "IMC Guillaume"
+    state_topic: "homeassistant/blea/MIScale2/imcGuillaume"
+    icon: "mdi:scale-bathroom"
+    unique_id: "sensor.imc_guillaume"
+    state_class: measurement
+
+  - name: "IMC Label Guillaume"
+    state_topic: "homeassistant/blea/MIScale2/imclabelGuillaume"
+    icon: "mdi:scale-bathroom"
+    unique_id: "sensor.imc_label_guillaume"
+
+  - name: "Poids Guillaume"
+    state_topic: "homeassistant/blea/MIScale2/poidsGuillaume"
+    unit_of_measurement: "kg"
+    icon: "mdi:weight-kilogram"
+    unique_id: "sensor.poids_guillaume"
+    state_class: measurement
+
+  #Jpi
+  - name: "Batterie JPI"
+    state_topic: "jpi/batteryLevel"
+    unit_of_measurement: "%"
+    icon: "mdi:battery-bluetooth-variant"
+    unique_id: "sensor.jpi_battery"
+    state_class: measurement
+
+  - name: "Batterie JPI Info"
+    state_topic: "jpi/batteryInfo"
+    unique_id: "sensor.jpi_battery_info"
+    icon: "mdi:battery-unknown"
+
+  - name: "Bluetooth Connect JPI"
+    state_topic: "jpi/getBTconnected"
+    unique_id: "sensor.jpi_getBTconnected"
+    icon: "mdi:bluetooth-connect"
+
+  #Enedis
+  - name: "Consommation Jour"
+    state_topic: "homeassistant/Enedis/jour"
+    unit_of_measurement: "kWh"
+    icon: "mdi:lightning-bolt"
+    unique_id: "sensor.enedis_jour"
+    device_class: energy
+    state_class: total
+
+  - name: "Consommation Mois"
+    state_topic: "homeassistant/Enedis/mois"
+    unit_of_measurement: "kWh"
+    icon: "mdi:calendar-month-outline"
+    unique_id: "sensor.enedis_mois"
+    device_class: energy
+    state_class: total
+
+  - name: "Consommation Année"
+    state_topic: "homeassistant/Enedis/annee"
+    unit_of_measurement: "kWh"
+    icon: "mdi:finance"
+    unique_id: "sensor.enedis_annee"
+    device_class: energy
+    state_class: total
+
+#MQTT Device Tracker
+device_tracker:
+  #Nuts Presence
+  - name: Nut Blanc Presence
+    icon: mdi:bluetooth
+    source_type: bluetooth
+    state_topic: "homeassistant/blea/nutBlanc/present"
+    payload_home: 1
+    payload_not_home: 0
+    unique_id: device_tracker.nut_blanc_presence
+
+  - name: Nut Rose Presence
+    icon: mdi:bluetooth
+    source_type: bluetooth
+    state_topic: "homeassistant/blea/nutRose/present"
+    payload_home: 1
+    payload_not_home: 0
+    unique_id: device_tracker.nut_rose_presence
+
+  - name: Nut Vert Presence
+    icon: mdi:bluetooth
+    source_type: bluetooth
+    state_topic: "homeassistant/blea/nutVert/present"
+    payload_home: 1
+    payload_not_home: 0
+    unique_id: device_tracker.nutVert_presence
+
+  - name: Nut 2 Presence
+    icon: mdi:bluetooth
+    source_type: bluetooth
+    state_topic: "homeassistant/blea/nut2/present"
+    payload_home: 1
+    payload_not_home: 0
+    unique_id: device_tracker.nut2_presence
+
+  #Other Presence
+  - name: Gtr2 Presence
+    icon: mdi:bluetooth
+    source_type: bluetooth
+    state_topic: "homeassistant/blea/gtr2/present"
+    payload_home: 1
+    payload_not_home: 0
+    unique_id: device_tracker.gtr2_presence
+
+  - name: MIScale2 Presence
+    icon: mdi:bluetooth
+    source_type: bluetooth
+    state_topic: "homeassistant/blea/MIScale2/present"
+    payload_home: 1
+    payload_not_home: 0
+    unique_id: device_tracker.miscale2_presence
+
+#Switch
+switch:
+  - name: "Lumiere Entrée"
+    command_topic: "/homeassistant/lights/entree/set"
+    state_topic: "/homeassistant/lights/entree/state"
+    qos: 0
+    payload_on: 1
+    payload_off: 0
+    optimistic: false
+    retain: false
+    unique_id: switch.lumiere_entree

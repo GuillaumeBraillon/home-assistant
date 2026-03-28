@@ -1,0 +1,232 @@
+# Configuration for morningtime
+morning_start:
+  name: Matin Start
+  has_date: false
+  has_time: true
+  icon: mdi:clock-digital
+  #initial: "07:15"
+
+morning_start_week_end:
+  name: Matin Start Week-End
+  has_date: false
+  has_time: true
+  icon: mdi:clock-digital
+  #initial: "08:30"
+
+morning_timer:
+  name: Matin Minuterie
+  has_date: false
+  has_time: true
+  icon: mdi:timer
+  #initial: "00:20"
+
+# Configuration for daytime
+day_start:
+  name: Journée Start
+  has_date: false
+  has_time: true
+  icon: mdi:home
+  #initial: "08:00"
+
+day_start_week_end:
+  name: Journée Start Week-End
+  has_date: false
+  has_time: true
+  icon: mdi:home
+  #initial: "09:15"
+
+day_timer:
+  name: Journée Minuterie
+  has_date: false
+  has_time: true
+  icon: mdi:timer
+  #initial: "00:30"
+
+# Configuration for eveningtime
+evening_start:
+  name: Soir Start
+  has_date: false
+  has_time: true
+  icon: mdi:theme-light-dark
+  #initial: "20:30"
+
+evening_start_week_end:
+  name: Soir Start Week-End
+  has_date: false
+  has_time: true
+  icon: mdi:theme-light-dark
+  #initial: "21:30"
+
+evening_timer:
+  name: Soir Minuterie
+  has_date: false
+  has_time: true
+  icon: mdi:timer
+  #initial: "00:15"
+
+# Configuration for nighttime
+night_start:
+  name: Nuit Start
+  has_date: false
+  has_time: true
+  icon: mdi:weather-night
+  #initial: "22:30"
+
+night_start_week_end:
+  name: Nuit Start Week-End
+  has_date: false
+  has_time: true
+  icon: mdi:weather-night
+  #initial: "23:45"
+
+night_timer:
+  name: Nuit Minuterie
+  has_date: false
+  has_time: true
+  icon: mdi:timer
+  #initial: "00:15"
+
+# Configuration for now.
+now_start:
+  name: Maintenant Start
+  has_date: false
+  has_time: true
+  icon: mdi:sun-wireless
+  #initial: "08:00"
+
+# Configuration for schooltime
+school_start_today:
+  name: School Start Today
+  has_date: false
+  has_time: true
+  icon: mdi:moon-last-quarter
+  #initial: "08:30"
+
+school_end_today:
+  name: School End Today
+  has_date: false
+  has_time: true
+  icon: mdi:moon-first-quarter
+  #initial: "17:30"
+
+school_start_monday:
+  name: School Start Monday
+  has_date: false
+  has_time: true
+  icon: mdi:alpha-m-circle-outline
+  #initial: "08:30"
+
+school_end_monday:
+  name: School End Monday
+  has_date: false
+  has_time: true
+  icon: mdi:alpha-m-circle
+  #initial: "17:30"
+
+school_start_tuesday:
+  name: School Start Tuesday
+  has_date: false
+  has_time: true
+  icon: mdi:alpha-t-circle-outline
+  #initial: "08:30"
+
+school_end_tuesday:
+  name: School End Tuesday
+  has_date: false
+  has_time: true
+  icon: mdi:alpha-t-circle
+  #initial: "18:30"
+
+school_start_wednesday:
+  name: School Start Wednesday
+  has_date: false
+  has_time: true
+  icon: mdi:alpha-w-circle-outline
+  #initial: "08:40"
+
+school_end_wednesday:
+  name: School End Wednesday
+  has_date: false
+  has_time: true
+  icon: mdi:alpha-w-circle
+  #initial: "12:00"
+
+school_start_thursday:
+  name: School Start Thursday
+  has_date: false
+  has_time: true
+  icon: mdi:alpha-t-circle-outline
+  #initial: "08:30"
+
+school_end_thursday:
+  name: School End Thursday
+  has_date: false
+  has_time: true
+  icon: mdi:alpha-t-circle
+  #initial: "18:30"
+
+school_start_friday:
+  name: School Start Friday
+  has_date: false
+  has_time: true
+  icon: mdi:alpha-f-circle-outline
+  #initial: "08:30"
+
+school_end_friday:
+  name: School End Friday
+  has_date: false
+  has_time: true
+  icon: mdi:alpha-f-circle
+  #initial: "17:30"
+
+school_start_timer:
+  name: School Start Minuterie
+  has_date: false
+  has_time: true
+  icon: mdi:timer-outline
+  #initial: "00:15"
+
+school_end_timer:
+  name: School End Minuterie
+  has_date: false
+  has_time: true
+  icon: mdi:timer
+  #initial: "00:15"
+
+# Configuration for showertime
+shower_time:
+  name: Shower Time
+  has_date: false
+  has_time: true
+  icon: mdi:shower-head
+  #initial: "18:45"
+
+# Configuration for dinertime
+diner_time:
+  name: Diner Time
+  has_date: false
+  has_time: true
+  icon: mdi:food
+  #initial: "19:15"
+
+diner_time_timer:
+  name: Diner Time Minuterie
+  has_date: false
+  has_time: true
+  icon: mdi:timer-outline
+  #initial: "00:25"
+
+# Configuration for sleepingtime
+sleeping_time:
+  name: Sleeping Time
+  has_date: false
+  has_time: true
+  icon: mdi:bed-clock
+  #initial: "20:15"
+
+sleeping_time_timer:
+  name: Sleeping Time Minuterie
+  has_date: false
+  has_time: true
+  icon: mdi:timer-outline
+  #initial: "00:25"

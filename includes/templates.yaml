@@ -1,0 +1,84 @@
+# Binary Sensors
+- binary_sensor:
+    - unique_id: binary_sensor.today_is_holiday
+      name: Vacances
+      icon: mdi:umbrella-beach-outline
+      state: >
+        {% if is_state('calendar.calendrier_scolaire_zone_a', 'on') or is_state('calendar.jours_feries_en_france', 'on') %}
+          on
+        {% else %}
+          off
+        {% endif %}
+
+    - unique_id: binary_sensor.today_is_weekend
+      name: Weekend
+      icon: mdi:umbrella-beach-outline
+      state: >
+        {% if now().weekday() in [5, 6] %}
+          on
+        {% else %}
+          off
+        {% endif %}
+
+    - unique_id: binary_sensor.tomorrow_is_weekend
+      name: Demain Weekend
+      icon: mdi:umbrella-beach-outline
+      state: >
+        {% set tomorrow = now() + timedelta(days=1) %}
+        {% if tomorrow.weekday() in [5, 6] %}
+          on
+        {% else %}
+          off
+        {% endif %}
+
+    - unique_id: binary_sensor.tomorrow_holidays_zone_a
+      name: Demain Vacances Zone A
+      icon: mdi:beach
+      state: >
+        {% set calendar_state = states('calendar.calendrier_scolaire_zone_a') %}
+        {% if calendar_state != 'unavailable' and calendar_state != 'unknown'%}
+          {% set tomorrow = now().date() + timedelta(days=1) %}
+          {% set start_time = strptime(state_attr('calendar.calendrier_scolaire_zone_a', 'start_time'), '%Y-%m-%d %H:%M:%S') %}
+          {% set end_time = strptime(state_attr('calendar.calendrier_scolaire_zone_a', 'end_time'), '%Y-%m-%d %H:%M:%S') %}
+          {% if start_time.date() <= tomorrow < end_time.date() %}
+            on
+          {% else %}
+            off
+          {% endif %}
+        {% else %}
+          off
+        {% endif %}
+
+    - unique_id: binary_sensor.freebox_player_pop_state
+      name: État Freebox Player Pop
+      icon: mdi:television
+      state: >
+        {% if is_state('remote.freebox_player_pop', 'on') %}
+          on
+        {% elif is_state('remote.freebox_player_pop', 'off') %}
+          off
+        {% else %}
+          {{ states('binary_sensor.freebox_player_pop_state') }}
+        {% endif %}
+
+# Template Sensors
+- sensor:
+    - unique_id: sensor.poids_guillaume_perte
+      name: Poids Guillaume Perte
+      unit_of_measurement: "kg"
+      state: "{{ (states('sensor.poids_guillaume')|float(default=0) - states('input_number.poids_guillaume_max')|float(default=0))|round(2) }}"
+
+    - unique_id: sensor.poids_guillaume_prise
+      name: Poids Guillaume Prise
+      unit_of_measurement: "kg"
+      state: "{{ (states('sensor.poids_guillaume')|float(default=0) - states('input_number.poids_guillaume_min')|float(default=0))|round(2) }}"
+
+    - unique_id: sensor.poids_nelly_perte
+      name: Poids Nelly Perte
+      unit_of_measurement: "kg"
+      state: "{{ (states('sensor.poids_nelly')|float(default=0) - states('input_number.poids_nelly_max')|float(default=0))|round(2) }}"
+
+    - unique_id: sensor.poids_nelly_prise
+      name: Poids Nelly Prise
+      unit_of_measurement: "kg"
+      state: "{{ (states('sensor.poids_nelly')|float(default=0) - states('input_number.poids_nelly_min')|float(default=0))|round(2) }}"

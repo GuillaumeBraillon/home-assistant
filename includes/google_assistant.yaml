@@ -1,0 +1,173 @@
+#Google Cloud Console
+project_id: praxis-wall-307910
+service_account: !include SERVICE_ACCOUNT.JSON
+report_state: true
+exposed_domains:
+  - light
+  - camera
+  - vacuum
+entity_config:
+  input_boolean.mode_automatique:
+    expose: true
+    room: Appartement
+    name: Mode automatique
+
+  input_boolean.mode_auto_cuisine:
+    expose: true
+    room: Cuisine
+    name: Éclairage automatique
+
+  input_boolean.mode_auto_eliott:
+    expose: true
+    room: Chambre d'Eliott
+    name: Éclairage automatique
+
+  input_boolean.mode_auto_chambre_enfants:
+    expose: true
+    room: Chambre des Enfants
+    name: Éclairage automatique
+
+  input_boolean.mode_auto_entree:
+    expose: true
+    room: Entrée
+    name: Éclairage automatique
+
+  input_boolean.mode_auto_exterieur:
+    expose: true
+    room: Extérieur
+    name: Éclairage automatique
+
+  input_boolean.mode_auto_oscar:
+    expose: true
+    room: Chambre d'Oscar
+    name: Éclairage automatique
+
+  input_boolean.mode_auto_parents:
+    expose: true
+    room: Chambre Des Parents
+    name: Éclairage automatique
+
+  input_boolean.mode_auto_salon:
+    expose: true
+    room: Salon
+    name: Éclairage automatique
+
+  input_boolean.volets_salon_auto:
+    expose: true
+    room: Salon
+    name: Volets automatique
+
+  input_boolean.histoire_du_soir:
+    expose: true
+    room: Chambre Des Parents
+    name: Histoire du Soir
+
+  switch.plug_bathroom:
+    expose: true
+    room: Salle de bain
+    name: Radiateur
+
+  sensor.temperature_oscar_temperature:
+    expose: true
+    room: Chambre d'Oscar
+    name: Température
+
+  sensor.temperature_oscar_humidity:
+    expose: true
+    room: Chambre d'Oscar
+    name: Humidité
+
+  sensor.temperature_eliott_temperature:
+    expose: true
+    room: Chambre d'Eliott
+    name: Température
+
+  sensor.temperature_eliott_humidity:
+    expose: true
+    room: Chambre d'Eliott
+    name: Humidité
+
+  sensor.temperature_parents_temperature:
+    expose: true
+    room: Chambre des Parents
+    name: Température
+
+  sensor.temperature_parents_humidity:
+    expose: true
+    room: Chambre des Parents
+    name: Humidité
+
+  sensor.temperature_salon:
+    expose: true
+    room: Salon
+    name: Température
+
+  sensor.humidite_salon:
+    expose: true
+    room: Salon
+    name: Humidité
+
+  cover.volets_parents_state:
+    expose: true
+    room: Chambre Des Parents
+    name: Volets
+
+  cover.volets_salon_state:
+    expose: true
+    room: Salon
+    name: Volets
+
+  cover.volets_oscar_state:
+    expose: true
+    room: Chambre d'Oscar
+    name: Volets
+
+  cover.volets_eliott_state:
+    expose: true
+    room: Chambre d'Eliott
+    name: Volets
+
+  input_select.vaccum_room:
+    expose: true
+    room: Cuisine
+    name: Nettoyage
+
+  input_select.modes_maison:
+    expose: true
+    room: Appartement
+    name: Mode
+
+  button.sous_la_table:
+    expose: true
+    room: Cuisine
+    name: Table
+
+  button.toilettes:
+    expose: true
+    room: Cuisine
+    name: Toilettes
+
+  button.salle_de_bain:
+    expose: true
+    room: Cuisine
+    name: Salle de bain
+
+  button.entree:
+    expose: true
+    room: Cuisine
+    name: Entrée
+
+  button.dashboard:
+    expose: true
+    room: Cuisine
+    name: Dashboard
+
+  switch.xbox_extinction:
+    expose: true
+    room: Chambre d'Oscar
+    name: Extinction de la Xbox
+
+  switch.minuterie_couloir:
+    expose: true
+    room: Chambre des Enfants
+    name: Minuterie du couloir

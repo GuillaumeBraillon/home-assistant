@@ -1,0 +1,33 @@
+# cover
+# time_based
+- platform: cover_rf_time_based
+  devices:
+    # volets_parents_time_based
+    volets_parents_time_based:
+      name: Volets Parents State
+      travelling_time_up: 30
+      travelling_time_down: 25
+      cover_entity_id: cover.volets_parents
+
+    # volets_salon_time_based
+    volets_salon_time_based:
+      name: Volets Salon State
+      travelling_time_up: 30
+      travelling_time_down: 25
+      cover_entity_id: cover.volets_salon
+
+    # volets_oscar_time_based
+    volets_oscar_time_based:
+      name: Volets Oscar State
+      travelling_time_up: 43
+      travelling_time_down: 43
+      cover_entity_id: cover.volets_oscar
+      device_class: blind
+
+    # volets_eliott_time_based
+    volets_eliott_time_based:
+      name: Volets Eliott State
+      travelling_time_up: 44
+      travelling_time_down: 44
+      cover_entity_id: cover.volets_eliott
+      device_class: blind

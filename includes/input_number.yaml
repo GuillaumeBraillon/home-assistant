@@ -1,0 +1,239 @@
+# Configuration for daytime.
+day_light_lumi_salon:
+  name: Luminosité Journée Salon
+  initial: 100
+  min: 1
+  max: 100
+  step: 1
+  unit_of_measurement: "%"
+  icon: mdi:sun-wireless
+day_light_temp_salon:
+  name: Température Journée Salon
+  initial: 4500
+  min: 1700
+  max: 6500
+  step: 100
+  icon: mdi:sun-thermometer-outline
+day_light_lumi_chambres:
+  name: Luminosité Journée Chambres
+  initial: 60
+  min: 1
+  max: 100
+  step: 1
+  unit_of_measurement: "%"
+  icon: mdi:sun-wireless
+day_light_temp_chambres:
+  name: Température Journée Chambres
+  initial: 2700
+  min: 1700
+  max: 6500
+  step: 100
+  icon: mdi:sun-thermometer-outline
+day_light_delay_off:
+  name: Délai d'extinction Journée
+  initial: 5
+  min: 1
+  max: 30
+  step: 1
+  unit_of_measurement: "min"
+  icon: mdi:sun-clock-outline
+day_volume:
+  name: Volume en Journée
+  initial: 50
+  min: 10
+  max: 100
+  step: 10
+  unit_of_measurement: "%"
+  icon: mdi:volume-source
+
+# Configuration for nighttime.
+night_light_lumi_salon:
+  name: Luminosité Nuit Salon
+  initial: 1
+  min: 1
+  max: 100
+  step: 1
+  unit_of_measurement: "%"
+  icon: mdi:sun-wireless
+night_light_temp_salon:
+  name: Température Nuit Salon
+  initial: 1700
+  min: 1700
+  max: 6500
+  step: 100
+  icon: mdi:sun-thermometer-outline
+night_light_lumi_chambres:
+  name: Luminosité Nuit Chambres
+  initial: 1
+  min: 1
+  max: 100
+  step: 1
+  unit_of_measurement: "%"
+  icon: mdi:sun-wireless
+night_light_temp_chambres:
+  name: Température Nuit Chambres
+  initial: 1700
+  min: 1700
+  max: 6500
+  step: 100
+  icon: mdi:sun-thermometer-outline
+night_light_delay_off:
+  name: Délai d'extinction Nuit
+  initial: 1
+  min: 1
+  max: 30
+  step: 1
+  unit_of_measurement: "min"
+  icon: mdi:sun-clock-outline
+night_volume:
+  name: Volume en Nuit
+  initial: 30
+  min: 10
+  max: 100
+  step: 10
+  unit_of_measurement: "%"
+  icon: mdi:volume-source
+
+# Configuration for eveningtime.
+evening_light_lumi_salon:
+  name: Luminosité Soirée Salon
+  initial: 75
+  min: 1
+  max: 100
+  step: 1
+  unit_of_measurement: "%"
+  icon: mdi:sun-wireless
+evening_light_temp_salon:
+  name: Température Soirée Salon
+  initial: 2700
+  min: 1700
+  max: 6500
+  step: 100
+  icon: mdi:sun-thermometer-outline
+evening_light_lumi_chambres:
+  name: Luminosité Soirée Chambres
+  initial: 25
+  min: 1
+  max: 100
+  step: 1
+  unit_of_measurement: "%"
+  icon: mdi:sun-wireless
+evening_light_temp_chambres:
+  name: Température Soirée Chambres
+  initial: 2700
+  min: 1700
+  max: 6500
+  step: 100
+  icon: mdi:sun-thermometer-outline
+evening_light_delay_off:
+  name: Délai d'extinction Soirée
+  initial: 3
+  min: 1
+  max: 30
+  step: 1
+  unit_of_measurement: "min"
+  icon: mdi:sun-clock-outline
+evening_volume:
+  name: Volume en Soirée
+  initial: 40
+  min: 10
+  max: 100
+  step: 10
+  unit_of_measurement: "%"
+  icon: mdi:volume-source
+
+# Configuration for morningtime.
+morning_light_lumi_salon:
+  name: Luminosité Matinée Salon
+  initial: 50
+  min: 1
+  max: 100
+  step: 1
+  unit_of_measurement: "%"
+  icon: mdi:sun-wireless
+morning_light_temp_salon:
+  name: Température Matinée Salon
+  initial: 2700
+  min: 1700
+  max: 6500
+  step: 100
+  icon: mdi:sun-thermometer-outline
+morning_light_lumi_chambres:
+  name: Luminosité Matinée Chambres
+  initial: 5
+  min: 1
+  max: 100
+  step: 1
+  unit_of_measurement: "%"
+  icon: mdi:sun-wireless
+morning_light_temp_chambres:
+  name: Température Matinée Chambres
+  initial: 1700
+  min: 1700
+  max: 6500
+  step: 100
+  icon: mdi:sun-thermometer-outline
+morning_light_delay_off:
+  name: Délai d'extinction Matinée
+  initial: 5
+  min: 1
+  max: 30
+  step: 1
+  unit_of_measurement: "min"
+  icon: mdi:sun-clock-outline
+morning_volume:
+  name: Volume en Matinée
+  initial: 20
+  min: 10
+  max: 100
+  step: 10
+  unit_of_measurement: "%"
+  icon: mdi:volume-source
+
+# Configuration for now.
+now_light_lumi_salon:
+  name: Luminosité Maintenant Salon
+  initial: 100
+  min: 1
+  max: 100
+  step: 1
+  unit_of_measurement: "%"
+  icon: mdi:sun-wireless
+now_light_temp_salon:
+  name: Température Maintenant Salon
+  initial: 4500
+  min: 1700
+  max: 6500
+  step: 100
+  icon: mdi:sun-thermometer-outline
+now_light_lumi_chambres:
+  name: Luminosité Maintenant Chambres
+  initial: 60
+  min: 1
+  max: 100
+  step: 1
+  unit_of_measurement: "%"
+  icon: mdi:sun-wireless
+now_light_temp_chambres:
+  name: Température Maintenant Chambres
+  initial: 2700
+  min: 1700
+  max: 6500
+  step: 100
+  icon: mdi:sun-thermometer-outline
+now_light_delay_off:
+  name: Délai d'extinction Maintenant
+  initial: 5
+  min: 1
+  max: 30
+  step: 1
+  unit_of_measurement: "min"
+  icon: mdi:sun-clock-outline
+now_volume:
+  name: Volume en Maintenant
+  initial: 40
+  min: 10
+  max: 100
+  step: 10
+  unit_of_measurement: "%"
+  icon: mdi:volume-source
