@@ -1,17 +1,22 @@
 alias: "[Notify] Send notifications To Mobiles"
 sequence:
   - variables:
-      notify_device: >-
-        {% set notify_map = {
-          'guillaume': 'guillaume_device',
-          'nelly': 'nelly_device',
-          'oscar': 'oscar_device',
-          'parents': 'parents_devices',
-          'all': 'all_devices'
-        } %}
-        {{ notify_map.get(target | lower, '') }}
-
-      notify_service: notify.{{ notify_device | slugify}}
+      notify_map:
+        guillaume: guillaume_device
+        nelly: nelly_device
+        oscar: oscar_device
+        parents: parents_devices
+        all: all_devices
+      notify_targets: >-
+        {% set ns = namespace(values=[]) %}
+        {% for raw_target in (target | default('', true) | string).split(';') %}
+          {% set cleaned = raw_target | trim | lower %}
+          {% set mapped = notify_map.get(cleaned) %}
+          {% if mapped and mapped not in ns.values %}
+            {% set ns.values = ns.values + [mapped] %}
+          {% endif %}
+        {% endfor %}
+        {{ ns.values }}
       is_clear: "{{ clear | default(false) }}"
       notify_data: >-
         {% set base = {
@@ -28,21 +33,27 @@ sequence:
           - condition: template
             value_template: "{{ is_clear }}"
         sequence:
-          - data:
-              message: clear_notification
-              data:
-                tag: "{{ clear_tag }}"
-            alias: Clear Notifications On Mobiles
-            action: "{{ notify_service }}"
+          - repeat:
+              for_each: "{{ notify_targets }}"
+              sequence:
+                - data:
+                    message: clear_notification
+                    data:
+                      tag: "{{ clear_tag }}"
+                  alias: Clear Notifications On Mobiles
+                  action: "notify.{{ repeat.item | slugify }}"
     default:
+      - repeat:
+          for_each: "{{ notify_targets }}"
+          sequence:
+            - data:
+                title: "{{ title }}"
+                message: "{{ message }}"
+                data: "{{ notify_data }}"
+              alias: Send Notifications To Mobiles
+              action: "notify.{{ repeat.item | slugify }}"
       - data:
-          title: "{{ title }}"
-          message: "{{ message }}"
-          data: "{{ notify_data }}"
-        alias: Send Notifications To Mobiles
-        action: "{{ notify_service }}"
-      - data:
-          message: "{{ message}} ({{ notify_device}})"
+          message: "{{ message}} ({{ notify_targets | join(', ') }})"
           title: "[{{ channel.capitalize() }}] {{ title }}"
         enabled: true
         action: notify.persistent_notification
