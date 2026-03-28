@@ -1,0 +1,104 @@
+alias: "[Vacuum] Ask Start Alarm On"
+description: "Envoie une notification pour demander si l'on souhaite annuler le lancement de l'aspirateur lorsque le mode de la maison passe en Alarme, que l'aspirateur est sur son dock et que personne n'est à la maison."
+mode: restart
+triggers:
+  - entity_id:
+      - input_select.modes_maison
+    to: Alarme
+    trigger: state
+conditions:
+  - condition: state
+    entity_id: vacuum.dreamebot_d10_plus
+    state: docked
+  - condition: state
+    entity_id: group.persons
+    state: not_home
+actions:
+  - data:
+      message: Je vais lancer l'aspirateur dans 5 minutes ? Voulez-vous l'annuler ?
+      data:
+        priority: high
+        tag: aspirateur
+        actions:
+          - action: cancelVaccum
+            title: Oui
+          - action: startVaccum
+            title: Non
+      title: "[Aspirateur] "
+    alias: Je vais lancer l'aspirateur dans 5 minutes ? Voulez-vous l'annuler ?
+    action: notify.mobile_app_one_plus_8t
+  - alias: Wait for a response or 5 minutes
+    wait_for_trigger:
+      - event_type: mobile_app_notification_action
+        event_data:
+          action: cancelVaccum
+        alias: Réponse Oui Annuler Aspirateur
+        trigger: event
+      - event_type: mobile_app_notification_action
+        event_data:
+          action: startVaccum
+        alias: Réponse Non Ne Pas Annuler Aspirateur
+        trigger: event
+    timeout:
+      hours: 0
+      minutes: 5
+      seconds: 0
+      milliseconds: 0
+  - condition: state
+    entity_id: group.persons
+    state: not_home
+  - if:
+      - condition: template
+        value_template: "{{ wait.trigger != None }}"
+        alias: Wait Trigger != None
+    then:
+      - if:
+          - condition: template
+            value_template: '{{ wait.trigger.event.data.action == "cancelVaccum" }}'
+            alias: Cancel Vaccum
+        then:
+          - data:
+              title: "[Aspirateur] "
+              message: Ok, je ne lance pas l'aspirateur.
+            alias: Ok, je ne lance pas l'aspirateur.
+            action: notify.mobile_app_one_plus_8t
+        else:
+          - data:
+              title: "[Aspirateur]"
+              message: Ok, je lance l'aspirateur.
+            alias: Ok, je lance l'aspirateur.
+            action: notify.mobile_app_one_plus_8t
+          - data: {}
+            target:
+              entity_id:
+                - vacuum.dreamebot_d10_plus
+            alias: Start DreameBot D10 Plus
+            action: vacuum.start
+        enabled: true
+        alias: >-
+          'Ok, je ne lance pas l'aspirateur.' if 'Cancel Vaccum' otherwise 'Ok,
+          je lance l'aspirateur.'
+      - data:
+          message: >-
+            wait :"{{ wait }}" =>> "{{ wait.trigger }}" =>> "{{
+            wait.trigger.event }}" =>> "{{ wait.trigger.event.data }}" =>> "{{
+            wait.trigger.event.data.action }}" =>> "{{
+            wait.trigger.event.data.action == "cancelVaccum" }}"
+        enabled: false
+        action: notify.persistent_notification
+    else:
+      - data:
+          title: "[Aspirateur]"
+          message: Sans réponse, je lance l'aspirateur.
+        alias: Sans réponse, je lance l'aspirateur.
+        action: notify.mobile_app_one_plus_8t
+      - data: {}
+        target:
+          entity_id:
+            - vacuum.dreamebot_d10_plus
+        alias: Start DreameBot D10 Plus
+        action: vacuum.start
+    alias: >-
+      ''Ok, je ne lance pas l'aspirateur.' if 'Cancel Vaccum' otherwise 'Ok, je
+      lance l'aspirateur.' if 'Wait Trigger != None' otherwise 'Sans réponse, je
+      lance l'aspirateur.'
