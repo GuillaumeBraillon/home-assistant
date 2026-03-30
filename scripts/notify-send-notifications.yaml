@@ -18,17 +18,60 @@ sequence:
         {% endfor %}
         {{ ns.values }}
       is_clear: "{{ clear | default(false) }}"
+      write_notification_log: "{{ write_log | default(true) }}"
+      notification_preset: "{{ preset | default('default', true) }}"
+      send_mobile_tts: >-
+        {{
+          notification_preset == 'alarm_tts'
+          and mobile_tts_text is defined
+          and mobile_tts_text | string | trim != ''
+        }}
+      preset_data: >-
+        {% if notification_preset in ['alarm', 'alarm_tts'] %}
+          {{
+            {
+              'ttl': 0,
+              'priority': 'high',
+              'importance': 'max',
+              'live_update': true,
+              'critical_text': '[ALARME]'
+            }
+          }}
+        {% else %}
+          {{ {} }}
+        {% endif %}
       notify_data: >-
         {% set base = {
-          'notification_icon': icon | default('', true),
+          'notification_icon': icon | default('mdi:cellphone', true),
           'channel': channel | default('', true),
+          'car_ui': true,
           'sticky': 'true',
           'importance': 'high',
           'persistent': true
         } %}
+        {% set preset_values = preset_data | default({}, true) %}
         {% set extra = mobile_data | default({}, true) %}
-        {{ base | combine(extra, recursive=True) }}
+        {{ base | combine(preset_values, recursive=True) | combine(extra, recursive=True) }}
+      notify_tts_data: >-
+        {{
+          {
+            'ttl': 0,
+            'priority': 'high',
+            'media_stream': 'alarm_stream_max',
+            'tts_text': mobile_tts_text,
+            'channel': channel | default('alarm_stream', true),
+            'car_ui': true
+          }
+        }}
   - choose:
+      - conditions:
+          - condition: template
+            value_template: "{{ notify_targets | count == 0 }}"
+        sequence:
+          - data:
+              message: "Cible invalide pour notify_send_notifications: {{ target | default('') }}"
+              title: "[Notify] Invalid target"
+            action: notify.persistent_notification
       - conditions:
           - condition: template
             value_template: "{{ is_clear }}"
@@ -43,6 +86,23 @@ sequence:
                   alias: Clear Notifications On Mobiles
                   action: "notify.{{ repeat.item | slugify }}"
     default:
+      - if:
+          - condition: template
+            value_template: "{{ send_mobile_tts }}"
+        then:
+          - repeat:
+              for_each: "{{ notify_targets }}"
+              sequence:
+                - data:
+                    message: TTS
+                    data: "{{ notify_tts_data }}"
+                  alias: Send Mobile TTS
+                  action: "notify.{{ repeat.item | slugify }}"
+          - delay:
+              hours: 0
+              minutes: 0
+              seconds: 3
+              milliseconds: 0
       - repeat:
           for_each: "{{ notify_targets }}"
           sequence:
@@ -52,15 +112,14 @@ sequence:
                 data: "{{ notify_data }}"
               alias: Send Notifications To Mobiles
               action: "notify.{{ repeat.item | slugify }}"
-      - data:
-          message: "{{ message}} ({{ notify_targets | join(', ') }})"
-          title: "[{{ channel.capitalize() }}] {{ title }}"
-        enabled: true
-        action: notify.persistent_notification
-      - data:
-          message: "{{ message }}"
-        alias: Write Notifications
-        action: script.notify_write_notifications
+      - if:
+          - condition: template
+            value_template: "{{ write_notification_log }}"
+        then:
+          - data:
+              message: "{{ message }}"
+            alias: Write Notifications
+            action: script.notify_write_notifications
 mode: queued
 icon: mdi:bell-circle-outline
 max: 10

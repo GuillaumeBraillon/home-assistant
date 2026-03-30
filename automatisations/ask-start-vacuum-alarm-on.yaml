@@ -16,10 +16,11 @@ conditions:
 actions:
   - variables:
       last_person_left: >-
-        {% set ns = namespace(name='guillaume', ts=as_timestamp(states.person.guillaume.last_changed, 0)) %}
+        {% set ns = namespace(name='guillaume', ts=0) %}
         {% for person_name in ['guillaume', 'nelly', 'oscar'] %}
+          {% set person_entity = 'person.' ~ person_name %}
           {% set person_state = states('person.' ~ person_name) %}
-          {% set person_ts = as_timestamp(states['person'][person_name].last_changed, 0) %}
+          {% set person_ts = as_timestamp(states[person_entity].last_changed, 0) %}
           {% if person_state == 'not_home' and person_ts >= ns.ts %}
             {% set ns.name = person_name %}
             {% set ns.ts = person_ts %}
@@ -50,7 +51,7 @@ actions:
     state: not_home
   - if:
       - condition: template
-        value_template: "{{ ask_result.answer != 'timeout' }}"
+        value_template: "{{ ask_result.answer not in ['timeout', 'invalid_target'] }}"
         alias: Ask Result != Timeout
     then:
       - if:

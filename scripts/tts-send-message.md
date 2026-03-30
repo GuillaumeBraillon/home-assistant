@@ -30,11 +30,6 @@ Si le Nest Hub affiche Home Assistant Lovelace, il est éteint pour éviter les 
   - Attend que le media player arrête de jouer (timeout 1 minute)
   - Éteint le media player
 
-### 3. Notifications
-
-- Écrit les notifications via `script.notify_write_notifications`
-- Option (désactivée) : notification persistante avec titre formaté
-
 ## Media players du séjour
 
 - `media_player.mi_smart_home_salon`
@@ -55,8 +50,7 @@ Si le Nest Hub affiche Home Assistant Lovelace, il est éteint pour éviter les 
 - `media_player.volume_set` : Définir le volume
 - `media_player.play_media` : Jouer le son SNCF
 - `tts.speak` : Service TTS principal
-- `script.mqtt_send_topics` : Envoi MQTT pour TTS avec pause
-- `script.notify_write_notifications` : Écriture des notifications
+- `script.mqtt_send_topics` : Envoi MQTT pour TTS avec pause sur JPI
 
 ## Fichiers média
 

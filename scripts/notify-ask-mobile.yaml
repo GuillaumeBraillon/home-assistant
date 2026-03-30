@@ -9,6 +9,8 @@ sequence:
         - guillaume
         - nelly
         - oscar
+        - parents
+        - all
       target_names: >-
         {% set ns = namespace(values=[]) %}
         {% for raw_target in (target | default('', true) | string).split(';') %}
@@ -65,6 +67,8 @@ sequence:
             message: "{{ message }}"
             icon: "{{ icon | default('mdi:message-question-outline', true) }}"
             channel: "{{ channel | default('questions', true) }}"
+            persistent_notification: false
+            write_log: false
             mobile_data:
               tag: "{{ notification_tag }}_{{ repeat.item }}"
               timeout: "{{ timeout_seconds }}"
@@ -73,6 +77,20 @@ sequence:
                   title: "{{ yes_title | default('Oui', true) }}"
                 - action: "{{ no_action }}"
                   title: "{{ no_title | default('Non', true) }}"
+  - if:
+      - condition: template
+        value_template: "{{ target_names | count == 0 }}"
+    then:
+      - variables:
+          ask_response:
+            answered: false
+            answer: invalid_target
+            respondent: unknown
+            action: invalid_target
+            timeout_seconds: "{{ timeout_seconds }}"
+            tag: "{{ notification_tag }}"
+      - stop: Ask mobile invalid target
+        response_variable: ask_response
   - wait_for_trigger:
       - trigger: event
         event_type: mobile_app_notification_action
