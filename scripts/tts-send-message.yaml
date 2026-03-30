@@ -1,4 +1,5 @@
 alias: "[TTS] Send TTS"
+description: "Diffuse un message TTS sur un media_player, avec gestion du volume, option SNCF et fallback JPI si une enceinte du séjour est déjà en lecture."
 sequence:
   - alias: A media_player in Séjour is already Playing
     if:
@@ -52,7 +53,7 @@ sequence:
           - delay:
               hours: 0
               minutes: 0
-              seconds: 5
+              seconds: 10
               milliseconds: 0
       - action: tts.speak
         target:
