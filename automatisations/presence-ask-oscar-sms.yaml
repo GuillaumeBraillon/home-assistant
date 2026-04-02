@@ -37,11 +37,14 @@ action:
               ask_tag: ask_oscar_presence
               title: "[Présence]"
               icon: mdi:account-question-outline
-              channel: presence
+              channel: alarm_stream
+              preset: alarm
               message: "[Présence] Oscar est-il seul à la maison ?"
               yes_title: "Oui"
               no_title: "Non"
               timeout: 300
+              mobile_data:
+                visibility: public
             response_variable: ask_result
           - variables:
               respondent: "{{ ask_result.respondent | default('unknown') }}"

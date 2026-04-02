@@ -66,17 +66,31 @@ sequence:
             title: "{{ title }}"
             message: "{{ message }}"
             icon: "{{ icon | default('mdi:message-question-outline', true) }}"
-            channel: "{{ channel | default('questions', true) }}"
+            channel: "{{ channel | default('alarm_stream', true) }}"
+            preset: "{{ preset | default('alarm', true) }}"
             persistent_notification: false
             write_log: false
-            mobile_data:
-              tag: "{{ notification_tag }}_{{ repeat.item }}"
-              timeout: "{{ timeout_seconds }}"
-              actions:
-                - action: "{{ yes_action }}"
-                  title: "{{ yes_title | default('Oui', true) }}"
-                - action: "{{ no_action }}"
-                  title: "{{ no_title | default('Non', true) }}"
+            mobile_data: >-
+              {{
+                (mobile_data | default({}, true)) | combine(
+                  {
+                    'visibility': 'public',
+                    'tag': notification_tag ~ '_' ~ repeat.item,
+                    'timeout': timeout_seconds,
+                    'actions': [
+                      {
+                        'action': yes_action,
+                        'title': yes_title | default('Oui', true)
+                      },
+                      {
+                        'action': no_action,
+                        'title': no_title | default('Non', true)
+                      }
+                    ]
+                  },
+                  recursive=True
+                )
+              }}
   - if:
       - condition: template
         value_template: "{{ target_names | count == 0 }}"
