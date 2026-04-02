@@ -1,0 +1,10 @@
+sequence:
+  - action: tts.speak
+    target:
+      entity_id: tts.google_cloud
+    data:
+      cache: true
+      media_player_entity_id: media_player.google_home_parents
+      message: Ceci est un test pour la voix
+alias: Script TTS
+description: ""

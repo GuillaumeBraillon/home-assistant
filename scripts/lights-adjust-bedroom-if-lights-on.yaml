@@ -1,0 +1,47 @@
+alias: "[Lights] Adjust Bed Room Brightness & Temperature if lights On"
+sequence:
+  - variables:
+      light_entity_ids:
+        - light.plafonnier_couloir
+        - light.yeelight_color
+        - light.yeelight_mono
+        - light.mibedsidelamp2
+        - light.yeelight_bslamp1
+        - light.light_parents
+        - light.enki_lexman_e27_led_white_hall_1
+        - light.enki_lexman_e27_led_white_hall_2
+        - light.livarno_lux_gu10
+      brightness_pct: "{{ states('input_number.now_light_lumi_chambres') | int }}"
+      brightness_value: "{{ ((brightness_pct / 100 * 255) | int) }}"
+      brightness_min: "{{ brightness_value - 5 }}"
+      brightness_max: "{{ brightness_value + 5 }}"
+      kelvin_value: "{{ states('input_number.now_light_temp_chambres') | int }}"
+      lights_on: >-
+        {{ states.light | selectattr('state', 'eq', 'on') |
+        selectattr('entity_id', 'in', light_entity_ids) |
+        map(attribute='entity_id') | list }}
+  - condition: "{{ lights_on | count > 0 }}"
+  - repeat:
+      while:
+        - condition: template
+          value_template: "{{ (repeat.index - 1) < lights_on | count }}"
+      sequence:
+        - variables:
+            entity_id: "{{ lights_on[repeat.index - 1] }}"
+        - target:
+            entity_id: "{{ entity_id }}"
+          data_template:
+            brightness_pct: "{{ brightness_pct }}"
+            color_temp_kelvin: "{{ kelvin_value }}"
+          action: light.turn_on
+  - condition: state
+    entity_id: input_boolean.histoire_du_soir
+    state: "on"
+  - action: light.turn_on
+    metadata: {}
+    data:
+      brightness_pct: 100
+    target:
+      area_id: chambre_parents
+mode: single
+icon: mdi:bed-outline

@@ -68,7 +68,7 @@ sequence:
           seconds: 10
           milliseconds: 0
       - wait_template: "{{ not is_state(media_player, 'playing') }}"
-        timeout: "00:01:00"
+        timeout: 60
         continue_on_timeout: true
         alias: Wait media_player not Playing
       - data: {}

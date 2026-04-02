@@ -1,0 +1,30 @@
+alias: "[Notify] Write notifications"
+sequence:
+  - variables:
+      max_characters: 200
+      time: "{{ now().strftime('%H:%M') }}"
+      new_message: "[{{ time }}] {{ message }}"
+      existing_text: >-
+        {{ states('input_text.notifications') | replace('<ul>','') |
+        replace('</ul>', '') | trim }}
+      nb_characters: "{{ existing_text | length + new_message | length }}"
+      remaining_characters: "{{ max_characters - existing_text | length }}"
+      final_message: >-
+        {% if existing_text == 'unknown' or remaining_characters < new_message |
+        length %}
+          <ul><li>{{ new_message | truncate(200) }}</li></ul>
+        {% else %}
+          <ul><li>{{ new_message | truncate(200) }}</li>{{ existing_text }}</ul>
+        {% endif %}
+  - data:
+      message: "{{ existing_text }} et {{ nb_characters }} et {{ remaining_characters }} et {{ final_message }}"
+      title: "[Notify] Write notifications"
+    enabled: false
+    action: notify.persistent_notification
+  - data:
+      entity_id: input_text.notifications
+      value: "{{ final_message }}"
+    action: input_text.set_value
+mode: queued
+icon: mdi:sticker-text-outline
+description: Permet de mettre a jour input_text.notifications
