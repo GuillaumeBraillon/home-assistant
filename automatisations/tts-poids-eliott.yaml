@@ -1,0 +1,147 @@
+alias: "[TTS] Poids Eliott IA"
+description: >-
+  Annonce TTS et notification mobile lors d’une nouvelle mesure de poids de
+  Eliott, historise la différence et génère un texte motivant via IA adapté à sa
+  croissance d’enfant.
+triggers:
+  - entity_id: sensor.poids_eliott
+    trigger: state
+    enabled: true
+conditions:
+  - condition: template
+    value_template: >-
+      {{
+        trigger.to_state is not none
+        and trigger.to_state.state not in ['unknown', 'unavailable', none, 'None', '']
+        and (trigger.to_state.state | float(0)) > 0
+      }}
+    enabled: true
+  - condition: template
+    value_template: >-
+      {{
+        trigger.from_state is not none
+        and trigger.from_state.state not in ['unknown', 'unavailable', none, 'None', '']
+      }}
+    enabled: true
+actions:
+  - variables:
+      poids_actuel: "{{ trigger.to_state.state | float }}"
+      poids_precedent: "{{ trigger.from_state.state | float }}"
+      poids_difference: "{{ (poids_actuel - poids_precedent) | round(2) }}"
+      imc: "{{ states('sensor.imc_eliott') | float(0) }}"
+      tendance: >-
+        {% if poids_difference < -0.01 %}baisse{% elif poids_difference > 0.01
+        %}hausse{% else %}stable{% endif %}
+  - data:
+      entity_id: input_number.poids_eliott_difference
+      value: "{{ poids_difference }}"
+    action: input_number.set_value
+    enabled: true
+  - alias: SQL GET HISTO 10 LAST
+    action: sql.query
+    metadata: {}
+    data:
+      query: |-
+        SELECT
+            COUNT(*) as nb_mesures,
+            ROUND(AVG((t1.min + t1.max) / 2), 1) as poids_moyen,
+            ROUND(MIN(t1.min), 1) as poids_min,
+            ROUND(MAX(t1.max), 1) as poids_max,
+            ROUND(MAX(t1.max) - MIN(t1.min), 1) as amplitude
+        FROM (
+            SELECT *
+            FROM statistics AS t1
+            INNER JOIN statistics_meta AS t2 ON t1.metadata_id = t2.id
+            WHERE
+                t2.statistic_id = 'sensor.poids_eliott'
+                AND t1.min != t1.max
+            ORDER BY t1.start_ts DESC
+            LIMIT 10
+        ) as t1;
+    response_variable: result_statistics
+  - variables:
+      stats_poids: >-
+        {%- set data = result_statistics.result -%} {%- if data | length > 0 and
+        data[0]['nb_mesures'] > 0 -%}
+          {%- set s = data[0] -%}
+          {{ {
+            'nb_mesures': s['nb_mesures'],
+            'poids_moyen': s['poids_moyen'],
+            'poids_min': s['poids_min'],
+            'poids_max': s['poids_max'],
+            'amplitude': s['amplitude']
+          } }}
+        {%- else -%}
+          {{ {'nb_mesures': 0, 'poids_moyen': 0, 'poids_min': 0, 'poids_max': 0, 'amplitude': 0} }}
+        {%- endif -%}
+      poids_min_effectif: >-
+        {% if stats_poids.nb_mesures > 0 %}
+          {{ [poids_actuel, stats_poids.poids_min] | min }}
+        {% else %}
+          {{ poids_actuel }}
+        {% endif %}
+      poids_max_effectif: >-
+        {% if stats_poids.nb_mesures > 0 %}
+          {{ [poids_actuel, stats_poids.poids_max] | max }}
+        {% else %}
+          {{ poids_actuel }}
+        {% endif %}
+      variation_label: >-
+        {% if poids_difference > 0 %}
+          +{{ poids_difference }}
+        {% else %}
+          {{ poids_difference }}
+        {% endif %}
+  - action: ai_task.generate_data
+    metadata: {}
+    data:
+      instructions: "Tu vas analyser les données fournies et TU NE DOIS RETOURNER QUE LE MESSAGE FINAL, sans aucune phrase avant ou après, sans commentaire, sans explication.\nPas de texte du type “Voici ton message :”, “Ok :”, “D’accord :”, etc.\nLa sortie doit commencer directement par la première phrase du message destiné à Eliott.\nAnalyse ces données de poids et génère un message oral, naturel, rassurant et encourageant destiné à Eliott.\n\nContexte important : Eliott a 9 ans. C’est un enfant en croissance, avec un léger surpoids. Les variations de poids peuvent exister pendant la croissance, mais tu dois employer un ton très doux, protecteur et jamais culpabilisant. Tu ne dois jamais présenter une hausse ou une baisse comme bonne ou mauvaise en soi.\n\nUtilise strictement les valeurs fournies sans en modifier aucune.\n\nDonnées :\npoids_actuel: {{ poids_actuel }}\npoids_precedent: {{ poids_precedent }}\npoids_difference: {{ poids_difference }}\npoids_min_10_derniers: {{ poids_min_effectif }}\npoids_max_10_derniers: {{ poids_max_effectif }}\nimc: {{ imc }}\ntendance: {{ tendance }}\nstatistiques_10_mesures: {{ stats_poids }}\n\t•\tnb_mesures: nombre de pesées (max 10 dernières)\n\t•\tpoids_moyen: poids moyen sur les dernières pesées\n\t•\tpoids_min: poids minimum observé sur les dernières pesées\n\t•\tpoids_max: poids maximum observé sur les dernières pesées\n\t•\tamplitude: différence entre max et min\n\nObjectif :\nCréer un message très court, fluide et bienveillant, adapté à une synthèse vocale.\nParle à Eliott à la deuxième personne, sans utiliser « Aujourd’hui ».\n\nDirectives :\n\t•\tLe message doit faire 2 phrases, 3 au maximum.\n\t•\tMentionne son poids actuel et l’écart avec la mesure précédente de manière simple et naturelle.\n\t•\tAjoute au plus une petite phrase de contexte sur sa dynamique récente, avec des mots faciles à comprendre.\n\t•\tParle d’évolution ou de dynamique, sans ton médical, sans jugement, sans parler de régime ni de performance.\n\t•\tN’utilise pas les notions de perte totale ou de prise totale.\n\t•\tN’utilise pas l’IMC dans le message final, même s’il est fourni.\n\t•\tInterdiction des phrases trop solennelles ou émotionnelles comme “On est là pour t’accompagner”, “tout va bien”, “ne t’inquiète pas”.\n\t•\tSi tu ajoutes un encouragement, il doit être très bref, simple, naturel, et sonner enfantin.\n\t•\tPas de listes, pas de bullet points, pas de ton médical.\n\t•\tStyle très oral, chaleureux, simple, kids friendly, comme un adulte doux qui parle à un enfant.\n\t•\tLa sortie doit être uniquement le message final, rien d’autre."
+      task_name: Poids Eliott
+    response_variable: response_variable
+    enabled: true
+    continue_on_error: true
+  - variables:
+      message_tts: >-
+        {% set msg = response_variable.data if response_variable is defined and response_variable.data is defined else '' %}
+        {% if msg | trim != '' %}
+          {{ msg | trim }}
+        {% else %}
+          Tu es à {{ poids_actuel }} kilos, avec une variation de {{ variation_label }} kilo par rapport à la dernière mesure. Ton corps grandit encore, et ton évolution récente reste dans une dynamique {{ tendance }}.
+        {% endif %}
+      message_notification: >-
+        <b>Poids d'Eliott du {{ now().strftime('%d/%m/%Y') }}</b><br>
+        Poids actuel : <b>{{ poids_actuel }} kg</b><br>
+        Évolution : <b>{{ variation_label }} kg</b> depuis la dernière mesure<br>
+        Tendance récente : <b>{{ tendance }}</b><br>
+        IMC remonté : <b>{{ imc }}</b><br>
+        Moyenne des 10 dernières pesées : <b>{{ stats_poids.poids_moyen }} kg</b><br>
+        Plage récente : <b>{{ poids_min_effectif }} kg</b> à <b>{{ poids_max_effectif }} kg</b>
+  - data:
+      media_player: media_player.salle_de_bain
+      message: "{{ message_tts }}"
+    action: script.tts_send_tts
+    enabled: true
+  - alias: Notification mobile
+    action: script.notify_send_notifications
+    data:
+      target: "guillaume;nelly"
+      title: "[Santé]"
+      message: "{{ message_notification }}"
+      icon: mdi:scale-bathroom
+      channel: health
+    enabled: true
+  - alias: Save to Google sheet
+    action: rest_command.save_weight
+    data:
+      person: Eliott
+      poids_actuel: "{{ poids_actuel }}"
+      poids_precedent: "{{ poids_precedent }}"
+      poids_difference: "{{ poids_difference }}"
+      poids_prise: 0
+      poids_min: "{{ poids_min_effectif }}"
+      poids_max: "{{ poids_max_effectif }}"
+      imc: "{{ imc }}"
+      tendance: "{{ tendance }}"
+      context: "{{ message_tts }}"
+    enabled: true
+mode: single

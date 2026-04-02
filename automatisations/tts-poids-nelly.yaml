@@ -1,9 +1,9 @@
-alias: "[TTS] Poids Guillaume IA"
+alias: "[TTS] Poids Nelly IA"
 description: >-
   Annonce TTS et notification mobile lors d’une nouvelle mesure de poids de
-  Guillaume, historise min/max/diff, et génère un texte motivant via IA.
+  Nelly, historise min/max/diff, et génère un texte motivant via IA.
 triggers:
-  - entity_id: sensor.poids_guillaume
+  - entity_id: sensor.poids_nelly
     trigger: state
     enabled: true
 conditions:
@@ -27,16 +27,16 @@ actions:
       poids_actuel: "{{ trigger.to_state.state | float }}"
       poids_precedent: "{{ trigger.from_state.state | float }}"
       poids_difference: "{{ (poids_actuel - poids_precedent) | round(2) }}"
-      poids_min: "{{ states('input_number.poids_guillaume_min') | float }}"
-      poids_max: "{{ states('input_number.poids_guillaume_max') | float }}"
-      perte_guillaume: "{{ states('sensor.poids_guillaume_perte') | float }}"
-      prise_guillaume: "{{ states('sensor.poids_guillaume_prise') | float }}"
+      poids_min: "{{ states('input_number.poids_nelly_min') | float }}"
+      poids_max: "{{ states('input_number.poids_nelly_max') | float }}"
+      perte_nelly: "{{ states('sensor.poids_nelly_perte') | float }}"
+      prise_nelly: "{{ states('sensor.poids_nelly_prise') | float }}"
       imc: "{{ (poids_actuel / (1.80 * 1.80)) | round(1) }}"
       tendance: >-
         {% if poids_difference < -0.01 %}baisse{% elif poids_difference > 0.01
         %}hausse{% else %}stable{% endif %}
   - data:
-      entity_id: input_number.poids_guillaume_difference
+      entity_id: input_number.poids_nelly_difference
       value: "{{ poids_difference }}"
     action: input_number.set_value
     enabled: true
@@ -47,7 +47,7 @@ actions:
             value_template: "{{ poids_actuel > poids_max }}"
         sequence:
           - data:
-              entity_id: input_number.poids_guillaume_max
+              entity_id: input_number.poids_nelly_max
               value: "{{ poids_actuel }}"
             action: input_number.set_value
       - conditions:
@@ -55,7 +55,7 @@ actions:
             value_template: "{{ poids_actuel < poids_min }}"
         sequence:
           - data:
-              entity_id: input_number.poids_guillaume_min
+              entity_id: input_number.poids_nelly_min
               value: "{{ poids_actuel }}"
             action: input_number.set_value
     enabled: true
@@ -84,7 +84,7 @@ actions:
             FROM statistics AS t1
             INNER JOIN statistics_meta AS t2 ON t1.metadata_id = t2.id
             WHERE
-                t2.statistic_id = 'sensor.poids_guillaume'
+                t2.statistic_id = 'sensor.poids_nelly'
                 AND t1.min != t1.max
             ORDER BY t1.start_ts DESC
             LIMIT 10
@@ -108,8 +108,8 @@ actions:
   - action: ai_task.generate_data
     metadata: {}
     data:
-      instructions: "Tu vas analyser les données fournies et TU NE DOIS RETOURNER QUE LE MESSAGE FINAL, sans aucune phrase avant ou après, sans commentaire, sans explication.\nPas de texte du type “Voici ton message :”, “Ok :”, “D’accord :”, etc.\nLa sortie doit commencer directement par la première phrase du message destiné à Guillaume.\nAnalyse ces données de poids et génère un message oral, naturel et encourageant destiné à Guillaume.\n\nUtilise strictement les valeurs fournies sans en modifier aucune.\n\nDonnées :\npoids_actuel: {{ poids_actuel }}\npoids_precedent: {{ poids_precedent }}\npoids_difference: {{ poids_difference }}\npoids_min: {{ poids_min_effectif }}\npoids_max: {{ poids_max_effectif }}\nperte_guillaume: {{ perte_guillaume }}\nprise_guillaume: {{ prise_guillaume }}\nimc: {{ imc }}\ntendance: {{ tendance }}\nstatistiques_10_mesures: {{ stats_poids }}\n\t•\tnb_mesures: nombre de pesées (max 10 dernières)\n\t•\tpoids_moyen: poids moyen sur les dernières pesées (stabilisation)\n\t•\tpoids_min: poids minimum atteint\n\t•\tpoids_max: poids maximum atteint\n\t•\tamplitude: différence entre max et min (fluctuation totale)\n\n⸻\n\nObjectif :\nCréer un message court, fluide et bienveillant, adapté à une synthèse vocale.\nParle à Guillaume à la deuxième personne, sans utiliser « Salut Guillaume » ni « Aujourd’hui ».\n\n⸻\n\nDirectives :\n\t•\tMentionne son poids actuel et la différence avec la dernière mesure de manière simple et naturelle.\n\t•\tParle en termes de dynamique ou de tendance ({{ tendance }}), pas de phrases évidentes.\n\t•\tUtilise les statistiques sur les dernières pesées pour contextualiser l’évolution :\n\t•\tSi amplitude < 2 kg : poids stable/stabilisé autour de poids_moyen\n\t•\tSi amplitude >= 2 kg : poids fluctuant entre poids_min et poids_max\n\t•\tMentionne si le poids actuel est proche du min, du max ou du moyen\n\t•\tMets en valeur la perte totale ({{ perte_guillaume }} kg) de manière naturelle, sans enchaîner plusieurs chiffres.\n\t•\tUtilise l’IMC calculé ({{ imc }}) uniquement si utile au ton bienveillant, jamais comme diagnostic.\n\t•\tInterdiction de conseils génériques ou banals (ex: “continue comme ça”, “n’oublie pas de t’hydrater”, “mange équilibré”).\n\t•\tSi encouragement, il doit être spécifique aux données fournies (lié à {{ tendance }} ou {{ poids_difference }} ou aux dernières mesures) et en une seule phrase courte ; sinon, ne pas ajouter d’encouragement.\n\t•\tPas de listes, pas de bullet points, pas de ton médical.\n\t•\tStyle très oral, chaleureux, comme un coach bienveillant.\n\t•\tLa sortie doit être uniquement le message final, rien d’autre."
-      task_name: Poids Guillaume
+      instructions: "Tu vas analyser les données fournies et TU NE DOIS RETOURNER QUE LE MESSAGE FINAL, sans aucune phrase avant ou après, sans commentaire, sans explication.\nPas de texte du type “Voici ton message :”, “Ok :”, “D’accord :”, etc.\nLa sortie doit commencer directement par la première phrase du message destiné à Nelly.\nAnalyse ces données de poids et génère un message oral, naturel et encourageant destiné à Nelly.\n\nUtilise strictement les valeurs fournies sans en modifier aucune.\n\nDonnées :\npoids_actuel: {{ poids_actuel }}\npoids_precedent: {{ poids_precedent }}\npoids_difference: {{ poids_difference }}\npoids_min: {{ poids_min_effectif }}\npoids_max: {{ poids_max_effectif }}\nperte_nelly: {{ perte_nelly }}\nprise_nelly: {{ prise_nelly }}\nimc: {{ imc }}\ntendance: {{ tendance }}\nstatistiques_10_mesures: {{ stats_poids }}\n\t•\tnb_mesures: nombre de pesées (max 10 dernières)\n\t•\tpoids_moyen: poids moyen sur les dernières pesées (stabilisation)\n\t•\tpoids_min: poids minimum atteint\n\t•\tpoids_max: poids maximum atteint\n\t•\tamplitude: différence entre max et min (fluctuation totale)\n\n⸻\n\nObjectif :\nCréer un message court, fluide et bienveillant, adapté à une synthèse vocale.\nParle à Nelly à la deuxième personne, sans utiliser « Salut Nelly » ni « Aujourd’hui ».\n\n⸻\n\nDirectives :\n\t•\tMentionne son poids actuel et la différence avec la dernière mesure de manière simple et naturelle.\n\t•\tParle en termes de dynamique ou de tendance ({{ tendance }}), pas de phrases évidentes.\n\t•\tUtilise les statistiques sur les dernières pesées pour contextualiser l’évolution :\n\t•\tSi amplitude < 2 kg : poids stable/stabilisé autour de poids_moyen\n\t•\tSi amplitude >= 2 kg : poids fluctuant entre poids_min et poids_max\n\t•\tMentionne si le poids actuel est proche du min, du max ou du moyen\n\t•\tMets en valeur la perte totale ({{ perte_nelly }} kg) de manière naturelle, sans enchaîner plusieurs chiffres.\n\t•\tUtilise l’IMC calculé ({{ imc }}) uniquement si utile au ton bienveillant, jamais comme diagnostic.\n\t•\tInterdiction de conseils génériques ou banals (ex: “continue comme ça”, “n’oublie pas de t’hydrater”, “mange équilibré”).\n\t•\tSi encouragement, il doit être spécifique aux données fournies (lié à {{ tendance }} ou {{ poids_difference }} ou aux dernières mesures) et en une seule phrase courte ; sinon, ne pas ajouter d’encouragement.\n\t•\tPas de listes, pas de bullet points, pas de ton médical.\n\t•\tStyle très oral, chaleureux, comme un coach bienveillant.\n\t•\tLa sortie doit être uniquement le message final, rien d’autre."
+      task_name: Poids Nelly
     response_variable: response_variable
     enabled: true
     continue_on_error: true
@@ -126,7 +126,7 @@ actions:
         Poids actuel : <b>{{ poids_actuel }} kg</b><br>
         Évolution : <b>{{ variation_label }} kg</b> depuis la dernière mesure<br>
         Tendance : <b>{{ tendance }}</b><br>
-        Cette année : perte <b>{{ perte_guillaume }} kg</b>, prise <b>{{ prise_guillaume }} kg</b><br>
+        Cette année : perte <b>{{ perte_nelly }} kg</b>, prise <b>{{ prise_nelly }} kg</b><br>
         Bornes enregistrées : min <b>{{ poids_min_effectif }} kg</b>, max <b>{{ poids_max_effectif }} kg</b>
   - data:
       media_player: media_player.salle_de_bain
@@ -136,7 +136,7 @@ actions:
   - alias: Notification mobile
     action: script.notify_send_notifications
     data:
-      target: guillaume
+      target: nelly
       title: "[Santé]"
       message: "{{ message_notification }}"
       icon: mdi:scale-bathroom
@@ -145,11 +145,11 @@ actions:
   - alias: Save to Google sheet
     action: rest_command.save_weight
     data:
-      person: Guillaume
+      person: Nelly
       poids_actuel: "{{ poids_actuel }}"
       poids_precedent: "{{ poids_precedent }}"
       poids_difference: "{{ poids_difference }}"
-      poids_prise: "{{ prise_guillaume }}"
+      poids_prise: "{{ prise_nelly }}"
       poids_min: "{{ poids_min_effectif }}"
       poids_max: "{{ poids_max_effectif }}"
       imc: "{{ imc }}"

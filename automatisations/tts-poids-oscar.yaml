@@ -1,0 +1,146 @@
+alias: "[TTS] Poids Oscar IA"
+description: >-
+  Annonce TTS et notification mobile lors d’une nouvelle mesure de poids de
+  Oscar, historise la différence et génère un texte motivant via IA adapté à sa
+  croissance.
+triggers:
+  - entity_id: sensor.poids_oscar
+    trigger: state
+    enabled: true
+conditions:
+  - condition: template
+    value_template: >-
+      {{
+        trigger.to_state is not none
+        and trigger.to_state.state not in ['unknown', 'unavailable', none, 'None', '']
+        and (trigger.to_state.state | float(0)) > 0
+      }}
+    enabled: true
+  - condition: template
+    value_template: >-
+      {{
+        trigger.from_state is not none
+        and trigger.from_state.state not in ['unknown', 'unavailable', none, 'None', '']
+      }}
+    enabled: true
+actions:
+  - variables:
+      poids_actuel: "{{ trigger.to_state.state | float }}"
+      poids_precedent: "{{ trigger.from_state.state | float }}"
+      poids_difference: "{{ (poids_actuel - poids_precedent) | round(2) }}"
+      imc: "{{ states('sensor.imc_oscar') | float(0) }}"
+      tendance: >-
+        {% if poids_difference < -0.01 %}baisse{% elif poids_difference > 0.01
+        %}hausse{% else %}stable{% endif %}
+  - data:
+      entity_id: input_number.poids_oscar_difference
+      value: "{{ poids_difference }}"
+    action: input_number.set_value
+    enabled: true
+  - alias: SQL GET HISTO 10 LAST
+    action: sql.query
+    metadata: {}
+    data:
+      query: |-
+        SELECT
+            COUNT(*) as nb_mesures,
+            ROUND(AVG((t1.min + t1.max) / 2), 1) as poids_moyen,
+            ROUND(MIN(t1.min), 1) as poids_min,
+            ROUND(MAX(t1.max), 1) as poids_max,
+            ROUND(MAX(t1.max) - MIN(t1.min), 1) as amplitude
+        FROM (
+            SELECT *
+            FROM statistics AS t1
+            INNER JOIN statistics_meta AS t2 ON t1.metadata_id = t2.id
+            WHERE
+                t2.statistic_id = 'sensor.poids_oscar'
+                AND t1.min != t1.max
+            ORDER BY t1.start_ts DESC
+            LIMIT 10
+        ) as t1;
+    response_variable: result_statistics
+  - variables:
+      stats_poids: >-
+        {%- set data = result_statistics.result -%} {%- if data | length > 0 and
+        data[0]['nb_mesures'] > 0 -%}
+          {%- set s = data[0] -%}
+          {{ {
+            'nb_mesures': s['nb_mesures'],
+            'poids_moyen': s['poids_moyen'],
+            'poids_min': s['poids_min'],
+            'poids_max': s['poids_max'],
+            'amplitude': s['amplitude']
+          } }}
+        {%- else -%}
+          {{ {'nb_mesures': 0, 'poids_moyen': 0, 'poids_min': 0, 'poids_max': 0, 'amplitude': 0} }}
+        {%- endif -%}
+      poids_min_effectif: >-
+        {% if stats_poids.nb_mesures > 0 %}
+          {{ [poids_actuel, stats_poids.poids_min] | min }}
+        {% else %}
+          {{ poids_actuel }}
+        {% endif %}
+      poids_max_effectif: >-
+        {% if stats_poids.nb_mesures > 0 %}
+          {{ [poids_actuel, stats_poids.poids_max] | max }}
+        {% else %}
+          {{ poids_actuel }}
+        {% endif %}
+      variation_label: >-
+        {% if poids_difference > 0 %}
+          +{{ poids_difference }}
+        {% else %}
+          {{ poids_difference }}
+        {% endif %}
+  - action: ai_task.generate_data
+    metadata: {}
+    data:
+      instructions: "Tu vas analyser les données fournies et TU NE DOIS RETOURNER QUE LE MESSAGE FINAL, sans aucune phrase avant ou après, sans commentaire, sans explication.\nPas de texte du type “Voici ton message :”, “Ok :”, “D’accord :”, etc.\nLa sortie doit commencer directement par la première phrase du message destiné à Oscar.\nAnalyse ces données de poids et génère un message oral, naturel, rassurant et encourageant destiné à Oscar.\n\nContexte important : Oscar est un adolescent en pleine croissance. Les variations de poids peuvent être normales. Tu ne dois jamais présenter une hausse ou une baisse comme bonne ou mauvaise en soi.\n\nUtilise strictement les valeurs fournies sans en modifier aucune.\n\nDonnées :\npoids_actuel: {{ poids_actuel }}\npoids_precedent: {{ poids_precedent }}\npoids_difference: {{ poids_difference }}\npoids_min_10_derniers: {{ poids_min_effectif }}\npoids_max_10_derniers: {{ poids_max_effectif }}\nimc: {{ imc }}\ntendance: {{ tendance }}\nstatistiques_10_mesures: {{ stats_poids }}\n\t•\tnb_mesures: nombre de pesées (max 10 dernières)\n\t•\tpoids_moyen: poids moyen sur les dernières pesées\n\t•\tpoids_min: poids minimum observé sur les dernières pesées\n\t•\tpoids_max: poids maximum observé sur les dernières pesées\n\t•\tamplitude: différence entre max et min\n\nObjectif :\nCréer un message court, fluide et bienveillant, adapté à une synthèse vocale.\nParle à Oscar à la deuxième personne, sans utiliser « Salut Oscar » ni « Aujourd’hui ».\n\nDirectives :\n\t•\tMentionne son poids actuel et l’écart avec la mesure précédente de manière simple et naturelle.\n\t•\tParle d’évolution ou de dynamique, sans ton médical ni jugement.\n\t•\tUtilise les statistiques récentes pour contextualiser : poids proche du moyen, plutôt en bas de sa plage récente, plutôt en haut, ou dans une zone stable.\n\t•\tRappelle de façon légère que son corps évolue encore et qu’une variation peut être normale dans une période de croissance, mais sans faire la leçon.\n\t•\tN’utilise pas les notions de perte totale ou de prise totale.\n\t•\tN’utilise l’IMC que si cela apporte une nuance rassurante, jamais comme diagnostic, jamais comme objectif, et tu peux aussi ne pas l’utiliser du tout.\n\t•\tInterdiction de conseils génériques ou banals.\n\t•\tSi tu ajoutes un encouragement, il doit être bref, concret, et lié aux données observées.\n\t•\tPas de listes, pas de bullet points, pas de ton médical.\n\t•\tStyle très oral, chaleureux, naturel, avec une voix de parent rassurant plus que de coach sportif.\n\t•\tLa sortie doit être uniquement le message final, rien d’autre."
+      task_name: Poids Oscar
+    response_variable: response_variable
+    enabled: true
+    continue_on_error: true
+  - variables:
+      message_tts: >-
+        {% set msg = response_variable.data if response_variable is defined and response_variable.data is defined else '' %}
+        {% if msg | trim != '' %}
+          {{ msg | trim }}
+        {% else %}
+          Tu es à {{ poids_actuel }} kilos, avec une variation de {{ variation_label }} kilo par rapport à la dernière mesure. Ton évolution récente reste dans une dynamique {{ tendance }}.
+        {% endif %}
+      message_notification: >-
+        <b>Poids du {{ now().strftime('%d/%m/%Y') }}</b><br>
+        Poids actuel : <b>{{ poids_actuel }} kg</b><br>
+        Évolution : <b>{{ variation_label }} kg</b> depuis la dernière mesure<br>
+        Tendance récente : <b>{{ tendance }}</b><br>
+        Moyenne des 10 dernières pesées : <b>{{ stats_poids.poids_moyen }} kg</b><br>
+        Plage récente : <b>{{ poids_min_effectif }} kg</b> à <b>{{ poids_max_effectif }} kg</b>
+  - data:
+      media_player: media_player.salle_de_bain
+      message: "{{ message_tts }}"
+    action: script.tts_send_tts
+    enabled: true
+  - alias: Notification mobile
+    action: script.notify_send_notifications
+    data:
+      target: oscar
+      title: "[Santé]"
+      message: "{{ message_notification }}"
+      icon: mdi:scale-bathroom
+      channel: health
+    enabled: true
+  - alias: Save to Google sheet
+    action: rest_command.save_weight
+    data:
+      person: Oscar
+      poids_actuel: "{{ poids_actuel }}"
+      poids_precedent: "{{ poids_precedent }}"
+      poids_difference: "{{ poids_difference }}"
+      poids_prise: 0
+      poids_min: "{{ poids_min_effectif }}"
+      poids_max: "{{ poids_max_effectif }}"
+      imc: "{{ imc }}"
+      tendance: "{{ tendance }}"
+      context: "{{ message_tts }}"
+    enabled: true
+mode: single
