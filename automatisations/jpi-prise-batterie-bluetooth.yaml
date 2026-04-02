@@ -1,0 +1,205 @@
+alias: "[JPI] Prise, Batterie, Bluetooth."
+description: ''
+triggers:
+- entity_id: sensor.batterie_jpi
+  above: 90
+  trigger: numeric_state
+- entity_id: sensor.batterie_jpi
+  below: 40
+  trigger: numeric_state
+- entity_id: sensor.batterie_jpi
+  below: 20
+  trigger: numeric_state
+- entity_id:
+  - device_tracker.smartphone_xiaomi_mi_a2
+  to: home
+  trigger: state
+- entity_id:
+  - device_tracker.smartphone_xiaomi_mi_a2
+  to: not_home
+  trigger: state
+- entity_id:
+  - sensor.batterie_jpi
+  for:
+    hours: 0
+    minutes: 15
+    seconds: 0
+  trigger: state
+- entity_id:
+  - sensor.bluetooth_connect_jpi
+  trigger: state
+conditions: []
+actions:
+- choose:
+  - conditions:
+    - condition: template
+      value_template: "{{ states('sensor.batterie_jpi') | int(default=0) <= 40 }}"
+      alias: Batterie JPI <= 40%
+    - condition: state
+      entity_id: switch.tuya_jpi_socket_1
+      state: 'off'
+    sequence:
+    - data: {}
+      target:
+        entity_id: switch.tuya_jpi_socket_1
+      action: switch.turn_on
+  - conditions:
+    - condition: template
+      value_template: "{{ states('sensor.batterie_jpi') | int(default=0) <= 35 }}"
+      alias: Batterie JPI <= 35%
+    - condition: template
+      value_template: "{{ 'Alim. connectée: NON' in states('sensor.batterie_jpi_info')}}"
+      alias: "'Alim. connectée: NON'"
+    sequence:
+    - data: {}
+      target:
+        entity_id: switch.tuya_jpi_socket_1
+      action: switch.turn_off
+    - delay:
+        hours: 0
+        minutes: 0
+        seconds: 2
+        milliseconds: 0
+    - data: {}
+      target:
+        entity_id: switch.tuya_jpi_socket_1
+      action: switch.turn_on
+    - data:
+        title: "[JPI] Prise, Batterie, Bluetooth."
+        message: Force Prise JPI on/off {{ states('sensor.batterie_jpi')}}%
+      action: notify.persistent_notification
+  - conditions:
+    - condition: template
+      value_template: "{{ states('sensor.batterie_jpi') | int(default=0) >= 90 }}"
+      alias: Batterie JPI >= 90%
+    - condition: state
+      entity_id: switch.tuya_jpi_socket_1
+      state: 'on'
+    sequence:
+    - data: {}
+      target:
+        entity_id: switch.tuya_jpi_socket_1
+      action: switch.turn_off
+  - conditions:
+    - condition: or
+      conditions:
+      - condition: and
+        conditions:
+        - condition: template
+          value_template: "{{ 'Alim. connectée: OUI' in states('sensor.batterie_jpi_info')
+            }}"
+          alias: 'Connectée: OUI'
+        - condition: state
+          entity_id: switch.tuya_jpi_socket_1
+          state: 'off'
+          alias: Prise JPI OFF
+        alias: 'Connectée: OUI & Prise JPI OFF'
+      - condition: and
+        conditions:
+        - condition: template
+          value_template: "{{ 'En charge: OUI' in states('sensor.batterie_jpi_info')
+            and 'Alim. connectée: NON' in states('sensor.batterie_jpi_info')}}"
+          alias: "'En charge: OUI' and 'Alim. connectée: NON'"
+        - condition: state
+          entity_id: switch.tuya_jpi_socket_1
+          state: 'on'
+          alias: Prise JPI ON
+        alias: "'En charge: OUI' and 'Alim. connectée: NON' and Prise JPI ON"
+      alias: 'Connectée: OUI & Prise JPI OFF OR  Connectée: NON & Prise JPI ON'
+    sequence:
+    - data:
+        title: "[JPI] Prise, Batterie, Bluetooth."
+        message: 'Error Prise JPI : {{ states(''switch.tuya_jpi_socket_1'') }}<br>
+          Etat JPI : {{ states(''sensor.batterie_jpi_info'') }}'
+      action: notify.persistent_notification
+  - conditions:
+    - condition: template
+      value_template: '{{ not "XiaomiSpeaker" in states(''sensor.bluetooth_connect_jpi'')
+        }}'
+      alias: Not XiaomiSpeaker
+    sequence:
+    - data:
+        action: manageBTDevice
+        deviceName: XiaomiSpeaker
+        BTaction: connect
+      alias: Connect BT XiaomiSpeaker
+      action: script.mqtt_send_topics
+  - conditions:
+    - condition: template
+      value_template: "{{ trigger.id == 'device_tracker.smartphone_xiaomi_mi_a2' }}\n"
+      alias: Triggered by device_tracker.smartphone_xiaomi_mi_a2
+    - condition: template
+      value_template: "{{ trigger.from_state.state == 'home' and trigger.to_state.state
+        == 'not_home' }}"
+      alias: home To not_home
+    sequence:
+    - data:
+        message: 'Attention, le  Smartphone Xiaomi A2 (JPI) est Offline !! Batterie
+          : {{ states(''sensor.batterie_jpi'') }}%.'
+        title: JPI
+      alias: 'Attention, le  Smartphone Xiaomi A2 (JPI) est Offline !! Batterie :  X%.'
+      enabled: false
+      action: notify.mobile_app_one_plus_8t
+    - data:
+        target: Guillaume
+        channel: JPI
+        message: 'Attention, le  Smartphone Xiaomi A2 (JPI) est Offline !! Batterie
+          : {{ states(''sensor.batterie_jpi'') }}%.'
+        title: JPI
+        icon: mdi:battery-remove-outline
+      alias: 'Attention, le  Smartphone Xiaomi A2 (JPI) est Offline !! Batterie :  X%.'
+      action: script.notify_send_notifications
+    - metadata: {}
+      data: {}
+      target:
+        entity_id: switch.tuya_jpi_socket_1
+      action: switch.turn_on
+  - conditions:
+    - condition: template
+      value_template: "{{ trigger.id == 'device_tracker.smartphone_xiaomi_mi_a2' }}"
+      alias: Triggered by device_tracker.smartphone_xiaomi_mi_a2
+    - condition: template
+      value_template: "{{ trigger.from_state.state == 'not_home' and trigger.to_state.state
+        == 'home' }}"
+      alias: not_home To home
+    sequence:
+    - data:
+        message: 'C''est bon, le  Smartphone Xiaomi A2 (JPI) est Online !! Batterie
+          : {{ states(''sensor.batterie_jpi'') }}%.'
+        title: JPI
+      alias: 'C''est bon, le  Smartphone Xiaomi A2 (JPI) est Online !! Batterie :  X%.'
+      enabled: false
+      action: notify.mobile_app_one_plus_8t
+    - data:
+        target: Guillaume
+        channel: JPI
+        icon: mdi:battery-charging-high
+        message: 'C''est bon, le  Smartphone Xiaomi A2 (JPI) est Online !! Batterie
+          : {{ states(''sensor.batterie_jpi'') }}%.'
+        title: JPI
+      alias: 'C''est bon, le  Smartphone Xiaomi A2 (JPI) est Online !! Batterie :  X%.'
+      action: script.notify_send_notifications
+  - conditions:
+    - condition: template
+      value_template: "{{ (as_timestamp(now()) - as_timestamp(states.sensor.batterie_jpi.last_updated))
+        >= 900 }}"
+      alias: 'Same battery level for 15 minutes '
+    sequence:
+    - data:
+        target: Guillaume
+        channel: JPI
+        icon: mdi:connection
+        message: 'Attention, le  Smartphone Xiaomi A2 (JPI) ne répond plus depuis
+          {{ ((as_timestamp(now()) - as_timestamp(states.sensor.batterie_jpi.last_updated))
+          / 60) | int }} Minutes !! Batterie : {{ states(''sensor.batterie_jpi'')
+          }}%.'
+        title: JPI
+      alias: 'Attention, le  Smartphone Xiaomi A2 (JPI) ne répond plus !! Batterie
+        :  X%.'
+      action: script.notify_send_notifications
+    - data: {}
+      target:
+        entity_id: switch.tuya_jpi_socket_1
+      action: switch.turn_on
+mode: queued
+max: 10

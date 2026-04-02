@@ -1,0 +1,32 @@
+alias: "[Multimédia] Vidéo projecteur Xgimi "
+description: ''
+triggers:
+- entity_id:
+  - binary_sensor.freebox_player_pop_state
+  for:
+    hours: 0
+    minutes: 1
+    seconds: 0
+  to: 'off'
+  trigger: state
+conditions: []
+actions:
+- alias: Xgimi H2 is Présent
+  if:
+  - condition: state
+    entity_id: device_tracker.xgimi_h2
+    state: home
+  - condition: state
+    state: 'off'
+    entity_id: binary_sensor.freebox_player_pop_state
+  - condition: state
+    entity_id: input_boolean.auto_off_xgimi
+    state:
+    - 'on'
+  then:
+  - data:
+      command: poweroff
+    target:
+      entity_id: remote.videoprojecteur_xgimi
+    action: remote.send_command
+mode: restart

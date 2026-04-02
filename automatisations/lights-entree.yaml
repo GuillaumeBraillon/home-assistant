@@ -1,0 +1,80 @@
+alias: "[Lights] Entrée"
+description: ''
+triggers:
+- entity_id:
+  - binary_sensor.motion_hall_occupancy
+  - binary_sensor.magnet_hall_contact
+  - input_boolean.mode_auto_entree
+  to: 'on'
+  trigger: state
+conditions:
+- condition: or
+  conditions:
+  - condition: state
+    entity_id: input_select.modes_maison
+    state: Alarme
+  - condition: state
+    entity_id: input_boolean.mode_auto_entree
+    state: 'on'
+- condition: or
+  conditions:
+  - condition: state
+    entity_id: binary_sensor.motion_hall_occupancy
+    state:
+    - 'on'
+  - condition: state
+    entity_id: binary_sensor.magnet_hall_contact
+    state:
+    - 'on'
+actions:
+- alias: 'Not Mode Nuit Turn On Plafonnier Entrée '
+  if:
+  - condition: not
+    conditions:
+    - condition: state
+      entity_id: input_select.modes_maison
+      state: Nuit
+    - condition: state
+      entity_id: input_select.modes_maison
+      state: Soirée TV
+  then:
+  - alias: Turn on Plafonnier
+    data: {}
+    target:
+      entity_id:
+      - light.enki_lexman_e27_led_white_hall_2
+      - light.enki_lexman_e27_led_white_hall_1
+    action: light.turn_on
+  - condition: numeric_state
+    entity_id: sensor.living_room_illuminance_old
+    below: input_number.luminosite_min
+    enabled: false
+  - alias: Turn on Plafonnier
+    data: {}
+    target:
+      entity_id:
+      - light.enki_lexman_e27_led_white_hall_1
+    action: light.turn_on
+    enabled: false
+  enabled: true
+- data: {}
+  target:
+    entity_id:
+    - light.prise_entree
+  enabled: true
+  alias: 'Turn on Prise Entrée '
+  action: light.turn_on
+- wait_template: "{{ is_state('binary_sensor.motion_hall_occupancy', 'off') }}"
+  continue_on_timeout: false
+- delay:
+    hours: 0
+    minutes: "{{ states('input_number.now_light_delay_off')|int}}"
+    seconds: 0
+    milliseconds: 0
+  alias: Wait the number of seconds that has been set
+- alias: 'Turn off Plafonnier Entrée '
+  data: {}
+  target:
+    area_id: entree
+  action: light.turn_off
+mode: restart

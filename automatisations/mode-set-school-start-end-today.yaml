@@ -1,0 +1,52 @@
+alias: "[Mode] Set School Start End Today"
+description: Set the school start and end times for the current day
+trigger:
+- platform: state
+  entity_id:
+  - input_datetime.school_start_monday
+  - input_datetime.school_end_monday
+  - input_datetime.school_start_tuesday
+  - input_datetime.school_end_tuesday
+  - input_datetime.school_start_wednesday
+  - input_datetime.school_end_wednesday
+  - input_datetime.school_start_thursday
+  - input_datetime.school_end_thursday
+  - input_datetime.school_start_friday
+  - input_datetime.school_end_friday
+  - input_datetime.school_start_timer
+  - input_datetime.school_end_timer
+- platform: time
+  at: 10
+action:
+- variables:
+    days:
+    - Monday
+    - Monday
+    - Tuesday
+    - Wednesday
+    - Thursday
+    - Friday
+- repeat:
+    count: "{{ days|length }}"
+    sequence:
+    - variables:
+        day: "{{ days[repeat.index-1] }}"
+        start_time_entity: input_datetime.school_start_{{ day|lower }}
+        end_time_entity: input_datetime.school_end_{{ day|lower }}
+        start_time: "{{ state_attr(start_time_entity, 'timestamp') }}"
+        end_time: "{{ state_attr(end_time_entity, 'timestamp') }}"
+    - condition: template
+      value_template: "{{ now().strftime('%A') == day }}"
+      alias: Check if day is today
+    - service: input_datetime.set_datetime
+      data:
+        entity_id: input_datetime.school_start_today
+        time: "{{ (start_time|int - 3600)|timestamp_custom('%H:%M') }}"
+      alias: Set School Start Time
+    - service: input_datetime.set_datetime
+      data:
+        entity_id: input_datetime.school_end_today
+        time: "{{ (end_time|int - 3600)|timestamp_custom('%H:%M') }}"
+      alias: Set School End Time
+mode: queued
+max: 10

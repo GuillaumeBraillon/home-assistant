@@ -1,0 +1,117 @@
+alias: "[Shutters] Living Room"
+description: ''
+triggers:
+- entity_id:
+  - cover.volets_salon_state
+  to: opening
+  trigger: state
+- entity_id:
+  - cover.volets_salon_state
+  to: closing
+  trigger: state
+conditions:
+- condition: state
+  entity_id: input_boolean.volets_salon_auto
+  state: 'on'
+actions:
+- condition: state
+  entity_id: input_boolean.volets_salon_auto
+  state: 'on'
+- alias: 'Ouverture or Fermeture '
+  if:
+  - condition: state
+    entity_id: cover.volets_salon_state
+    state: opening
+    alias: Ouverture
+  then:
+  - delay:
+      hours: 0
+      minutes: 1
+      seconds: 0
+      milliseconds: 0
+  - wait_template: "{{ is_state('binary_sensor.motion_outside_occupancy', 'on') }}"
+    continue_on_timeout: true
+    timeout: '1'
+    alias: Wait motion Outside
+  - wait_template: "{{ is_state('binary_sensor.motion_outside_occupancy', 'off') }}"
+    continue_on_timeout: false
+    alias: Wait no motion Outside
+  - delay:
+      hours: 0
+      minutes: "{{ states('input_number.now_light_delay_off')|int}}"
+      seconds: 0
+      milliseconds: 0
+    alias: Wait the number of seconds that has been set
+  - wait_template: "{{ is_state('binary_sensor.motion_outside_occupancy', 'off') }}"
+    continue_on_timeout: false
+    alias: Wait no motion Outside
+  - alias: Set Position by mode
+    choose:
+    - conditions:
+      - condition: template
+        value_template: "{{ is_state('input_select.modes_maison', 'Journée') }}"
+        alias: Mode Journée
+      - condition: template
+        value_template: "{{ is_state('sun.sun', 'below_horizon') }}"
+        alias: Sun Down
+      sequence:
+      - alias: Volets Salon 40%
+        data:
+          position: 40
+        target:
+          entity_id: cover.volets_salon_state
+        enabled: true
+        action: cover.set_cover_position
+    - conditions:
+      - condition: template
+        value_template: "{{ is_state('input_select.modes_maison', 'Soir') }}"
+        alias: Mode Soir
+      - condition: state
+        entity_id: input_boolean.mode_auto_salon
+        state: 'on'
+      sequence:
+      - alias: Volets Salon 40%
+        data:
+          position: 40
+        target:
+          entity_id: cover.volets_salon_state
+        enabled: true
+        action: cover.set_cover_position
+    - conditions:
+      - condition:
+        - condition: template
+          value_template: "{{ is_state('input_select.modes_maison', 'Nuit') }}"
+        alias: Mode Nuit
+      sequence:
+      - data: {}
+        target:
+          entity_id: cover.volets_salon_state
+        alias: Close Volets Salon
+        enabled: false
+        action: cover.close_cover
+    - conditions:
+      - condition: template
+        value_template: "{{ is_state('input_select.modes_maison', 'Soirée TV') }}"
+        alias: Mode Soirée TV
+      sequence:
+      - alias: Volets Salon 40%
+        data:
+          position: 40
+        target:
+          entity_id: cover.volets_salon_state
+        enabled: true
+        action: cover.set_cover_position
+  else:
+  - if:
+    - condition: template
+      value_template: "{{ is_state('binary_sensor.motion_outside_occupancy', 'on')
+        }}"
+      alias: Motion Outside
+    then:
+    - data: {}
+      target:
+        entity_id: cover.volets_salon_state
+      alias: Stop Volets Salon
+      action: cover.stop_cover
+    alias: Fermeture
+mode: restart

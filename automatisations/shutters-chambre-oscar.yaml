@@ -1,0 +1,46 @@
+alias: "[Shutters] Chambre Oscar"
+description: ''
+triggers:
+- entity_id:
+  - binary_sensor.motion_oscar_occupancy
+  from:
+  - 'off'
+  to:
+  - 'on'
+  trigger: state
+- entity_id:
+  - input_boolean.mode_auto_oscar
+  from: 'off'
+  to: 'on'
+  trigger: state
+conditions:
+- condition: state
+  entity_id: binary_sensor.motion_oscar_occupancy
+  state: 'on'
+- condition: state
+  entity_id: input_boolean.mode_auto_oscar
+  state: 'on'
+actions:
+- alias: Set Position by mode
+  choose:
+  - conditions:
+    - condition: template
+      value_template: "{{ is_state('input_select.modes_maison', 'Journée') }}"
+      alias: Mode Journée
+    - condition: template
+      alias: Sun Up
+      value_template: "{{ is_state('sun.sun', 'above_horizon') }}"
+    sequence:
+    - alias: Volets 100%
+      data:
+        position: 100
+      target:
+        entity_id: cover.volets_oscar_state
+      action: cover.set_cover_position
+  default:
+  - data: {}
+    target:
+      entity_id: cover.volets_oscar_state
+    alias: Close Volets
+    action: cover.close_cover
+mode: restart

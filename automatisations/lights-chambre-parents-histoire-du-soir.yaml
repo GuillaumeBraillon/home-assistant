@@ -1,0 +1,79 @@
+alias: "[Lights] Chambre Parents Histoire Du Soir"
+description: ''
+trigger:
+- platform: state
+  entity_id:
+  - input_boolean.histoire_du_soir
+  id: 'Switch '
+- platform: state
+  entity_id:
+  - light.light_parents
+  from: 'on'
+  to: 'off'
+  id: Light
+condition: []
+action:
+- choose:
+  - conditions:
+    - condition: trigger
+      id:
+      - 'Switch '
+    sequence:
+    - if:
+      - condition: state
+        entity_id: input_boolean.histoire_du_soir
+        state: 'on'
+      then:
+      - service: input_boolean.turn_off
+        data: {}
+        target:
+          entity_id: input_boolean.mode_auto_parents
+      - service: light.turn_on
+        data:
+          brightness_pct: 100
+        target:
+          entity_id:
+          - light.mibedsidelamp2
+          - light.light_parents
+          - light.yeelight_bslamp1
+      - delay:
+          hours: 0
+          minutes: 0
+          seconds: 1
+          milliseconds: 0
+      - service: light.turn_on
+        data:
+          brightness_pct: 100
+        target:
+          entity_id:
+          - light.mibedsidelamp2
+          - light.light_parents
+          - light.yeelight_bslamp1
+      else:
+      - service: input_boolean.turn_on
+        data: {}
+        target:
+          entity_id: input_boolean.mode_auto_parents
+      - service: script.1684929625648
+        data: {}
+  - conditions:
+    - condition: trigger
+      id:
+      - Light
+    - condition: state
+      entity_id: input_boolean.histoire_du_soir
+      state: 'on'
+    sequence:
+    - service: input_boolean.turn_on
+      data: {}
+      target:
+        entity_id:
+        - input_boolean.mode_auto_parents
+    - service: script.1684929625648
+      data: {}
+    - service: input_boolean.turn_off
+      data: {}
+      target:
+        entity_id:
+        - input_boolean.histoire_du_soir
+mode: single

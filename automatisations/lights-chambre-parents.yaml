@@ -1,0 +1,82 @@
+alias: "[Lights] Chambre Parents"
+description: ''
+trigger:
+- platform: state
+  entity_id:
+  - binary_sensor.motion_parents_occupancy
+  - input_boolean.mode_auto_parents
+  to: 'on'
+condition:
+- condition: state
+  entity_id: input_boolean.mode_auto_parents
+  state: 'on'
+- condition: state
+  entity_id: binary_sensor.motion_parents_occupancy
+  state: 'on'
+action:
+- service: light.turn_on
+  data: {}
+  target:
+    entity_id:
+    - light.mibedsidelamp2
+    - light.yeelight_bslamp1
+  alias: Turn on Chevets
+- if:
+  - condition: state
+    entity_id: input_select.modes_maison
+    state: Journée
+  then:
+  - if:
+    - condition: template
+      value_template: "{{ is_state('sun.sun', 'below_horizon')}}"
+      alias: Sun Down
+    then:
+    - service: cover.set_cover_position
+      data:
+        position: 25
+      target:
+        entity_id: cover.volets_parents_state
+      alias: Volets Parents 25%
+    else:
+    - service: cover.set_cover_position
+      data:
+        position: 100
+      target:
+        entity_id: cover.volets_parents_state
+      alias: Volets Parents 100%
+    alias: Open Volets
+  alias: Modes Maison is 'Journée'
+- if:
+  - condition: template
+    value_template: "{{ not is_state('input_select.modes_maison', 'Nuit') }}"
+    alias: Not 'Nuit'
+  then:
+  - service: light.turn_on
+    data: {}
+    alias: Turn on Plafonnier
+    target:
+      entity_id:
+      - light.light_parents
+  alias: " Not 'Nuit' Turn on Plafonnier"
+- wait_template: "{{ is_state('binary_sensor.motion_parents_occupancy', 'off') }}"
+  continue_on_timeout: false
+- delay:
+    hours: 0
+    minutes: "{{ states('input_number.now_light_delay_off')|int}}"
+    seconds: 0
+    milliseconds: 0
+  alias: Wait the number of seconds that has been set
+- if:
+  - condition: state
+    entity_id: input_boolean.mode_auto_parents
+    state: 'on'
+  then:
+  - alias: Turn off the light
+    service: light.turn_off
+    data: {}
+    target:
+      entity_id:
+      - light.mibedsidelamp2
+      - light.light_parents
+      - light.yeelight_bslamp1
+mode: restart

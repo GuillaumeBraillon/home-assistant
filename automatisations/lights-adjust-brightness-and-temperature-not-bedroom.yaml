@@ -1,0 +1,36 @@
+alias: "[Lights] Adjust Brightness and Temperature (Not bedroom)"
+description: ''
+triggers:
+- entity_id:
+  - light.yeelight_ct_bulb
+  - light.ikea_tradfri_e27_1055lm_2
+  - light.yeelight_stripe_local
+  - light.enki_lexman_e27_led_white_bulb_kitchen
+  - light.enki_lexman_e27_led_white_bulb_living_room
+  - light.ptitlampe
+  from:
+  - 'off'
+  to:
+  - 'on'
+  trigger: state
+conditions: []
+actions:
+- target:
+    entity_id: "{{ trigger.entity_id }}"
+  data:
+    brightness_pct: "{{ states('input_number.now_light_lumi_salon') | int }}"
+    color_temp_kelvin: "{{ states('input_number.now_light_temp_salon') | int }}"
+  action: light.turn_on
+- delay:
+    hours: 0
+    minutes: 0
+    seconds: 0
+    milliseconds: 500
+- target:
+    entity_id: "{{ trigger.entity_id }}"
+  data:
+    brightness_pct: "{{ states('input_number.now_light_lumi_salon') | int }}"
+    color_temp_kelvin: "{{ states('input_number.now_light_temp_salon') | int }}"
+  action: light.turn_on
+mode: parallel
+max: 10

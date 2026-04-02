@@ -1,0 +1,80 @@
+alias: "[Lights] Chambre Eliott"
+description: ''
+trigger:
+- platform: state
+  entity_id:
+  - binary_sensor.motion_eliott_occupancy
+  - input_boolean.mode_auto_eliott
+  from: 'off'
+  to: 'on'
+- platform: state
+  entity_id:
+  - device_tracker.ampoule_yeelink_color
+  from: unavailable
+  id: Indisponible
+condition:
+- condition: state
+  entity_id: binary_sensor.motion_eliott_occupancy
+  state: 'on'
+action:
+- alias: " Turn on the light"
+  if:
+  - condition: state
+    entity_id: input_boolean.mode_auto_eliott
+    state: 'on'
+  then:
+  - alias: Turn on the planet terre
+    service: light.turn_on
+    data: {}
+    target:
+      device_id:
+      - '0988d11fa4822b1827e8ca9891e8a064'
+  - if:
+    - condition: not
+      conditions:
+      - condition: state
+        entity_id: light.yeelight_color
+        state: unavailable
+    then:
+    - alias: Turn on the light
+      service: light.turn_on
+      data: {}
+      target:
+        entity_id:
+        - light.yeelight_color
+    alias: turn on plafonnier if available
+  - wait_template: "{{ is_state('binary_sensor.motion_eliott_occupancy', 'off') }}"
+    continue_on_timeout: false
+  - delay:
+      hours: 0
+      minutes: "{{ states('input_number.now_light_delay_off')|int}}"
+      seconds: 0
+      milliseconds: 0
+    alias: Wait the number of seconds that has been set
+- alias: " Turn off the light"
+  if:
+  - condition: state
+    entity_id: input_boolean.mode_auto_eliott
+    state: 'on'
+  then:
+  - alias: Turn off the light
+    service: light.turn_off
+    data: {}
+    target:
+      entity_id:
+      - light.ikea_tradfri_control_outlet
+  - alias: turn off plafonnier if available
+    if:
+    - condition: not
+      conditions:
+      - condition: state
+        entity_id: light.yeelight_color
+        state: unavailable
+    then:
+    - alias: Turn off the light
+      service: light.turn_off
+      data: {}
+      target:
+        entity_id:
+        - light.yeelight_color
+mode: restart

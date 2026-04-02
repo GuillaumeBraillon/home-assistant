@@ -1,0 +1,110 @@
+alias: "[Lights] Chambre Parents Bouton"
+description: ''
+triggers:
+- topic: zigbee2mqtt/Xiaomi_switch_Nelly
+  alias: Xiaomi Switch Nelly
+  trigger: mqtt
+- topic: zigbee2mqtt/Xiaomi_switch_Guillaume
+  alias: Xiaomi Switch Guillaume
+  trigger: mqtt
+conditions:
+- condition: template
+  value_template: "{{ trigger.payload_json.action == 'single' or trigger.payload_json.action
+    == 'double' }}"
+  alias: Single Or Double Click
+actions:
+- choose:
+  - conditions:
+    - condition: state
+      entity_id: input_boolean.mode_auto_parents
+      state: 'off'
+      alias: Mode Auto Parents is 'Désactivé'
+    - condition: template
+      value_template: "{{ (now().timestamp() | timestamp_custom('%H:%M')) >= (today_at(states('input_datetime.morning_start'))
+        - timedelta(minutes=90)).strftime('%H:%M') and  (now().timestamp() | timestamp_custom('%H:%M'))
+        <= (today_at(states('input_datetime.morning_start_week_end')) + timedelta(minutes=90)).strftime('%H:%M')}}"
+      alias: Matinée
+    sequence:
+    - data:
+        skip_condition: true
+      target:
+        entity_id: automation.mode_by_time
+      alias: Trigger [Mode] Auto Mode Based on Time of Day
+      action: automation.trigger
+    - data: {}
+      target:
+        entity_id: input_boolean.mode_auto_parents
+      alias: Turn on Mode Auto Parents
+      action: input_boolean.turn_on
+    - data:
+        position: 25
+      target:
+        area_id: chambre_parents
+      alias: 'Set position Volets:  25%'
+      action: cover.set_cover_position
+    - data: {}
+      target:
+        entity_id:
+        - light.mibedsidelamp2
+        - light.yeelight_bslamp1
+      alias: Turn on Chevets
+      action: light.turn_on
+  - conditions:
+    - condition: state
+      entity_id: input_boolean.mode_auto_parents
+      state: 'off'
+      alias: Mode Auto Parents is 'Désactivé'
+    sequence:
+    - data:
+        skip_condition: true
+      target:
+        entity_id: automation.mode_by_time
+      action: automation.trigger
+    - data: {}
+      target:
+        entity_id: input_boolean.mode_auto_parents
+      alias: Turn on Mode Auto Parents
+      action: input_boolean.turn_on
+    - data: {}
+      target:
+        entity_id:
+        - light.mibedsidelamp2
+        - light.yeelight_bslamp1
+        - light.light_parents
+      alias: Turn on Lights
+      action: light.turn_on
+    - data: {}
+      target:
+        entity_id:
+        - cover.volets_parents_state
+      alias: Open Volets
+      action: cover.open_cover
+  enabled: true
+  default:
+  - data: {}
+    target:
+      entity_id:
+      - cover.volets_parents_state
+    alias: Close Volets Parents
+    action: cover.close_cover
+  - data: {}
+    target:
+      entity_id:
+      - light.mibedsidelamp2
+      - light.light_parents
+      - light.yeelight_bslamp1
+    alias: Turn off Lights
+    action: light.turn_off
+  - data: {}
+    target:
+      entity_id: input_boolean.mode_auto_parents
+    alias: Turn off Mode Auto Parents
+    action: input_boolean.turn_off
+- data:
+    title: Automation Trigger
+    message: The {{ trigger.payload_json.device.friendlyName }} trigged  {{ trigger.payload_json.action
+      }}
+  enabled: false
+  action: notify.persistent_notification
+mode: parallel
+max: 10
