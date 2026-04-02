@@ -1,5 +1,7 @@
 alias: "[TTS] Agenda Famille (Séjour)"
-description: "Agenda vocal séjour (48h famille + contexte scolaire/jours fériés étendu) généré via script IA puis lu sur enceinte séjour."
+description: >-
+  Résumé vocal (48h) des événements familles + Guillaume généré via script IA
+  puis lu sur enceinte parents.
 triggers:
   - entity_id:
       - input_select.modes_maison
@@ -15,7 +17,9 @@ actions:
   - wait_for_trigger:
       - entity_id:
           - binary_sensor.motion_kitchen_occupancy
-        to: "on"
+          - binary_sensor.motion_living_room_occupancy
+        to:
+          - "on"
         trigger: state
     timeout:
       hours: 0
@@ -33,7 +37,7 @@ actions:
     data:
       start_date_time: "{{ now().replace(hour=0, minute=0, second=0).isoformat() }}"
       duration:
-        hours: 48
+        hours: 24
         minutes: 0
         seconds: 0
     target:
@@ -42,7 +46,7 @@ actions:
     response_variable: agenda_famille
   - data:
       duration:
-        hours: 1500
+        hours: 735
         minutes: 0
         seconds: 0
     target:

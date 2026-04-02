@@ -1,27 +1,26 @@
 alias: "[Presence] ASK SMS Oscar"
-description: "Gestion alarme selon présence d'Oscar et ses clés"
-mode: single
-trigger:
-  - platform: state
-    entity_id:
+description: Gestion alarme selon présence d'Oscar et ses clés
+triggers:
+  - entity_id:
       - person.guillaume
       - person.nelly
       - person.oscar
-
-variables:
-  notify_targets:
-    - guillaume
-    - nelly
-    - oscar
-  parents_home: "{{ is_state('person.guillaume', 'home') or is_state('person.nelly', 'home') }}"
-  oscar_home: "{{ is_state('person.oscar', 'home') }}"
-  oscar_keys: "{{ is_state('input_boolean.oscar_active', 'on') }}"
-
-action:
+    trigger: state
+actions:
+  - variables:
+      notify_targets:
+        - guillaume
+        - nelly
+        - oscar
+      parents_home: >-
+        {{ is_state('person.guillaume', 'home') or is_state('person.nelly',
+        'home') }}
+      oscar_home: "{{ is_state('person.oscar', 'home') }}"
+      oscar_keys: "{{ is_state('input_boolean.oscar_active', 'on') }}"
   - choose:
       - conditions:
           - condition: template
-            value_template: >-
+            value_template: |-
               {{
                 oscar_keys
                 and oscar_home
@@ -33,15 +32,15 @@ action:
         sequence:
           - action: script.notify_ask_mobile
             data:
-              target: "guillaume;nelly;oscar"
+              target: guillaume;nelly;oscar
               ask_tag: ask_oscar_presence
               title: "[Présence]"
               icon: mdi:account-question-outline
               channel: alarm_stream
               preset: alarm
               message: "[Présence] Oscar est-il seul à la maison ?"
-              yes_title: "Oui"
-              no_title: "Non"
+              yes_title: Oui
+              no_title: Non
               timeout: 300
               mobile_data:
                 visibility: public
@@ -49,11 +48,9 @@ action:
           - variables:
               respondent: "{{ ask_result.respondent | default('unknown') }}"
               respondent_name: >-
-                {% if respondent == 'guillaume' %}Papa
-                {% elif respondent == 'nelly' %}Maman
-                {% elif respondent == 'oscar' %}Oscar
-                {% else %}Inconnu
-                {% endif %}
+                {% if respondent == 'guillaume' %}Papa {% elif respondent ==
+                'nelly' %}Maman {% elif respondent == 'oscar' %}Oscar {% else
+                %}Inconnu {% endif %}
           - choose:
               - conditions:
                   - condition: template
@@ -66,12 +63,12 @@ action:
                           data:
                             target: "{{ repeat.item }}"
                             title: "[Présence]"
-                            message: "Sans réponse, j'active l'alarme."
+                            message: Sans réponse, j'active l'alarme.
                             icon: mdi:account-alert-outline
                             channel: presence
-                  - service: input_boolean.turn_off
-                    target:
+                  - target:
                       entity_id: input_boolean.oscar_active
+                    action: input_boolean.turn_off
               - conditions:
                   - condition: template
                     value_template: "{{ ask_result.answer == 'yes' }}"
@@ -83,7 +80,9 @@ action:
                           data:
                             target: "{{ repeat.item }}"
                             title: "[Présence]"
-                            message: "{{ respondent_name }} a répondu oui, je n'active pas l'alarme."
+                            message: >-
+                              {{ respondent_name }} a répondu oui, je n'active
+                              pas l'alarme.
                             icon: mdi:account-check-outline
                             channel: presence
               - conditions:
@@ -97,20 +96,23 @@ action:
                           data:
                             target: "{{ repeat.item }}"
                             title: "[Présence]"
-                            message: "{{ respondent_name }} a dit qu'Oscar n'est pas à la maison, je désactive ses clés pour activer l'alarme."
+                            message: >-
+                              {{ respondent_name }} a dit qu'Oscar n'est pas à
+                              la maison, je désactive ses clés pour activer
+                              l'alarme.
                             icon: mdi:account-cancel-outline
                             channel: presence
-                  - service: input_boolean.turn_off
-                    target:
+                  - target:
                       entity_id: input_boolean.oscar_active
-                  - service: button.press
-                    target:
+                    action: input_boolean.turn_off
+                  - target:
                       entity_id: button.change_presence_nut_oscar
-
+                    action: button.press
       - conditions:
           - condition: template
             value_template: "{{ not oscar_keys }}"
         sequence:
-          - service: input_boolean.turn_on
-            target:
+          - target:
               entity_id: input_boolean.oscar_active
+            action: input_boolean.turn_on
+mode: single

@@ -26,8 +26,8 @@ actions:
         value_template: "{{ not is_state('input_select.modes_maison', 'Soirée TV') }}"
         alias: Not 'Soirée TV'
       - condition: numeric_state
-        entity_id: sensor.motion_kitchen_illuminance
-        below: 80
+        entity_id: sensor.living_room_illuminance_old
+        below: input_number.luminosite_min
     then:
       - alias: Turn on Console
         data: {}

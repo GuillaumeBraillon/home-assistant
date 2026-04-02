@@ -5,6 +5,16 @@ triggers:
       - input_boolean.bouton_test
     trigger: state
     id: start
+    enabled: true
+  - value_template: >-
+      {{ (now().timestamp() | timestamp_custom('%H:%M')) ==
+
+      (strptime(states('input_datetime.school_start_today'), '%H:%M:%S') -
+      strptime(states('input_datetime.school_start_timer'),
+      '%H:%M:%S')).total_seconds() | timestamp_custom('%H:%M', false) }}
+    alias: Timer (15 minutes) Before School Start
+    id: start
+    trigger: template
   - value_template: >-
       {{ (now().timestamp() | timestamp_custom('%H:%M')) ==
       (today_at(states('input_datetime.school_start_today')) -
@@ -19,13 +29,10 @@ triggers:
     alias: 5 Minutes Before School Start
     id: start
     trigger: template
-  - value_template: >-
+  - alias: At School Start
+    value_template: >-
       {{ (now().timestamp() | timestamp_custom('%H:%M')) ==
-
-      (strptime(states('input_datetime.school_start_today'), '%H:%M:%S') -
-      strptime(states('input_datetime.school_start_timer'),
-      '%H:%M:%S')).total_seconds() | timestamp_custom('%H:%M', false) }}
-    alias: Timer (15 minutes) Before School Start
+      (today_at(states('input_datetime.school_start_today'))) }}
     id: start
     trigger: template
   - value_template: >-
@@ -58,6 +65,7 @@ conditions:
   - condition: state
     entity_id: group.persons
     state: home
+    enabled: true
 actions:
   - variables:
       time: "{{ now().strftime('%H:%M') }}"
@@ -70,8 +78,12 @@ actions:
           - action: script.facts_fun_fact_aleatoire
             data: {}
             response_variable: fact_result
+            enabled: false
+          - action: rest_command.fun_facts
+            data: {}
+            response_variable: fact_result
           - variables:
-              message: "{{ fact_result.fun_fact }}"
+              message: "{{ fact_result.content.funFacts }}"
       - conditions:
           - condition: template
             value_template: "{{ trigger.id in ['end_5min', 'end_10min', 'end_timer'] }}"
@@ -79,7 +91,7 @@ actions:
           - variables:
               message: |-
                 {% set end_messages = {
-                  'end_10min': "Prépare-toi à partir chercher Eliott.",
+                  'end_10min': "C'est presque l'heure d'aller chercher Eliott.",
                   'end_5min':  "Il faut partir maintenant pour être à l'heure.",
                   'end_timer': "Il faut aller chercher Eliott tout de suite."
                 } %} {{ end_messages[trigger.id] }}
@@ -92,4 +104,11 @@ actions:
       media_player: media_player.ni_oscar_ni_parents
       message: Il est {{ time }}. {{ message }}
       sncf: "{{ sncf }}"
+    enabled: true
+  - action: notify.persistent_notification
+    metadata: {}
+    data:
+      message: Il est {{ time }}. {{ message }}
+      title: "[TTS] School Start & End"
+    enabled: false
 mode: single
