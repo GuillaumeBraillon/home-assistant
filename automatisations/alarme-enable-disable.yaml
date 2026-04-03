@@ -1,0 +1,153 @@
+alias: "[Presence] Maison Present or Absent"
+description: ""
+triggers:
+  - entity_id:
+      - group.persons
+    for:
+      hours: 0
+      minutes: 0
+      seconds: 0
+    from: home
+    to: not_home
+    trigger: state
+  - entity_id:
+      - group.persons
+    for:
+      hours: 0
+      minutes: 0
+      seconds: 10
+    from: not_home
+    to: home
+    trigger: state
+conditions: []
+actions:
+  - if:
+      - condition: state
+        entity_id: group.persons
+        state: home
+    then:
+      - data: {}
+        target:
+          entity_id: alarm_control_panel.logement
+        alias: Alarm Disarmed
+        action: alarm_control_panel.alarm_disarm
+      - alias: On Mode Auto (light / shutters)
+        data: {}
+        target:
+          entity_id:
+            - input_boolean.mode_auto_chambre_enfants
+            - input_boolean.mode_auto_cuisine
+            - input_boolean.mode_auto_entree
+            - input_boolean.mode_auto_exterieur
+            - input_boolean.mode_auto_parents
+            - input_boolean.mode_auto_salon
+            - input_boolean.volets_salon_auto
+            - input_boolean.mode_automatique
+        action: input_boolean.turn_on
+      - if:
+          - alias: Online
+            condition: template
+            value_template: "{{ states('light.yeelight_mono') != 'unavailable' }}"
+        then:
+          - data: {}
+            target:
+              entity_id: input_boolean.mode_auto_oscar
+            alias: Turn on Mode Auto Oscar
+            action: input_boolean.turn_on
+        alias: "Auto Mode Oscar "
+      - if:
+          - alias: Online
+            condition: template
+            value_template: "{{states('light.yeelight_color') != 'unavailable' }}"
+        then:
+          - data: {}
+            target:
+              entity_id: input_boolean.mode_auto_eliott
+            alias: Turn on Mode Auto Éliott
+            action: input_boolean.turn_on
+        alias: "Auto Mode Eliott "
+      - alias: Trigger [Mode] Auto Mode Based on Time of Day
+        data:
+          skip_condition: false
+        target:
+          entity_id:
+            - automation.mode_by_time
+        action: automation.trigger
+      - if:
+          - condition: or
+            conditions:
+              - condition: state
+                entity_id: binary_sensor.today_is_holiday
+                state: "on"
+              - condition: state
+                entity_id: binary_sensor.today_is_weekend
+                state: "on"
+            alias: Vacances ou Weekend
+        then:
+          - alias: Trigger [Mode] Auto Mode Based on Motions (Morning)
+            data:
+              skip_condition: true
+            target:
+              entity_id:
+                - automation.mode_auto_mode_based_on_motions_morning
+            action: automation.trigger
+        alias: >-
+          Trigger [Mode] Auto Mode Based on Motions (Morning) If Vacances ou
+          Weekend
+      - alias: Désactiver Caméra Salon
+        if:
+          - condition: state
+            entity_id: input_boolean.camera_salon
+            state: "on"
+          - condition: state
+            entity_id: input_boolean.invites_active
+            state: "on"
+          - condition: template
+            value_template: "{{states('input_text.telephone_invite') !=''}}"
+            alias: If Telephone invité
+        then:
+          - metadata: {}
+            data: {}
+            target:
+              entity_id: input_boolean.camera_salon
+            action: input_boolean.turn_off
+        enabled: false
+    else:
+      - data:
+          option: Alarme
+        target:
+          entity_id: input_select.modes_maison
+        alias: Mode Alarme
+        action: input_select.select_option
+      - alias: Off Mode Auto (light / shutters)
+        data: {}
+        target:
+          entity_id:
+            - input_boolean.mode_auto_chambre_enfants
+            - input_boolean.mode_auto_cuisine
+            - input_boolean.mode_auto_eliott
+            - input_boolean.mode_auto_entree
+            - input_boolean.mode_auto_exterieur
+            - input_boolean.mode_auto_oscar
+            - input_boolean.mode_auto_parents
+            - input_boolean.mode_auto_salon
+            - input_boolean.volets_salon_auto
+        action: input_boolean.turn_off
+      - action: fan.turn_off
+        metadata: {}
+        data: {}
+        target:
+          entity_id: fan.ikea_inspelning_smart_plug
+      - data: {}
+        target:
+          entity_id: alarm_control_panel.logement
+        action: alarm_control_panel.alarm_arm_home
+      - condition: state
+        entity_id: input_boolean.camera_salon
+        state: "off"
+      - metadata: {}
+        data: {}
+        target:
+          entity_id: input_boolean.camera_salon
+        action: input_boolean.turn_on
+mode: restart

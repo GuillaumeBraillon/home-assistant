@@ -1,0 +1,89 @@
+alias: "[Assistant] Started"
+description: ""
+triggers:
+  - event: start
+    trigger: homeassistant
+  - entity_id:
+      - sensor.poids_guillaume
+      - sensor.nut_blanc_battery
+    to: unknown
+    trigger: state
+conditions: []
+actions:
+  - alias: Force Reload MiScale2
+    data: {}
+    action: rest_command.force_jeedom_mqtt
+  - data: {}
+    target:
+      entity_id: input_button.refresh_maintenant
+    alias: Refresh Maintenant
+    action: input_button.press
+  - data:
+      skip_condition: true
+    target:
+      entity_id: automation.mode_by_time
+    action: automation.trigger
+  - if:
+      - alias: Oscar Groupe And Active différents
+        condition: template
+        value_template: >
+          {{ (is_state('input_boolean.oscar_active', 'off') and 'person.oscar'
+          in state_attr('group.persons', 'entity_id')) or 
+             (is_state('input_boolean.oscar_active', 'on') and 'person.oscar' not in state_attr('group.persons', 'entity_id')) }}
+    then:
+      - data:
+          message: >-
+            Conflit entre oscar_active = "{{
+            states('input_boolean.oscar_active') }}" et Oscar in group.persons 
+            = "{{ 'person.oscar' in state_attr('group.persons', 'entity_id') }}"
+          title: "[Assistant] Started"
+        action: notify.persistent_notification
+      - target:
+          entity_id: input_boolean.oscar_active
+        data: {}
+        action: input_boolean.toggle
+  - if:
+      - alias: Nelly Groupe And Active différents
+        condition: template
+        value_template: >
+          {{ (is_state('input_boolean.nelly_active', 'off') and 'person.nelly'
+          in state_attr('group.persons', 'entity_id')) or 
+             (is_state('input_boolean.nelly_active', 'on') and 'person.nelly' not in state_attr('group.persons', 'entity_id')) }}
+    then:
+      - data:
+          message: >-
+            Conflit entre nelly_active = "{{
+            states('input_boolean.nelly_active') }}" et Nelly in group.persons 
+            = "{{ 'person.nelly' in state_attr('group.persons', 'entity_id') }}"
+          title: "[Assistant] Started"
+        action: notify.persistent_notification
+      - target:
+          entity_id: input_boolean.nelly_active
+        data: {}
+        action: input_boolean.toggle
+  - if:
+      - alias: Invités Groupe And Active différents
+        condition: template
+        value_template: >
+          {{ (is_state('input_boolean.invites_active', 'off') and
+          'person.invites' in state_attr('group.persons', 'entity_id')) or 
+             (is_state('input_boolean.invites_active', 'on') and 'person.invites' not in state_attr('group.persons', 'entity_id')) }}
+    then:
+      - data:
+          message: >-
+            Conflit entre invites_active = "{{
+            states('input_boolean.invites_active') }}" et Invités in
+            group.persons  = "{{ 'person.invites' in state_attr('group.persons',
+            'entity_id') }}"
+          title: "[Assistant] Started"
+        action: notify.persistent_notification
+      - target:
+          entity_id: input_boolean.invites_active
+        data: {}
+        action: input_boolean.toggle
+  - action: homeassistant.reload_config_entry
+    target:
+      device_id: 553f350ae6d7fe6f4ea966cd2d76fdaf
+    data: {}
+mode: queued
+max: 10

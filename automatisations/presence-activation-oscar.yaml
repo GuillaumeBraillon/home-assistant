@@ -1,0 +1,121 @@
+alias: "[Presence] Enable / Disable Persons"
+description: ""
+triggers:
+  - entity_id:
+      - person.oscar
+    id: "Oscar "
+    trigger: state
+    to: home
+  - entity_id:
+      - input_boolean.oscar_active
+    id: "Oscar "
+    trigger: state
+  - entity_id:
+      - input_boolean.nelly_active
+    id: Nelly
+    trigger: state
+  - entity_id:
+      - input_boolean.invites_active
+    id: Invités
+    trigger: state
+conditions: []
+actions:
+  - if:
+      - condition: trigger
+        id: "Oscar "
+    then:
+      - action: rest_command.force_jeedom_mqtt
+        data: {}
+    alias: Refresh Nut si Oscar
+  - choose:
+      - conditions:
+          - condition: state
+            entity_id: input_boolean.oscar_active
+            state: "on"
+          - condition: trigger
+            id: "Oscar "
+        sequence:
+          - alias: Add Oscar
+            data:
+              object_id: persons
+              name: Maison
+              icon: mdi:home-account
+              add_entities:
+                - person.oscar
+            action: group.set
+      - conditions:
+          - condition: state
+            entity_id: input_boolean.oscar_active
+            state: "off"
+          - condition: trigger
+            id: "Oscar "
+        sequence:
+          - alias: Remove Oscar
+            data:
+              object_id: persons
+              name: Maison
+              icon: mdi:home-account
+              remove_entities:
+                - person.oscar
+            action: group.set
+      - conditions:
+          - condition: state
+            entity_id: input_boolean.nelly_active
+            state: "on"
+          - condition: trigger
+            id: Nelly
+        sequence:
+          - alias: Add Nelly
+            data:
+              object_id: persons
+              name: Maison
+              icon: mdi:home-account
+              add_entities:
+                - person.nelly
+            action: group.set
+      - conditions:
+          - condition: state
+            entity_id: input_boolean.nelly_active
+            state: "off"
+          - condition: trigger
+            id: Nelly
+        sequence:
+          - alias: Remove Nelly
+            data:
+              object_id: persons
+              name: Maison
+              icon: mdi:home-account
+              remove_entities:
+                - person.nelly
+            action: group.set
+      - conditions:
+          - condition: state
+            entity_id: input_boolean.invites_active
+            state: "on"
+          - condition: trigger
+            id: Invités
+        sequence:
+          - alias: Add Invités
+            data:
+              object_id: persons
+              name: Maison
+              icon: mdi:home-account
+              add_entities:
+                - person.invites
+            action: group.set
+      - conditions:
+          - condition: state
+            entity_id: input_boolean.invites_active
+            state: "off"
+          - condition: trigger
+            id: Invités
+        sequence:
+          - alias: Remove Invités
+            data:
+              object_id: persons
+              name: Maison
+              icon: mdi:home-account
+              remove_entities:
+                - person.invites
+            action: group.set
+mode: restart
