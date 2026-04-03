@@ -2,7 +2,7 @@
 
 ## Description
 
-Automatisation de question interactive pour savoir si Oscar est seul à la maison quand ses clés sont actives et que les parents ne sont pas présents.
+Automatisation de question interactive pour savoir si Oscar est seul à la maison quand son statut de présence est actif et que les parents ne sont pas présents.
 
 Le nom historique contient encore `SMS`, mais le mécanisme repose maintenant sur des notifications mobiles interactives.
 
@@ -18,24 +18,27 @@ Changement d'état sur :
 
 La question est posée si :
 
-- les clés d'Oscar sont actives (`input_boolean.oscar_active == on`)
+- le statut d'Oscar est actif (`input_boolean.oscar_active == on`)
 - Oscar est à la maison
 - les parents ne sont pas à la maison
-- le déclencheur correspond à un vrai changement d'état
+- et qu'un événement utile se produit :
+- retour d'Oscar à `home`
+- ou départ de `home` d'un des parents
 
 ## Flux
 
 1. Envoi d'une question interactive à `guillaume`, `nelly` et `oscar`
 2. Attente d'une réponse via `script.notify_ask_mobile`
-3. Si timeout : notification de suivi et désactivation des clés d'Oscar
+3. Si timeout : notification de suivi et désactivation du statut d'Oscar
 4. Si réponse `yes` : notification de suivi, sans activer l'alarme
-5. Si réponse `no` : notification de suivi et désactivation des clés d'Oscar
+5. Si réponse `no` : notification de suivi et désactivation du statut d'Oscar
+6. Si Oscar revient à `home` alors que son statut est inactif : réactivation de `input_boolean.oscar_active`
 
 ## Réponses
 
 - `yes` = Oscar est bien seul à la maison, on ne change rien
-- `no` = Oscar n'est pas à la maison, on peut désactiver ses clés
-- `timeout` = pas de réponse, on désactive les clés
+- `no` = Oscar n'est pas à la maison, on peut désactiver son statut
+- `timeout` = pas de réponse, on désactive son statut
 
 ## Scripts utilisés
 
@@ -48,4 +51,3 @@ La question est posée si :
 - `person.nelly`
 - `person.oscar`
 - `input_boolean.oscar_active`
-- `button.change_presence_nut_oscar`

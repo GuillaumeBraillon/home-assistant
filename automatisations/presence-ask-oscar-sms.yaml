@@ -1,5 +1,5 @@
 alias: "[Presence] ASK SMS Oscar"
-description: Gestion alarme selon présence d'Oscar et ses clés
+description: Gestion alarme selon présence d'Oscar et son statut actif
 triggers:
   - entity_id:
       - person.guillaume
@@ -16,19 +16,32 @@ actions:
         {{ is_state('person.guillaume', 'home') or is_state('person.nelly',
         'home') }}
       oscar_home: "{{ is_state('person.oscar', 'home') }}"
-      oscar_keys: "{{ is_state('input_boolean.oscar_active', 'on') }}"
+      oscar_actif: "{{ is_state('input_boolean.oscar_active', 'on') }}"
   - choose:
       - conditions:
           - condition: template
             value_template: |-
               {{
-                oscar_keys
+                oscar_actif
                 and oscar_home
                 and not parents_home
+                and (
+                  (
+                    trigger.entity_id == 'person.oscar'
+                    and trigger.from_state.state != 'home'
+                    and trigger.to_state.state == 'home'
+                  )
+                  or (
+                    trigger.entity_id in ['person.guillaume', 'person.nelly']
+                    and trigger.from_state.state == 'home'
+                    and trigger.to_state.state != 'home'
+                  )
+                )
                 and trigger.from_state is not none
                 and trigger.to_state is not none
                 and trigger.from_state.state != trigger.to_state.state
               }}
+            alias: Ask if Oscar Is Alone
         sequence:
           - action: script.notify_ask_mobile
             data:
@@ -51,10 +64,12 @@ actions:
                 {% if respondent == 'guillaume' %}Papa {% elif respondent ==
                 'nelly' %}Maman {% elif respondent == 'oscar' %}Oscar {% else
                 %}Inconnu {% endif %}
-          - choose:
+          - alias: Handle Responses
+            choose:
               - conditions:
                   - condition: template
                     value_template: "{{ ask_result.answer == 'timeout' }}"
+                    alias: Timeout
                 sequence:
                   - repeat:
                       for_each: "{{ notify_targets }}"
@@ -72,6 +87,7 @@ actions:
               - conditions:
                   - condition: template
                     value_template: "{{ ask_result.answer == 'yes' }}"
+                    alias: Confirmed Alone
                 sequence:
                   - repeat:
                       for_each: "{{ notify_targets }}"
@@ -88,6 +104,7 @@ actions:
               - conditions:
                   - condition: template
                     value_template: "{{ ask_result.answer == 'no' }}"
+                    alias: Not Home
                 sequence:
                   - repeat:
                       for_each: "{{ notify_targets }}"
@@ -98,21 +115,30 @@ actions:
                             title: "[Présence]"
                             message: >-
                               {{ respondent_name }} a dit qu'Oscar n'est pas à
-                              la maison, je désactive ses clés pour activer
+                              la maison, je désactive son statut pour activer
                               l'alarme.
                             icon: mdi:account-cancel-outline
                             channel: presence
                   - target:
                       entity_id: input_boolean.oscar_active
                     action: input_boolean.turn_off
-                  - target:
-                      entity_id: button.change_presence_nut_oscar
-                    action: button.press
       - conditions:
           - condition: template
-            value_template: "{{ not oscar_keys }}"
+            value_template: |-
+              {{
+                not oscar_actif
+                and oscar_home
+                and trigger.entity_id == 'person.oscar'
+                and trigger.from_state is not none
+                and trigger.to_state is not none
+                and trigger.from_state.state != 'home'
+                and trigger.to_state.state == 'home'
+                and trigger.from_state.state != trigger.to_state.state
+              }}
+            alias: Reactivate Oscar on Return Home
         sequence:
           - target:
               entity_id: input_boolean.oscar_active
             action: input_boolean.turn_on
+            data: {}
 mode: single

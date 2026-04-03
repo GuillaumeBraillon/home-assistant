@@ -1,24 +1,28 @@
 alias: "[Presence] Sync Oscar Keys From Phone"
-description: "Force les clés d'Oscar à absent quand son téléphone est absent en GPS et en Wi-Fi."
-mode: single
+description: >-
+  Désactive oscar_active quand le téléphone d'Oscar est absent en GPS et sur
+  ses deux sources Wi-Fi.
 triggers:
   - trigger: state
     entity_id:
-      - device_tracker.samsung_e10
       - device_tracker.a55_de_oscar
-    to: "not_home"
+      - device_tracker.nmap_tracker_1a_d6_c6_43_dc_ff
+      - device_tracker.samsung_a55
+    to: not_home
     for:
       minutes: 5
 conditions:
   - condition: state
-    entity_id: device_tracker.samsung_e10
-    state: "not_home"
+    entity_id: device_tracker.samsung_a55
+    state: not_home
   - condition: state
     entity_id: device_tracker.a55_de_oscar
-    state: "not_home"
-  - condition: template
-    value_template: "{{ states('device_tracker.nut_vert_presence') != 'not_home' }}"
+    state: not_home
+  - condition: state
+    entity_id: device_tracker.nmap_tracker_1a_d6_c6_43_dc_ff
+    state: not_home
 actions:
-  - action: button.press
+  - action: input_boolean.turn_off
     target:
-      entity_id: button.change_presence_nut_oscar
+      entity_id: input_boolean.oscar_active
+mode: single
