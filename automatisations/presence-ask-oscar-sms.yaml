@@ -122,23 +122,4 @@ actions:
                   - target:
                       entity_id: input_boolean.oscar_active
                     action: input_boolean.turn_off
-      - conditions:
-          - condition: template
-            value_template: |-
-              {{
-                not oscar_actif
-                and oscar_home
-                and trigger.entity_id == 'person.oscar'
-                and trigger.from_state is not none
-                and trigger.to_state is not none
-                and trigger.from_state.state != 'home'
-                and trigger.to_state.state == 'home'
-                and trigger.from_state.state != trigger.to_state.state
-              }}
-            alias: Reactivate Oscar on Return Home
-        sequence:
-          - target:
-              entity_id: input_boolean.oscar_active
-            action: input_boolean.turn_on
-            data: {}
 mode: single

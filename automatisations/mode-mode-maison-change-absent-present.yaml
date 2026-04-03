@@ -61,8 +61,10 @@ actions:
           - alias: "Turn On : [Mode] Auto Mode Based on Motions (Morning)"
             if:
               - condition: template
-                value_template: "{{ is_state('automation.mode_auto_mode_based_on_motions_morning',
-                  'off') }}"
+                value_template: >-
+                  {{
+                  is_state('automation.mode_auto_mode_based_on_motions_morning',
+                  'off') }}
                 alias: IF [Mode] Auto Mode Based on Motions (Morning) Is OFF
             then:
               - target:
@@ -108,8 +110,9 @@ actions:
           - if:
               - alias: Volets Salon < 40%
                 condition: template
-                value_template: "{{state_attr('cover.volets_salon_state', 'current_position')
-                  | int < 40}}"
+                value_template: >-
+                  {{state_attr('cover.volets_salon_state', 'current_position') |
+                  int < 40}}
             then:
               - alias: Volets Salon 40%
                 data:
@@ -124,8 +127,9 @@ actions:
                 state: "on"
                 alias: Mode Auto Parents is 'Activé'
               - condition: template
-                value_template: "{{state_attr('cover.volets_parents_state', 'current_position')
-                  | int < 25}}"
+                value_template: >-
+                  {{state_attr('cover.volets_parents_state', 'current_position')
+                  | int < 25}}
                 alias: Volets Parents < 25%
             then:
               - data:
@@ -149,8 +153,9 @@ actions:
             then:
               - if:
                   - condition: template
-                    value_template: "{{state_attr('cover.volets_salon_state', 'current_position')
-                      | int < 40}}"
+                    value_template: >-
+                      {{state_attr('cover.volets_salon_state',
+                      'current_position') | int < 40}}
                     alias: Volets Salon < 40%
                 then:
                   - data:
@@ -163,8 +168,9 @@ actions:
                 enabled: true
               - if:
                   - condition: template
-                    value_template: "{{state_attr('cover.volets_parents_state', 'current_position')
-                      | int < 25}}"
+                    value_template: >-
+                      {{state_attr('cover.volets_parents_state',
+                      'current_position') | int < 25}}
                     alias: Volets Parents < 25%
                   - condition: state
                     entity_id: input_boolean.mode_auto_parents
@@ -181,8 +187,9 @@ actions:
             else:
               - if:
                   - condition: template
-                    value_template: "{{state_attr('cover.volets_salon_state', 'current_position')
-                      | int < 100}}"
+                    value_template: >-
+                      {{state_attr('cover.volets_salon_state',
+                      'current_position') | int < 100}}
                     alias: Volets Salon < 100%
                 then:
                   - data:
@@ -193,8 +200,9 @@ actions:
                     action: cover.set_cover_position
               - if:
                   - condition: template
-                    value_template: "{{state_attr('cover.volets_parents_state', 'current_position')
-                      | int < 100}}"
+                    value_template: >-
+                      {{state_attr('cover.volets_parents_state',
+                      'current_position') | int < 100}}
                     alias: Volets Parents < 100%
                   - condition: state
                     entity_id: input_boolean.mode_auto_parents
@@ -210,8 +218,9 @@ actions:
                 alias: " Mode Auto Parents is 'Activé' & Volets Parents < 100%"
               - if:
                   - condition: template
-                    value_template: "{{state_attr('cover.volets_oscar_state', 'current_position')
-                      | int < 50}}"
+                    value_template: >-
+                      {{state_attr('cover.volets_oscar_state',
+                      'current_position') | int < 50}}
                     alias: Volets Oscar < 50%
                   - condition: state
                     entity_id: input_boolean.mode_auto_oscar
@@ -227,8 +236,9 @@ actions:
                 alias: " Mode Auto Oscar is 'Activé' & Volets Oscar < 50%"
               - if:
                   - condition: template
-                    value_template: "{{state_attr('cover.volets_eliott_state', 'current_position')
-                      | int < 50}}"
+                    value_template: >-
+                      {{state_attr('cover.volets_eliott_state',
+                      'current_position') | int < 50}}
                     alias: Volets Eliott < 50%
                   - condition: state
                     entity_id: input_boolean.mode_auto_eliott
@@ -246,8 +256,10 @@ actions:
           - alias: "Turn Off : [Mode] Auto Mode Based on Motions (Morning)"
             if:
               - condition: template
-                value_template: "{{ is_state('automation.mode_auto_mode_based_on_motions_morning',
-                  'on') }}"
+                value_template: >-
+                  {{
+                  is_state('automation.mode_auto_mode_based_on_motions_morning',
+                  'on') }}
                 alias: IF [Mode] Auto Mode Based on Motions (Morning) Is ON
             then:
               - data:
@@ -271,8 +283,9 @@ actions:
             action: cover.close_cover
           - if:
               - condition: template
-                value_template: "{{state_attr('cover.volets_salon_state', 'current_position')
-                  | int > 40}}"
+                value_template: >-
+                  {{state_attr('cover.volets_salon_state', 'current_position') |
+                  int > 40}}
                 alias: Volets Salon > 40%
             then:
               - data:
@@ -335,8 +348,10 @@ actions:
           - alias: "Turn On : [Mode] Auto Mode Based on Motions (Morning)"
             if:
               - condition: template
-                value_template: "{{ is_state('automation.mode_auto_mode_based_on_motions_morning',
-                  'off') }}"
+                value_template: >-
+                  {{
+                  is_state('automation.mode_auto_mode_based_on_motions_morning',
+                  'off') }}
                 alias: IF [Mode] Auto Mode Based on Motions (Morning) Is OFF
             then:
               - target:
@@ -365,8 +380,9 @@ actions:
                 entity_id: binary_sensor.motion_outside_occupancy
                 state: "on"
               - condition: template
-                value_template: "{{ state_attr('cover.volets_salon_state','current_position')
-                  > 40}}"
+                value_template: >-
+                  {{ state_attr('cover.volets_salon_state','current_position') >
+                  40}}
                 alias: current_position > 35
             then:
               - wait_for_trigger:
@@ -393,8 +409,9 @@ actions:
                 entity_id: input_boolean.volets_salon_auto
                 state: "on"
               - condition: template
-                value_template: "{{ state_attr('cover.volets_salon_state','current_position')
-                  > 40}}"
+                value_template: >-
+                  {{ state_attr('cover.volets_salon_state','current_position') >
+                  40}}
                 alias: current_position > 35
               - data:
                   position: 40
@@ -437,8 +454,9 @@ actions:
       - alias: "Turn Off : [Mode] Auto Mode Based on Motions (Morning)"
         if:
           - condition: template
-            value_template: "{{ is_state('automation.mode_auto_mode_based_on_motions_morning',
-              'on') }}"
+            value_template: >-
+              {{ is_state('automation.mode_auto_mode_based_on_motions_morning',
+              'on') }}
             alias: IF [Mode] Auto Mode Based on Motions (Morning) Is ON
           - condition: not
             conditions:
@@ -498,7 +516,9 @@ actions:
                 data:
                   cache: true
                   media_player_entity_id: media_player.toutes_les_enceintes
-                  message: Le nettoyage n'est pas fini, je retourne à ma base dans 2 minutes.
+                  message: >-
+                    Le nettoyage n'est pas fini, je retourne à ma base dans 2
+                    minutes.
               - delay:
                   hours: 0
                   minutes: 5
@@ -506,8 +526,9 @@ actions:
                   milliseconds: 0
               - if:
                   - condition: template
-                    value_template: "{{ not is_state('vacuum.dreamebot_d10_plus', 'cleaning')
-                      }}"
+                    value_template: >-
+                      {{ not is_state('vacuum.dreamebot_d10_plus', 'cleaning')
+                      }}
                     alias: Aspirateur Not Cleaning
                 then:
                   - data: {}
@@ -524,31 +545,12 @@ actions:
         data:
           stop_actions: true
         target:
-          entity_id: automation.alarm_simulation_presence
+          entity_id: automation.alarm_simulation_presence_v2
         action: automation.turn_off
       - action: input_boolean.turn_on
         metadata: {}
         data: {}
         target:
           entity_id: input_boolean.nelly_active
-      - if:
-          - condition: or
-            conditions:
-              - condition: state
-                entity_id: device_tracker.a55_de_oscar
-                state: home
-              - condition: state
-                entity_id: device_tracker.nmap_tracker_1a_d6_c6_43_dc_ff
-                state: home
-              - condition: state
-                entity_id: device_tracker.samsung_a55
-                state:
-                  - home
-        then:
-          - action: input_boolean.turn_on
-            metadata: {}
-            data: {}
-            target:
-              entity_id: input_boolean.oscar_active
 mode: queued
 max: 10

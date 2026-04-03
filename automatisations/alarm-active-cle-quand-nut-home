@@ -3,7 +3,6 @@ description: ""
 triggers:
   - trigger: state
     entity_id:
-      - device_tracker.nut_vert_presence
       - device_tracker.nut_rose_presence
     from: not_home
     to: home
@@ -11,32 +10,16 @@ conditions:
   - condition: state
     entity_id: input_select.modes_maison
     state: Alarme
+  - condition: state
+    entity_id: device_tracker.nut_rose_presence
+    state: home
+  - condition: state
+    entity_id: input_boolean.nelly_active
+    state: "off"
 actions:
-  - choose:
-      - conditions:
-          - condition: state
-            entity_id: device_tracker.nut_vert_presence
-            state: home
-          - condition: state
-            entity_id: input_boolean.oscar_active
-            state: "off"
-        sequence:
-          - action: input_boolean.turn_on
-            metadata: {}
-            data: {}
-            target:
-              entity_id: input_boolean.oscar_active
-      - conditions:
-          - condition: state
-            entity_id: device_tracker.nut_rose_presence
-            state: home
-          - condition: state
-            entity_id: input_boolean.nelly_active
-            state: "off"
-        sequence:
-          - action: input_boolean.turn_on
-            metadata: {}
-            data: {}
-            target:
-              entity_id: input_boolean.oscar_active
+  - action: input_boolean.turn_on
+    metadata: {}
+    data: {}
+    target:
+      entity_id: input_boolean.nelly_active
 mode: single
