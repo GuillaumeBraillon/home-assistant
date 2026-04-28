@@ -25,12 +25,6 @@ actions:
           - entity_id: all
             alias: Off All Lights
             action: light.turn_off
-          - data: {}
-            target:
-              entity_id:
-                - switch.plug_bathroom
-            alias: Off Prise Salle de bain
-            action: switch.turn_off
           - alias: Off All Google home
             enabled: true
             data: {}
@@ -44,10 +38,28 @@ actions:
                 - media_player.tout_sauf_enfants
                 - media_player.tout_sauf_salon
                 - media_player.toutes_les_enceintes
-                - media_player.toutes_les_pieces
                 - media_player.tout_sauf_parents
                 - media_player.google_home_oscar
-                - media_player.mi_smart_speaker3646
+                - media_player.mi_smart_home_salon
+                - media_player.freebox_player_pop
+                - media_player.freebox
+                - media_player.mi_box_3_2
+                - media_player.tele_chambre_parents
+                - media_player.xbox
+              device_id:
+                - 495f599191fa1de53c030211bc6695b6
+                - a48bcc9ff18e18f012e047407b585316
+                - 0309eee8ed4a02573806b043665838aa
+                - b1e3488820ec7b40f209e2f2d7a5bf2a
+                - c3e610a40f7eecd1eddce25ab5e2ece4
+                - dc909c1a75575e1adb040b8974e2ac16
+                - 3f61a43c1b03e802fb8aacc8e48dc7c1
+                - 101fb5281996a4b51e9011137fcae500
+                - bc13ce742a1a3cc6ff65bd611e6f1c3c
+                - 39dc98a244e3e795fb2930610abd4738
+                - fd6851dcfc27615a41b5f7593b645742
+                - 4bf3e6e12978d589e75abd2d416daaed
+                - e0c1313f39ed59441b6d017b53e07ef5
             action: media_player.turn_off
           - type: turn_on
             device_id: 70493a3eed3e8982aa5e61cd565f4a1b
@@ -107,56 +119,39 @@ actions:
             target:
               entity_id: input_text.notifications
             action: input_text.set_value
-          - if:
-              - alias: Volets Salon < 40%
-                condition: template
-                value_template: >-
-                  {{state_attr('cover.volets_salon_state', 'current_position') |
-                  int < 40}}
-            then:
-              - alias: Volets Salon 40%
-                data:
-                  position: 40
-                target:
-                  entity_id: cover.volets_salon_state
-                action: cover.set_cover_position
-            enabled: true
-          - if:
-              - condition: state
-                entity_id: input_boolean.mode_auto_parents
-                state: "on"
-                alias: Mode Auto Parents is 'Activé'
-              - condition: template
-                value_template: >-
-                  {{state_attr('cover.volets_parents_state', 'current_position')
-                  | int < 25}}
-                alias: Volets Parents < 25%
-            then:
-              - data:
-                  position: 25
-                target:
-                  entity_id:
-                    - cover.volets_parents_state
-                alias: Volets Parents 25%
-                action: cover.set_cover_position
-            alias: Mode Auto Parents is 'Activé' & Volets Parents < 25%
+          - action: script.volets_ajuster_volets_selon_mode
+            metadata: {}
+            data: {}
       - conditions:
           - condition: state
             entity_id: input_select.modes_maison
             state: Journée
             alias: "Mode Journée "
         sequence:
-          - if:
+          - action: script.volets_ajuster_volets_selon_mode
+            metadata: {}
+            data: {}
+          - alias: Volets Salon & Parents
+            if:
               - condition: template
                 value_template: "{{ is_state('sun.sun', 'below_horizon') }}"
-                alias: Sun Down
+                alias: Si le soleil est couché
             then:
-              - if:
+              - alias: Mode Volet Auto & Volets Salon < 40% & Motion
+                if:
                   - condition: template
                     value_template: >-
                       {{state_attr('cover.volets_salon_state',
                       'current_position') | int < 40}}
                     alias: Volets Salon < 40%
+                  - condition: state
+                    entity_id: binary_sensor.motion_living_room_occupancy
+                    state:
+                      - "on"
+                  - condition: state
+                    entity_id: input_boolean.volets_salon_auto
+                    state:
+                      - "on"
                 then:
                   - data:
                       position: 40
@@ -164,18 +159,22 @@ actions:
                       entity_id: cover.volets_salon_state
                     alias: Volets Salon 40%
                     action: cover.set_cover_position
-                alias: Volets Salon < 40%
                 enabled: true
-              - if:
+              - alias: " Mode Auto Parents is 'Activé' & Volets Parents < 25% & motion"
+                if:
+                  - condition: state
+                    entity_id: binary_sensor.motion_parents_occupancy
+                    state:
+                      - "on"
+                  - condition: state
+                    entity_id: input_boolean.mode_auto_parents
+                    state: "on"
+                    alias: Mode Auto Parents is 'Activé'
                   - condition: template
                     value_template: >-
                       {{state_attr('cover.volets_parents_state',
                       'current_position') | int < 25}}
                     alias: Volets Parents < 25%
-                  - condition: state
-                    entity_id: input_boolean.mode_auto_parents
-                    state: "on"
-                    alias: Mode Auto Parents is 'Activé'
                 then:
                   - data:
                       position: 25
@@ -183,14 +182,22 @@ actions:
                       entity_id: cover.volets_parents_state
                     alias: Volets Parents 25%
                     action: cover.set_cover_position
-                alias: " Mode Auto Parents is 'Activé' & Volets Parents < 25%"
             else:
-              - if:
+              - alias: Mode Volet Auto & Volets Salon < 100% & Motion
+                if:
+                  - condition: state
+                    entity_id: input_boolean.volets_salon_auto
+                    state:
+                      - "on"
                   - condition: template
                     value_template: >-
                       {{state_attr('cover.volets_salon_state',
                       'current_position') | int < 100}}
                     alias: Volets Salon < 100%
+                  - condition: state
+                    entity_id: binary_sensor.motion_living_room_occupancy
+                    state:
+                      - "on"
                 then:
                   - data:
                       position: 100
@@ -198,16 +205,21 @@ actions:
                       entity_id: cover.volets_salon_state
                     alias: Volets Salon 100%
                     action: cover.set_cover_position
-              - if:
+              - alias: " Mode Auto Parents is 'Activé' & Volets Parents < 100% & Motion "
+                if:
+                  - condition: state
+                    entity_id: binary_sensor.motion_parents_occupancy
+                    state:
+                      - "on"
+                  - condition: state
+                    entity_id: input_boolean.mode_auto_parents
+                    state: "on"
+                    alias: Mode Auto Parents is 'Activé'
                   - condition: template
                     value_template: >-
                       {{state_attr('cover.volets_parents_state',
                       'current_position') | int < 100}}
                     alias: Volets Parents < 100%
-                  - condition: state
-                    entity_id: input_boolean.mode_auto_parents
-                    state: "on"
-                    alias: Mode Auto Parents is 'Activé'
                 then:
                   - data:
                       position: 100
@@ -215,17 +227,21 @@ actions:
                       entity_id: cover.volets_parents_state
                     alias: Volets Parents 100%
                     action: cover.set_cover_position
-                alias: " Mode Auto Parents is 'Activé' & Volets Parents < 100%"
-              - if:
+              - alias: " Mode Auto Oscar is 'Activé' & Volets Oscar < 50% & motion"
+                if:
+                  - condition: state
+                    entity_id: input_boolean.mode_auto_oscar
+                    state: "on"
+                    alias: Mode Auto Oscar is 'Activé'
+                  - condition: state
+                    entity_id: binary_sensor.motion_oscar_occupancy
+                    state:
+                      - "on"
                   - condition: template
                     value_template: >-
                       {{state_attr('cover.volets_oscar_state',
                       'current_position') | int < 50}}
                     alias: Volets Oscar < 50%
-                  - condition: state
-                    entity_id: input_boolean.mode_auto_oscar
-                    state: "on"
-                    alias: Mode Auto Oscar is 'Activé'
                 then:
                   - data:
                       position: 50
@@ -233,26 +249,6 @@ actions:
                       entity_id: cover.volets_oscar_state
                     alias: Volets Oscar 50%
                     action: cover.set_cover_position
-                alias: " Mode Auto Oscar is 'Activé' & Volets Oscar < 50%"
-              - if:
-                  - condition: template
-                    value_template: >-
-                      {{state_attr('cover.volets_eliott_state',
-                      'current_position') | int < 50}}
-                    alias: Volets Eliott < 50%
-                  - condition: state
-                    entity_id: input_boolean.mode_auto_eliott
-                    state: "on"
-                    alias: Mode Auto Eliott is 'Activé'
-                then:
-                  - data:
-                      position: 50
-                    target:
-                      entity_id: cover.volets_eliott_state
-                    alias: Volets Eliott 50%
-                    action: cover.set_cover_position
-                alias: " Mode Auto Eliott is 'Activé' & Volets Eliott < 50%"
-            alias: Volets Salon & Parents
           - alias: "Turn Off : [Mode] Auto Mode Based on Motions (Morning)"
             if:
               - condition: template
@@ -281,20 +277,9 @@ actions:
                 - cover.volets_parents_state
             alias: Close Volets Eliott, Oscar, Parents
             action: cover.close_cover
-          - if:
-              - condition: template
-                value_template: >-
-                  {{state_attr('cover.volets_salon_state', 'current_position') |
-                  int > 40}}
-                alias: Volets Salon > 40%
-            then:
-              - data:
-                  position: 40
-                target:
-                  entity_id: cover.volets_salon_state
-                alias: Volets Salon 40%
-                action: cover.set_cover_position
-            alias: Volets Salon > 40%
+          - action: script.volets_ajuster_volets_selon_mode
+            metadata: {}
+            data: {}
       - conditions:
           - condition: state
             entity_id: input_select.modes_maison
@@ -315,36 +300,9 @@ actions:
                 - cover.volets_oscar_state
                 - cover.volets_parents_state
             action: cover.close_cover
-          - if:
-              - condition: state
-                entity_id: binary_sensor.motion_outside_occupancy
-                state: "on"
-            then:
-              - wait_for_trigger:
-                  - entity_id:
-                      - binary_sensor.motion_outside_occupancy
-                    from: "on"
-                    to: "off"
-                    trigger: state
-                alias: Wait until there is no motion
-                continue_on_timeout: false
-              - delay:
-                  hours: 0
-                  minutes: "{{ states('input_number.now_light_delay_off')|int}}"
-                  seconds: 0
-                  milliseconds: 0
-                alias: Wait the number of seconds that has been set
-              - data: {}
-                target:
-                  entity_id:
-                    - cover.volets_salon_state
-                action: cover.close_cover
-            else:
-              - data: {}
-                target:
-                  entity_id: cover.volets_salon_state
-                action: cover.close_cover
-            alias: Fermer Volets Salon
+          - action: script.volets_ajuster_volets_selon_mode
+            metadata: {}
+            data: {}
           - alias: "Turn On : [Mode] Auto Mode Based on Motions (Morning)"
             if:
               - condition: template
@@ -372,52 +330,9 @@ actions:
                 - cover.volets_parents_state
             alias: Close Volets Eliott, Oscar, Parents
             action: cover.close_cover
-          - if:
-              - condition: state
-                entity_id: input_boolean.volets_salon_auto
-                state: "on"
-              - condition: state
-                entity_id: binary_sensor.motion_outside_occupancy
-                state: "on"
-              - condition: template
-                value_template: >-
-                  {{ state_attr('cover.volets_salon_state','current_position') >
-                  40}}
-                alias: current_position > 35
-            then:
-              - wait_for_trigger:
-                  - entity_id:
-                      - binary_sensor.motion_outside_occupancy
-                    from: "on"
-                    to: "off"
-                    trigger: state
-                alias: Wait until there is no motion
-                continue_on_timeout: false
-              - delay:
-                  hours: 0
-                  minutes: "{{ states('input_number.now_light_delay_off')|int}}"
-                  seconds: 0
-                  milliseconds: 0
-                alias: Wait the number of seconds that has been set
-              - data:
-                  position: 40
-                target:
-                  entity_id: cover.volets_salon_state
-                action: cover.set_cover_position
-            else:
-              - condition: state
-                entity_id: input_boolean.volets_salon_auto
-                state: "on"
-              - condition: template
-                value_template: >-
-                  {{ state_attr('cover.volets_salon_state','current_position') >
-                  40}}
-                alias: current_position > 35
-              - data:
-                  position: 40
-                target:
-                  entity_id: cover.volets_salon_state
-                action: cover.set_cover_position
+          - action: script.volets_ajuster_volets_selon_mode
+            metadata: {}
+            data: {}
           - data:
               value: unknown
             target:
@@ -429,17 +344,30 @@ actions:
             state: Soirée Invités
             alias: "Mode Soirée Invités "
         sequence:
-          - data: {}
+          - alias: Turn off Mode Auto Cuisine, Extérieur, Salon
+            data: {}
             target:
               entity_id:
                 - input_boolean.mode_auto_cuisine
                 - input_boolean.mode_auto_exterieur
                 - input_boolean.mode_auto_salon
-            alias: Turn off Mode Auto Cuisine, Extérieur, Salon
+                - input_boolean.volets_salon_auto
+                - input_boolean.mode_auto_chambre_enfants
+                - input_boolean.mode_auto_parents
             action: input_boolean.turn_off
-          - entity_id: all
-            alias: On All Lights
+          - alias: On All Lights
             action: light.turn_on
+            data: {}
+            target:
+              area_id:
+                - entree
+                - chambre_parents
+                - cuisine
+                - salon
+                - exterieur
+                - chambre_des_enfants
+                - chambre_d_oscar
+                - chambre_d_eliott
           - data:
               value: unknown
             target:
@@ -470,10 +398,21 @@ actions:
             target:
               entity_id: automation.mode_auto_mode_based_on_motions_morning
             action: automation.turn_off
-      - data: {}
+      - type: turn_off
+        device_id: 70493a3eed3e8982aa5e61cd565f4a1b
+        entity_id: 00bf52948404627e2c01efb5298a23b9
+        domain: switch
+      - metadata: {}
+        data:
+          stop_actions: true
         target:
-          entity_id: input_boolean.simulation_de_presence
-        action: input_boolean.turn_off
+          entity_id: automation.alarm_simulation_presence_v2
+        action: automation.turn_off
+      - action: input_boolean.turn_on
+        metadata: {}
+        data: {}
+        target:
+          entity_id: input_boolean.nelly_active
       - alias: Aspirateur not sur Base
         choose:
           - conditions:
@@ -484,14 +423,18 @@ actions:
               - alias: Attendre Porte entrée change de Fermé à Ouvert ou 5 minutes
                 wait_for_trigger:
                   - entity_id:
+                      - binary_sensor.motion_hall_occupancy
                       - binary_sensor.motion_kitchen_occupancy
-                    to: "on"
+                      - binary_sensor.magnet_hall_contact
+                    to:
+                      - "on"
                     trigger: state
                 timeout:
                   hours: 0
-                  minutes: 1
+                  minutes: 5
                   seconds: 0
                   milliseconds: 0
+                continue_on_timeout: true
               - data: {}
                 target:
                   device_id: 70493a3eed3e8982aa5e61cd565f4a1b
@@ -537,20 +480,5 @@ actions:
                     action: vacuum.return_to_base
                 alias: Aspirateur Not Cleaning
             alias: SI l'aspirateur n'est pas sur sa base
-      - type: turn_off
-        device_id: 70493a3eed3e8982aa5e61cd565f4a1b
-        entity_id: 00bf52948404627e2c01efb5298a23b9
-        domain: switch
-      - metadata: {}
-        data:
-          stop_actions: true
-        target:
-          entity_id: automation.alarm_simulation_presence_v2
-        action: automation.turn_off
-      - action: input_boolean.turn_on
-        metadata: {}
-        data: {}
-        target:
-          entity_id: input_boolean.nelly_active
 mode: queued
 max: 10

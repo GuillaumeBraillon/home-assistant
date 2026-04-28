@@ -1,0 +1,70 @@
+sequence:
+  - wait_template: "{{ is_state('binary_sensor.motion_living_room_occupancy', 'on')}}"
+    continue_on_timeout: true
+    alias: Attendre un mouvement dans le salon
+  - condition: state
+    state:
+      - "on"
+    entity_id: input_boolean.volets_salon_auto
+  - alias: Set Position by mode
+    choose:
+      - conditions:
+          - alias: Mode Journée ET soleil couché OU Soir OU Soirée TV
+            condition: or
+            conditions:
+              - condition: template
+                value_template: "{{ is_state('input_select.modes_maison', 'Soir') }}"
+                alias: Mode Soir
+              - condition: template
+                value_template: "{{ is_state('input_select.modes_maison', 'Soirée TV') }}"
+                alias: Mode Soirée TV
+              - condition: and
+                conditions:
+                  - condition: template
+                    value_template: "{{ is_state('input_select.modes_maison', 'Journée') }}"
+                    alias: Mode Journée
+                  - condition: template
+                    value_template: "{{ is_state('sun.sun', 'below_horizon') }}"
+                    alias: Sun Down
+                alias: Mode Journée & Soleil couché
+        sequence:
+          - alias: Volets Salon 40%
+            data:
+              position: 40
+            target:
+              entity_id: cover.volets_salon_state
+            enabled: true
+            action: cover.set_cover_position
+        alias: "Mode Journée & Soleil couché OU Soir OU Soirée TV "
+      - conditions:
+          - condition: template
+            value_template: "{{ is_state('input_select.modes_maison', 'Journée') }}"
+            alias: Mode Journée
+          - alias: Sun Up
+            condition: template
+            value_template: "{{ is_state('sun.sun', 'above_horizon') }}"
+        sequence:
+          - alias: Volets Salon 100%
+            data:
+              position: 100
+            target:
+              entity_id: cover.volets_salon_state
+            enabled: true
+            action: cover.set_cover_position
+        alias: Mode Journée & Soleil levé
+      - conditions:
+          - condition:
+              - condition: template
+                value_template: "{{ is_state('input_select.modes_maison', 'Nuit') }}"
+            alias: Mode Nuit
+        sequence:
+          - data: {}
+            target:
+              entity_id: cover.volets_salon_state
+            alias: Close Volets Salon
+            enabled: true
+            action: cover.close_cover
+alias: "[Volets] Ajuster Volets Salon selon Mode"
+description: >-
+  Ce script ajuste la position des volets du salon en fonction du mode de la
+  maison (Journée, Soir, Soirée TV, Nuit).

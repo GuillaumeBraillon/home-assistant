@@ -1,46 +1,46 @@
 alias: "[Shutters] Chambre Éliott "
-description: ''
-trigger:
-- platform: state
-  entity_id:
-  - binary_sensor.motion_eliott_occupancy
-  from: 'off'
-  to: 'on'
-  enabled: false
-- platform: state
-  entity_id:
-  - input_boolean.mode_auto_eliott
-  from: 'off'
-  to: 'on'
-condition:
-- condition: state
-  entity_id: binary_sensor.motion_eliott_occupancy
-  state: 'on'
-  enabled: false
-- condition: state
-  entity_id: input_boolean.mode_auto_eliott
-  state: 'on'
-action:
-- alias: Set Position by mode
-  choose:
-  - conditions:
-    - condition: template
-      value_template: "{{ is_state('input_select.modes_maison', 'Journée') }}"
-      alias: Mode Journée
-    - condition: template
-      alias: Sun Up
-      value_template: "{{ is_state('sun.sun', 'above_horizon') }}"
-    sequence:
-    - data:
-        position: 50
-      target:
-        entity_id: cover.volets_eliott_state
-      alias: Volets 50%
-      action: cover.set_cover_position
-  default:
-  - data: {}
-    target:
-      entity_id: cover.volets_eliott_state
-    alias: Close Volets
-    action: cover.close_cover
+description: ""
 mode: restart
+triggers:
+  - entity_id:
+      - binary_sensor.motion_eliott_occupancy
+    from: "off"
+    to: "on"
+    enabled: true
+    trigger: state
+  - entity_id:
+      - input_boolean.mode_auto_eliott
+    from: "off"
+    to: "on"
+    trigger: state
+conditions:
+  - condition: state
+    entity_id: binary_sensor.motion_eliott_occupancy
+    state: "on"
+    enabled: true
+  - condition: state
+    entity_id: input_boolean.mode_auto_eliott
+    state: "on"
+actions:
+  - alias: Set Position by mode
+    choose:
+      - conditions:
+          - condition: template
+            value_template: "{{ is_state('input_select.modes_maison', 'Journée') }}"
+            alias: Mode Journée
+          - condition: template
+            alias: Sun Up
+            value_template: "{{ is_state('sun.sun', 'above_horizon') }}"
+        sequence:
+          - data:
+              position: 50
+            target:
+              entity_id: cover.volets_eliott_state
+            alias: Volets 50%
+            action: cover.set_cover_position
+    default:
+      - data: {}
+        target:
+          entity_id: cover.volets_eliott_state
+        alias: Close Volets
+        action: cover.close_cover
