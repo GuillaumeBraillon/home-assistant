@@ -49,7 +49,7 @@ actions:
               ask_tag: ask_oscar_presence
               title: "[Présence]"
               icon: mdi:account-question-outline
-              channel: alarm_stream
+              channel: presence
               preset: alarm
               message: "[Présence] Oscar est-il seul à la maison ?"
               yes_title: Oui

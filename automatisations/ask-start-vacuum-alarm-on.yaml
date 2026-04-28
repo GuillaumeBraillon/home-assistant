@@ -41,7 +41,7 @@ actions:
       title: "[Aspirateur]"
       message: Je vais lancer l'aspirateur dans 5 minutes ? Voulez-vous l'annuler ?
       icon: mdi:robot-vacuum-alert
-      channel: alarm_stream
+      channel: presence
       yes_title: "Oui"
       no_title: "Non"
       timeout: 300
@@ -65,7 +65,7 @@ actions:
               title: "[Aspirateur]"
               message: Ok, je ne lance pas l'aspirateur.
               icon: mdi:robot-vacuum-off
-              channel: alarm_stream
+              channel: presence
         else:
           - action: script.notify_send_notifications
             data:
@@ -73,7 +73,7 @@ actions:
               title: "[Aspirateur]"
               message: Ok, je lance l'aspirateur.
               icon: mdi:robot-vacuum
-              channel: alarm_stream
+              channel: presence
           - data: {}
             target:
               entity_id:
@@ -87,7 +87,7 @@ actions:
           title: "[Aspirateur]"
           message: Sans réponse, je lance l'aspirateur.
           icon: mdi:robot-vacuum
-          channel: alarm_stream
+          channel: presence
       - data: {}
         target:
           entity_id:
