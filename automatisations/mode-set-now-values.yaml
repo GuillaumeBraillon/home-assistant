@@ -1,311 +1,311 @@
 alias: "[Mode] Set Now values"
-description: ''
+description: "Met à jour les valeurs 'now' (luminosité, température, volume, horaires) selon le mode."
 trigger:
-- platform: state
-  entity_id:
-  - input_select.modes_maison
-- platform: state
-  entity_id:
-  - input_button.refresh_maintenant
+  - platform: state
+    entity_id:
+      - input_select.modes_maison
+  - platform: state
+    entity_id:
+      - input_button.refresh_maintenant
 condition: []
 action:
-- if:
-  - condition: state
-    entity_id: input_select.modes_maison
-    state: Matin
-  then:
-  - service: input_number.set_value
-    data:
-      value: "{{states('input_number.morning_light_lumi_salon')|float}}"
-    target:
-      entity_id: input_number.now_light_lumi_salon
-  - service: input_number.set_value
-    data:
-      value: "{{states('input_number.morning_light_temp_salon')|float}}"
-    target:
-      entity_id: input_number.now_light_temp_salon
-  - service: input_number.set_value
-    data:
-      value: "{{states('input_number.morning_light_lumi_chambres')|float}}"
-    target:
-      entity_id: input_number.now_light_lumi_chambres
-  - service: input_number.set_value
-    data:
-      value: "{{states('input_number.morning_light_temp_chambres')|float}}"
-    target:
-      entity_id: input_number.now_light_temp_chambres
-  - service: input_number.set_value
-    data:
-      value: "{{states('input_number.morning_light_delay_off')|float}}"
-    target:
-      entity_id: input_number.now_light_delay_off
-  - service: input_number.set_value
-    data:
-      value: "{{states('input_number.morning_volume')|float}}"
-    target:
-      entity_id: input_number.now_volume
   - if:
-    - condition: time
-      after: 0
-      before: '23:59:59'
-      weekday:
-      - mon
-      - tue
-      - wed
-      - thu
-      - fri
+      - condition: state
+        entity_id: input_select.modes_maison
+        state: Matin
     then:
-    - service: input_datetime.set_datetime
-      data:
-        time: "{{states('input_datetime.morning_start')}}"
-      target:
-        entity_id: input_datetime.now_start
-      alias: Start Week
-    else:
-    - service: input_datetime.set_datetime
-      data:
-        time: "{{states('input_datetime.morning_start_week_end')}}"
-      target:
-        entity_id: input_datetime.now_start
-      alias: Start Weekend
-    alias: Set horaire Matin (Week - Weekend)
-  alias: Matin
-- alias: 'Journée or Alarme '
-  if:
-  - condition: or
+      - service: input_number.set_value
+        data:
+          value: "{{states('input_number.morning_light_lumi_salon')|float}}"
+        target:
+          entity_id: input_number.now_light_lumi_salon
+      - service: input_number.set_value
+        data:
+          value: "{{states('input_number.morning_light_temp_salon')|float}}"
+        target:
+          entity_id: input_number.now_light_temp_salon
+      - service: input_number.set_value
+        data:
+          value: "{{states('input_number.morning_light_lumi_chambres')|float}}"
+        target:
+          entity_id: input_number.now_light_lumi_chambres
+      - service: input_number.set_value
+        data:
+          value: "{{states('input_number.morning_light_temp_chambres')|float}}"
+        target:
+          entity_id: input_number.now_light_temp_chambres
+      - service: input_number.set_value
+        data:
+          value: "{{states('input_number.morning_light_delay_off')|float}}"
+        target:
+          entity_id: input_number.now_light_delay_off
+      - service: input_number.set_value
+        data:
+          value: "{{states('input_number.morning_volume')|float}}"
+        target:
+          entity_id: input_number.now_volume
+      - if:
+          - condition: time
+            after: 0
+            before: "23:59:59"
+            weekday:
+              - mon
+              - tue
+              - wed
+              - thu
+              - fri
+        then:
+          - service: input_datetime.set_datetime
+            data:
+              time: "{{states('input_datetime.morning_start')}}"
+            target:
+              entity_id: input_datetime.now_start
+            alias: Start Week
+        else:
+          - service: input_datetime.set_datetime
+            data:
+              time: "{{states('input_datetime.morning_start_week_end')}}"
+            target:
+              entity_id: input_datetime.now_start
+            alias: Start Weekend
+        alias: Set horaire Matin (Week - Weekend)
+    alias: Matin
+  - alias: "Journée or Alarme "
+    if:
+      - condition: or
+        conditions:
+          - condition: state
+            entity_id: input_select.modes_maison
+            state: Alarme
+          - condition: state
+            entity_id: input_select.modes_maison
+            state: Journée
+    then:
+      - service: input_number.set_value
+        data:
+          value: "{{states('input_number.day_light_lumi_salon')|float}}"
+        target:
+          entity_id: input_number.now_light_lumi_salon
+      - service: input_number.set_value
+        data:
+          value: "{{states('input_number.day_light_temp_salon')|float}}"
+        target:
+          entity_id: input_number.now_light_temp_salon
+      - service: input_number.set_value
+        data:
+          value: "{{states('input_number.day_light_lumi_chambres')|float}}"
+        target:
+          entity_id: input_number.now_light_lumi_chambres
+      - service: input_number.set_value
+        data:
+          value: "{{states('input_number.day_light_temp_chambres')|float}}"
+        target:
+          entity_id: input_number.now_light_temp_chambres
+      - service: input_number.set_value
+        data:
+          value: "{{states('input_number.day_light_delay_off')|float}}"
+        target:
+          entity_id: input_number.now_light_delay_off
+      - service: input_number.set_value
+        data:
+          value: "{{states('input_number.day_volume')|float}}"
+        target:
+          entity_id: input_number.now_volume
+      - if:
+          - condition: time
+            after: 0
+            before: "23:59:59"
+            weekday:
+              - mon
+              - tue
+              - wed
+              - thu
+              - fri
+        then:
+          - service: input_datetime.set_datetime
+            data:
+              time: "{{states('input_datetime.day_start')}}"
+            target:
+              entity_id: input_datetime.now_start
+            alias: Start Week
+        else:
+          - service: input_datetime.set_datetime
+            data:
+              time: "{{states('input_datetime.day_start_week_end')}}"
+            target:
+              entity_id: input_datetime.now_start
+            alias: Start Weekend
+        alias: Set horaire Soir (Week - Weekend)
+  - if:
+      - condition: state
+        entity_id: input_select.modes_maison
+        state: Soir
+    then:
+      - service: input_number.set_value
+        data:
+          value: "{{states('input_number.evening_light_lumi_salon')|float}}"
+        target:
+          entity_id: input_number.now_light_lumi_salon
+      - service: input_number.set_value
+        data:
+          value: "{{states('input_number.evening_light_temp_salon')|float}}"
+        target:
+          entity_id: input_number.now_light_temp_salon
+      - service: input_number.set_value
+        data:
+          value: "{{states('input_number.evening_light_lumi_chambres')|float}}"
+        target:
+          entity_id: input_number.now_light_lumi_chambres
+      - service: input_number.set_value
+        data:
+          value: "{{states('input_number.evening_light_temp_chambres')|float}}"
+        target:
+          entity_id: input_number.now_light_temp_chambres
+      - service: input_number.set_value
+        data:
+          value: "{{states('input_number.evening_light_delay_off')|float}}"
+        target:
+          entity_id: input_number.now_light_delay_off
+      - service: input_number.set_value
+        data:
+          value: "{{states('input_number.evening_volume')|float}}"
+        target:
+          entity_id: input_number.now_volume
+      - if:
+          - condition: time
+            after: 0
+            before: "23:59:59"
+            weekday:
+              - mon
+              - tue
+              - wed
+              - thu
+              - sun
+        then:
+          - service: input_datetime.set_datetime
+            data:
+              time: "{{states('input_datetime.evening_start')}}"
+            target:
+              entity_id: input_datetime.now_start
+            alias: Start Week
+        else:
+          - service: input_datetime.set_datetime
+            data:
+              time: "{{states('input_datetime.evening_start_week_end')}}"
+            target:
+              entity_id: input_datetime.now_start
+            alias: Start Weekend
+        alias: Set horaire Soir (Week - Weekend)
+    alias: Soir
+  - alias: Nuit OR Soirée TV
+    if:
+      - condition: or
+        conditions:
+          - condition: state
+            entity_id: input_select.modes_maison
+            state: Nuit
+          - condition: state
+            entity_id: input_select.modes_maison
+            state: Soirée TV
+    then:
+      - service: input_number.set_value
+        data:
+          value: "{{states('input_number.night_light_lumi_salon')|float}}"
+        target:
+          entity_id: input_number.now_light_lumi_salon
+      - service: input_number.set_value
+        data:
+          value: "{{states('input_number.night_light_temp_salon')|float}}"
+        target:
+          entity_id: input_number.now_light_temp_salon
+      - service: input_number.set_value
+        data:
+          value: "{{states('input_number.night_light_lumi_chambres')|float}}"
+        target:
+          entity_id: input_number.now_light_lumi_chambres
+      - service: input_number.set_value
+        data:
+          value: "{{states('input_number.night_light_temp_chambres')|float}}"
+        target:
+          entity_id: input_number.now_light_temp_chambres
+      - service: input_number.set_value
+        data:
+          value: "{{states('input_number.night_light_delay_off')|float}}"
+        target:
+          entity_id: input_number.now_light_delay_off
+      - service: input_number.set_value
+        data:
+          value: "{{states('input_number.night_volume')|float}}"
+        target:
+          entity_id: input_number.now_volume
+      - if:
+          - condition: time
+            after: 0
+            before: "23:59:59"
+            weekday:
+              - mon
+              - tue
+              - wed
+              - thu
+              - sun
+        then:
+          - service: input_datetime.set_datetime
+            data:
+              time: "{{states('input_datetime.night_start')}}"
+            target:
+              entity_id: input_datetime.now_start
+            alias: Start Week
+        else:
+          - service: input_datetime.set_datetime
+            data:
+              time: "{{states('input_datetime.night_start_week_end')}}"
+            target:
+              entity_id: input_datetime.now_start
+            alias: Start Weekend
+        alias: Set horaire Nuit (Week - Weekend)
+  - alias: Invités Soirée
+    if:
+      - condition: state
+        entity_id: input_select.modes_maison
+        state: Soirée Invités
+    then:
+      - service: input_number.set_value
+        data:
+          value: 60
+        target:
+          entity_id: input_number.now_light_lumi_salon
+      - service: input_number.set_value
+        data:
+          value: 2500
+        target:
+          entity_id: input_number.now_light_temp_salon
+      - service: input_number.set_value
+        data:
+          value: 60
+        target:
+          entity_id: input_number.now_light_lumi_chambres
+      - service: input_number.set_value
+        data:
+          value: 2500
+        target:
+          entity_id: input_number.now_light_temp_chambres
+      - service: input_number.set_value
+        data:
+          value: 15
+        target:
+          entity_id: input_number.now_light_delay_off
+      - service: input_number.set_value
+        data:
+          value: 50
+        target:
+          entity_id: input_number.now_volume
+  - condition: not
     conditions:
-    - condition: state
-      entity_id: input_select.modes_maison
-      state: Alarme
-    - condition: state
-      entity_id: input_select.modes_maison
-      state: Journée
-  then:
-  - service: input_number.set_value
-    data:
-      value: "{{states('input_number.day_light_lumi_salon')|float}}"
-    target:
-      entity_id: input_number.now_light_lumi_salon
-  - service: input_number.set_value
-    data:
-      value: "{{states('input_number.day_light_temp_salon')|float}}"
-    target:
-      entity_id: input_number.now_light_temp_salon
-  - service: input_number.set_value
-    data:
-      value: "{{states('input_number.day_light_lumi_chambres')|float}}"
-    target:
-      entity_id: input_number.now_light_lumi_chambres
-  - service: input_number.set_value
-    data:
-      value: "{{states('input_number.day_light_temp_chambres')|float}}"
-    target:
-      entity_id: input_number.now_light_temp_chambres
-  - service: input_number.set_value
-    data:
-      value: "{{states('input_number.day_light_delay_off')|float}}"
-    target:
-      entity_id: input_number.now_light_delay_off
-  - service: input_number.set_value
-    data:
-      value: "{{states('input_number.day_volume')|float}}"
-    target:
-      entity_id: input_number.now_volume
-  - if:
-    - condition: time
-      after: 0
-      before: '23:59:59'
-      weekday:
-      - mon
-      - tue
-      - wed
-      - thu
-      - fri
-    then:
-    - service: input_datetime.set_datetime
-      data:
-        time: "{{states('input_datetime.day_start')}}"
-      target:
-        entity_id: input_datetime.now_start
-      alias: Start Week
-    else:
-    - service: input_datetime.set_datetime
-      data:
-        time: "{{states('input_datetime.day_start_week_end')}}"
-      target:
-        entity_id: input_datetime.now_start
-      alias: Start Weekend
-    alias: Set horaire Soir (Week - Weekend)
-- if:
-  - condition: state
-    entity_id: input_select.modes_maison
-    state: Soir
-  then:
-  - service: input_number.set_value
-    data:
-      value: "{{states('input_number.evening_light_lumi_salon')|float}}"
-    target:
-      entity_id: input_number.now_light_lumi_salon
-  - service: input_number.set_value
-    data:
-      value: "{{states('input_number.evening_light_temp_salon')|float}}"
-    target:
-      entity_id: input_number.now_light_temp_salon
-  - service: input_number.set_value
-    data:
-      value: "{{states('input_number.evening_light_lumi_chambres')|float}}"
-    target:
-      entity_id: input_number.now_light_lumi_chambres
-  - service: input_number.set_value
-    data:
-      value: "{{states('input_number.evening_light_temp_chambres')|float}}"
-    target:
-      entity_id: input_number.now_light_temp_chambres
-  - service: input_number.set_value
-    data:
-      value: "{{states('input_number.evening_light_delay_off')|float}}"
-    target:
-      entity_id: input_number.now_light_delay_off
-  - service: input_number.set_value
-    data:
-      value: "{{states('input_number.evening_volume')|float}}"
-    target:
-      entity_id: input_number.now_volume
-  - if:
-    - condition: time
-      after: 0
-      before: '23:59:59'
-      weekday:
-      - mon
-      - tue
-      - wed
-      - thu
-      - sun
-    then:
-    - service: input_datetime.set_datetime
-      data:
-        time: "{{states('input_datetime.evening_start')}}"
-      target:
-        entity_id: input_datetime.now_start
-      alias: Start Week
-    else:
-    - service: input_datetime.set_datetime
-      data:
-        time: "{{states('input_datetime.evening_start_week_end')}}"
-      target:
-        entity_id: input_datetime.now_start
-      alias: Start Weekend
-    alias: Set horaire Soir (Week - Weekend)
-  alias: Soir
-- alias: Nuit OR Soirée TV
-  if:
-  - condition: or
-    conditions:
-    - condition: state
-      entity_id: input_select.modes_maison
-      state: Nuit
-    - condition: state
-      entity_id: input_select.modes_maison
-      state: Soirée TV
-  then:
-  - service: input_number.set_value
-    data:
-      value: "{{states('input_number.night_light_lumi_salon')|float}}"
-    target:
-      entity_id: input_number.now_light_lumi_salon
-  - service: input_number.set_value
-    data:
-      value: "{{states('input_number.night_light_temp_salon')|float}}"
-    target:
-      entity_id: input_number.now_light_temp_salon
-  - service: input_number.set_value
-    data:
-      value: "{{states('input_number.night_light_lumi_chambres')|float}}"
-    target:
-      entity_id: input_number.now_light_lumi_chambres
-  - service: input_number.set_value
-    data:
-      value: "{{states('input_number.night_light_temp_chambres')|float}}"
-    target:
-      entity_id: input_number.now_light_temp_chambres
-  - service: input_number.set_value
-    data:
-      value: "{{states('input_number.night_light_delay_off')|float}}"
-    target:
-      entity_id: input_number.now_light_delay_off
-  - service: input_number.set_value
-    data:
-      value: "{{states('input_number.night_volume')|float}}"
-    target:
-      entity_id: input_number.now_volume
-  - if:
-    - condition: time
-      after: 0
-      before: '23:59:59'
-      weekday:
-      - mon
-      - tue
-      - wed
-      - thu
-      - sun
-    then:
-    - service: input_datetime.set_datetime
-      data:
-        time: "{{states('input_datetime.night_start')}}"
-      target:
-        entity_id: input_datetime.now_start
-      alias: Start Week
-    else:
-    - service: input_datetime.set_datetime
-      data:
-        time: "{{states('input_datetime.night_start_week_end')}}"
-      target:
-        entity_id: input_datetime.now_start
-      alias: Start Weekend
-    alias: Set horaire Nuit (Week - Weekend)
-- alias: Invités Soirée
-  if:
-  - condition: state
-    entity_id: input_select.modes_maison
-    state: Soirée Invités
-  then:
-  - service: input_number.set_value
-    data:
-      value: 60
-    target:
-      entity_id: input_number.now_light_lumi_salon
-  - service: input_number.set_value
-    data:
-      value: 2500
-    target:
-      entity_id: input_number.now_light_temp_salon
-  - service: input_number.set_value
-    data:
-      value: 60
-    target:
-      entity_id: input_number.now_light_lumi_chambres
-  - service: input_number.set_value
-    data:
-      value: 2500
-    target:
-      entity_id: input_number.now_light_temp_chambres
-  - service: input_number.set_value
-    data:
-      value: 15
-    target:
-      entity_id: input_number.now_light_delay_off
-  - service: input_number.set_value
-    data:
-      value: 50
-    target:
-      entity_id: input_number.now_volume
-- condition: not
-  conditions:
-  - condition: state
-    entity_id: input_select.modes_maison
-    state: Alarme
-- service: script.1684929625648
-  data: {}
-- service: script.1684969348732
-  data: {}
+      - condition: state
+        entity_id: input_select.modes_maison
+        state: Alarme
+  - service: script.1684929625648
+    data: {}
+  - service: script.1684969348732
+    data: {}
 mode: restart

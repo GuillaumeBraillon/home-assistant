@@ -1,5 +1,5 @@
 alias: "[Lights] Cuisine"
-description: ""
+description: "Gère l'éclairage de la cuisine selon présence et mode."
 triggers:
   - entity_id:
       - binary_sensor.motion_kitchen_occupancy

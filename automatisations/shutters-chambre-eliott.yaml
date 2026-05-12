@@ -1,5 +1,5 @@
 alias: "[Shutters] Chambre Éliott "
-description: ""
+description: "Contrôle les volets de la chambre d'Éliott selon le mode et la présence."
 mode: restart
 triggers:
   - entity_id:

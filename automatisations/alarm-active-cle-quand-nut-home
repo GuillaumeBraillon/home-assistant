@@ -1,5 +1,5 @@
 alias: "[Alarm] Active Nut When nut home"
-description: ""
+description: "Active input_boolean.nelly_active quand l'objet Nut revient à la maison (mode Alarme)."
 triggers:
   - trigger: state
     entity_id:

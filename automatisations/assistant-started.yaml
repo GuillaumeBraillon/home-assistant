@@ -1,5 +1,5 @@
 alias: "[Assistant] Started"
-description: ""
+description: "Tâches et vérifications exécutées au démarrage de Home Assistant."
 triggers:
   - event: start
     trigger: homeassistant

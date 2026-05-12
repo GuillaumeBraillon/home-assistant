@@ -1,173 +1,173 @@
 alias: "[Multimédia] Ampli"
-description: ''
+description: "Gère les sources et commandes de l'amplificateur multimédia."
 triggers:
-- entity_id:
-  - input_button.ampli_source_video
-  - input_button.ampli_source_satellite
-  - input_button.ampli_source_game
-  - input_button.ampli_audio_surround
-  - input_button.ampli_audio_dolby
-  - input_button.ampli_power
-  alias: Ampli Vidéo, Satellite, Game, Surround, or Dolby
-  trigger: state
+  - entity_id:
+      - input_button.ampli_source_video
+      - input_button.ampli_source_satellite
+      - input_button.ampli_source_game
+      - input_button.ampli_audio_surround
+      - input_button.ampli_audio_dolby
+      - input_button.ampli_power
+    alias: Ampli Vidéo, Satellite, Game, Surround, or Dolby
+    trigger: state
 conditions: []
 actions:
-- alias: Select Source or Audio
-  choose:
-  - conditions:
-    - condition: template
-      value_template: "{{ trigger.entity_id == 'input_button.ampli_source_video' }}"
-      alias: Source Vidéo
-    sequence:
-    - data:
-        device: ampli
-        command: video
-      target:
-        entity_id: remote.rm_pro
-      alias: Ampli Vidéo
-      action: remote.send_command
-    - data:
-        option: Vidéo
-      target:
-        entity_id: input_select.ampli_source
-      alias: Select Ampli Source Vidéo
-      action: input_select.select_option
-  - conditions:
-    - condition: template
-      value_template: "{{ trigger.entity_id == 'input_button.ampli_source_game' }}"
-      alias: Source Game
-    sequence:
-    - data:
-        device: ampli
-        command: game
-      target:
-        entity_id: remote.rm_pro
-      alias: Ampli Game
-      action: remote.send_command
-    - data:
-        option: Game
-      target:
-        entity_id: input_select.ampli_source
-      alias: Select Ampli Source Game
-      action: input_select.select_option
-  - conditions:
-    - condition: template
-      value_template: "{{ trigger.entity_id == 'input_button.ampli_source_satellite'
-        }}"
-      alias: Source Satellite
-    sequence:
-    - data:
-        device: ampli
-        command: satellite
-      target:
-        entity_id: remote.rm_pro
-      alias: Ampli Satellite
-      action: remote.send_command
-    - data:
-        option: Satellite
-      target:
-        entity_id: input_select.ampli_source
-      alias: Select Ampli Source Satellite
-      action: input_select.select_option
-  - conditions:
-    - condition: template
-      value_template: "{{ trigger.entity_id == 'input_button.ampli_audio_surround'
-        }}"
-      alias: Source Surround
-    sequence:
-    - data:
-        device: ampli
-        command: surround
-      target:
-        entity_id: remote.rm_pro
-      alias: Ampli Surround
-      action: remote.send_command
-    - data:
-        option: Surround
-      target:
-        entity_id: input_select.ampli_audio
-      alias: Select Ampli Audio Surround
-      action: input_select.select_option
-  - conditions:
-    - condition: template
-      value_template: "{{ trigger.entity_id == 'input_button.ampli_audio_dolby' }}"
-      alias: Source Dolby
-    sequence:
-    - data:
-        device: ampli
-        command: dolby
-      target:
-        entity_id: remote.rm_pro
-      alias: Ampli Dolby
-      action: remote.send_command
-    - data:
-        option: Dolby
-      target:
-        entity_id: input_select.ampli_audio
-      alias: Select Ampli Audio Dolby
-      action: input_select.select_option
-  - conditions:
-    - condition: template
-      value_template: "{{ trigger.entity_id == 'input_button.ampli_power' }}"
-      alias: Power Trigger
-    sequence:
-    - choose:
+  - alias: Select Source or Audio
+    choose:
       - conditions:
-        - condition: template
-          value_template: "{{states('input_select.ampli_power_states') == 'on'}}"
-          alias: Ampli On
+          - condition: template
+            value_template: "{{ trigger.entity_id == 'input_button.ampli_source_video' }}"
+            alias: Source Vidéo
         sequence:
-        - alias: If Plug Ampli > 5 W
-          if:
-          - alias: Plug Ampli > 5 W
-            condition: template
-            value_template: "{{ states('sensor.plug_living_room_power') | int > 8
-              }}"
-          then:
           - data:
               device: ampli
-              command: power
+              command: video
             target:
               entity_id: remote.rm_pro
-            alias: Ampli Power
-            enabled: true
+            alias: Ampli Vidéo
             action: remote.send_command
-        - data:
-            option: 'off'
-          target:
-            entity_id: input_select.ampli_power_states
-          alias: Select Ampli Power State
-          action: input_select.select_option
-        - action: input_boolean.turn_on
-          metadata: {}
-          target:
-            entity_id: input_boolean.auto_off_xgimi
-          data: {}
+          - data:
+              option: Vidéo
+            target:
+              entity_id: input_select.ampli_source
+            alias: Select Ampli Source Vidéo
+            action: input_select.select_option
       - conditions:
-        - condition: template
-          value_template: "{{states('input_select.ampli_power_states') == 'off'}}"
-          alias: Ampli Off
+          - condition: template
+            value_template: "{{ trigger.entity_id == 'input_button.ampli_source_game' }}"
+            alias: Source Game
         sequence:
-        - alias: If Plug Ampli < 5 W
-          if:
-          - alias: Plug Ampli < 5 W
-            condition: template
-            value_template: "{{ states('sensor.plug_living_room_power') | int < 8
-              }}"
-          then:
           - data:
               device: ampli
-              command: power
+              command: game
             target:
               entity_id: remote.rm_pro
-            alias: Ampli Power
-            enabled: true
+            alias: Ampli Game
             action: remote.send_command
-        - data:
-            option: 'on'
-          target:
-            entity_id: input_select.ampli_power_states
-          alias: Select Ampli Power State
-          action: input_select.select_option
+          - data:
+              option: Game
+            target:
+              entity_id: input_select.ampli_source
+            alias: Select Ampli Source Game
+            action: input_select.select_option
+      - conditions:
+          - condition: template
+            value_template: "{{ trigger.entity_id == 'input_button.ampli_source_satellite'
+              }}"
+            alias: Source Satellite
+        sequence:
+          - data:
+              device: ampli
+              command: satellite
+            target:
+              entity_id: remote.rm_pro
+            alias: Ampli Satellite
+            action: remote.send_command
+          - data:
+              option: Satellite
+            target:
+              entity_id: input_select.ampli_source
+            alias: Select Ampli Source Satellite
+            action: input_select.select_option
+      - conditions:
+          - condition: template
+            value_template: "{{ trigger.entity_id == 'input_button.ampli_audio_surround'
+              }}"
+            alias: Source Surround
+        sequence:
+          - data:
+              device: ampli
+              command: surround
+            target:
+              entity_id: remote.rm_pro
+            alias: Ampli Surround
+            action: remote.send_command
+          - data:
+              option: Surround
+            target:
+              entity_id: input_select.ampli_audio
+            alias: Select Ampli Audio Surround
+            action: input_select.select_option
+      - conditions:
+          - condition: template
+            value_template: "{{ trigger.entity_id == 'input_button.ampli_audio_dolby' }}"
+            alias: Source Dolby
+        sequence:
+          - data:
+              device: ampli
+              command: dolby
+            target:
+              entity_id: remote.rm_pro
+            alias: Ampli Dolby
+            action: remote.send_command
+          - data:
+              option: Dolby
+            target:
+              entity_id: input_select.ampli_audio
+            alias: Select Ampli Audio Dolby
+            action: input_select.select_option
+      - conditions:
+          - condition: template
+            value_template: "{{ trigger.entity_id == 'input_button.ampli_power' }}"
+            alias: Power Trigger
+        sequence:
+          - choose:
+              - conditions:
+                  - condition: template
+                    value_template: "{{states('input_select.ampli_power_states') == 'on'}}"
+                    alias: Ampli On
+                sequence:
+                  - alias: If Plug Ampli > 5 W
+                    if:
+                      - alias: Plug Ampli > 5 W
+                        condition: template
+                        value_template: "{{ states('sensor.plug_living_room_power') | int > 8
+                          }}"
+                    then:
+                      - data:
+                          device: ampli
+                          command: power
+                        target:
+                          entity_id: remote.rm_pro
+                        alias: Ampli Power
+                        enabled: true
+                        action: remote.send_command
+                  - data:
+                      option: "off"
+                    target:
+                      entity_id: input_select.ampli_power_states
+                    alias: Select Ampli Power State
+                    action: input_select.select_option
+                  - action: input_boolean.turn_on
+                    metadata: {}
+                    target:
+                      entity_id: input_boolean.auto_off_xgimi
+                    data: {}
+              - conditions:
+                  - condition: template
+                    value_template: "{{states('input_select.ampli_power_states') == 'off'}}"
+                    alias: Ampli Off
+                sequence:
+                  - alias: If Plug Ampli < 5 W
+                    if:
+                      - alias: Plug Ampli < 5 W
+                        condition: template
+                        value_template: "{{ states('sensor.plug_living_room_power') | int < 8
+                          }}"
+                    then:
+                      - data:
+                          device: ampli
+                          command: power
+                        target:
+                          entity_id: remote.rm_pro
+                        alias: Ampli Power
+                        enabled: true
+                        action: remote.send_command
+                  - data:
+                      option: "on"
+                    target:
+                      entity_id: input_select.ampli_power_states
+                    alias: Select Ampli Power State
+                    action: input_select.select_option
 mode: parallel
 max: 10

@@ -7,4 +7,4 @@ sequence:
       media_player_entity_id: media_player.google_home_parents
       message: Ceci est un test pour la voix
 alias: Script TTS
-description: ""
+description: "Envoie un message via tts.google_cloud vers media_player.google_home_parents."

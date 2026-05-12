@@ -1,5 +1,5 @@
 alias: "[Lights] Chambre Parents"
-description: ""
+description: "Gère l'éclairage et l'ouverture des volets de la chambre parents selon présence et mode."
 mode: restart
 triggers:
   - entity_id:

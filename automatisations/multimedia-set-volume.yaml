@@ -1,31 +1,31 @@
 alias: "[Multimédia] Set volume"
-description: ''
+description: "Ajuste le volume des media_players selon input_number.now_volume."
 trigger:
-- platform: state
-  entity_id:
-  - media_player.google_home_parents
-  - media_player.mi_smart_home_salon
-  - media_player.google_home_eliott
-  - media_player.google_home_oscar
-  - media_player.nest_hub
-  - media_player.salle_de_bain
-  from: 'off'
+  - platform: state
+    entity_id:
+      - media_player.google_home_parents
+      - media_player.mi_smart_home_salon
+      - media_player.google_home_eliott
+      - media_player.google_home_oscar
+      - media_player.nest_hub
+      - media_player.salle_de_bain
+    from: "off"
 condition:
-- alias: volume_level != now_volume
-  condition: template
-  value_template: "{{ state_attr(trigger.entity_id, 'volume_level') | round(1, default=0)
-    != states('input_number.now_volume') | int / 100 }}"
+  - alias: volume_level != now_volume
+    condition: template
+    value_template: "{{ state_attr(trigger.entity_id, 'volume_level') | round(1, default=0)
+      != states('input_number.now_volume') | int / 100 }}"
 action:
-- service: media_player.volume_set
-  data:
-    volume_level: "{{ states('input_number.now_volume') |int /100 }}"
-  target:
-    entity_id: "{{ trigger.entity_id }}"
-- service: notify.persistent_notification
-  metadata: {}
-  data:
-    title: 'Set volume '
-    message: "{{ trigger.entity_id }}"
-  enabled: false
+  - service: media_player.volume_set
+    data:
+      volume_level: "{{ states('input_number.now_volume') |int /100 }}"
+    target:
+      entity_id: "{{ trigger.entity_id }}"
+  - service: notify.persistent_notification
+    metadata: {}
+    data:
+      title: "Set volume "
+      message: "{{ trigger.entity_id }}"
+    enabled: false
 mode: parallel
 max: 10

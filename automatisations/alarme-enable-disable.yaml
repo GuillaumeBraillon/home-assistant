@@ -1,5 +1,5 @@
 alias: "[Presence] Maison Present or Absent"
-description: ""
+description: "Active/désactive l'alarme et les modes automatiques lors de l'arrivée ou du départ du foyer."
 triggers:
   - entity_id:
       - group.persons

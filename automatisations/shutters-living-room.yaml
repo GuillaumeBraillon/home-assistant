@@ -1,5 +1,5 @@
 alias: "[Shutters] Living Room"
-description: ""
+description: "Gère l'ouverture et la fermeture des volets du salon selon le mode et la présence extérieure."
 triggers:
   - entity_id:
       - cover.volets_salon_state
@@ -49,11 +49,12 @@ actions:
       - action: script.volets_ajuster_volets_selon_mode
         metadata: {}
         data: {}
+        enabled: false
       - condition: state
         state:
           - "on"
         entity_id: input_boolean.volets_salon_auto
-        enabled: false
+        enabled: true
       - alias: Set Position by mode
         choose:
           - conditions:
@@ -112,7 +113,7 @@ actions:
                 alias: Close Volets Salon
                 enabled: true
                 action: cover.close_cover
-        enabled: false
+        enabled: true
     else:
       - if:
           - condition: template
@@ -125,4 +126,5 @@ actions:
             alias: Stop Volets Salon
             action: cover.stop_cover
         alias: Fermeture
+        enabled: true
 mode: restart

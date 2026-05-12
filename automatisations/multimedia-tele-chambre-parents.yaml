@@ -1,102 +1,102 @@
 alias: "[Multimedia] Télé Chambre Parents"
-description: ''
+description: "Actions déclenchées lors de l'allumage ou extinction de la TV de la chambre parents."
 trigger:
-- platform: state
-  entity_id:
-  - media_player.tele_chambre_parents
-  to: 'off'
-- platform: state
-  entity_id:
-  - media_player.tele_chambre_parents
-  to: 'on'
-  enabled: true
+  - platform: state
+    entity_id:
+      - media_player.tele_chambre_parents
+    to: "off"
+  - platform: state
+    entity_id:
+      - media_player.tele_chambre_parents
+    to: "on"
+    enabled: true
 condition:
-- condition: state
-  entity_id: input_boolean.histoire_du_soir
-  state: 'off'
-- condition: state
-  entity_id: input_boolean.mode_auto_parents
-  state: 'on'
+  - condition: state
+    entity_id: input_boolean.histoire_du_soir
+    state: "off"
+  - condition: state
+    entity_id: input_boolean.mode_auto_parents
+    state: "on"
 action:
-- choose:
-  - conditions:
-    - condition: template
-      value_template: "{{ is_state('media_player.tele_chambre_parents', 'on') }}"
-      alias: Télé Chambre On
-    sequence:
-    - if:
-      - condition: state
-        entity_id: input_boolean.mode_auto_parents
-        state: 'on'
-        alias: Auto Parents is 'Activé'
-      then:
-      - data: {}
-        target:
-          entity_id:
-          - input_boolean.mode_auto_parents
-        alias: Turn off Mode Auto Parents
-        action: input_boolean.turn_off
-      alias: Turn off Mode Auto Parents
-    - if:
-      - condition: state
-        entity_id: light.light_parents
-        state: 'on'
-        alias: Plafonnier Parents is 'Activé'
-      then:
-      - data: {}
-        target:
-          entity_id:
-          - light.light_parents
-        action: light.turn_off
-      alias: Turn off Plafonnier Parents
-    - if:
-      - condition: template
-        alias: Chevet Guillaume is 'Activé'
-        value_template: "{{ is_state('light.mibedsidelamp2', 'on') }}"
-      then:
-      - data: {}
-        target:
-          entity_id:
-          - light.mibedsidelamp2
-        action: light.turn_off
-      alias: Turn off Chevet Guillaume
-    - if:
-      - condition: template
-        value_template: "{{ is_state('light.yeelight_bslamp1', 'on') }}"
-        alias: Chevet Nelly is 'Activé'
-      then:
-      - data: {}
-        target:
-          entity_id:
-          - light.yeelight_bslamp1
-        action: light.turn_off
-      alias: Turn off Chevet Nelly
-    - if:
-      - condition: numeric_state
-        entity_id: cover.volets_parents_state
-        above: 0
-      then:
-      - data: {}
-        target:
-          entity_id: cover.volets_parents_state
-        action: cover.close_cover
-      alias: 'Close volets '
-  - conditions:
-    - condition: template
-      value_template: "{{ is_state('media_player.tele_chambre_parents', 'off') }}"
-      alias: Télé Chambre Off
-    sequence:
-    - if:
-      - condition: state
-        entity_id: input_boolean.mode_auto_parents
-        state: 'off'
-      - condition: state
-        entity_id: input_select.modes_maison
-        state: Journée
-      then:
-      - data: {}
-        target:
-          entity_id: input_boolean.mode_auto_parents
-        action: input_boolean.turn_on
-      alias: Turn on Mode Auto Parents
+  - choose:
+      - conditions:
+          - condition: template
+            value_template: "{{ is_state('media_player.tele_chambre_parents', 'on') }}"
+            alias: Télé Chambre On
+        sequence:
+          - if:
+              - condition: state
+                entity_id: input_boolean.mode_auto_parents
+                state: "on"
+                alias: Auto Parents is 'Activé'
+            then:
+              - data: {}
+                target:
+                  entity_id:
+                    - input_boolean.mode_auto_parents
+                alias: Turn off Mode Auto Parents
+                action: input_boolean.turn_off
+            alias: Turn off Mode Auto Parents
+          - if:
+              - condition: state
+                entity_id: light.light_parents
+                state: "on"
+                alias: Plafonnier Parents is 'Activé'
+            then:
+              - data: {}
+                target:
+                  entity_id:
+                    - light.light_parents
+                action: light.turn_off
+            alias: Turn off Plafonnier Parents
+          - if:
+              - condition: template
+                alias: Chevet Guillaume is 'Activé'
+                value_template: "{{ is_state('light.mibedsidelamp2', 'on') }}"
+            then:
+              - data: {}
+                target:
+                  entity_id:
+                    - light.mibedsidelamp2
+                action: light.turn_off
+            alias: Turn off Chevet Guillaume
+          - if:
+              - condition: template
+                value_template: "{{ is_state('light.yeelight_bslamp1', 'on') }}"
+                alias: Chevet Nelly is 'Activé'
+            then:
+              - data: {}
+                target:
+                  entity_id:
+                    - light.yeelight_bslamp1
+                action: light.turn_off
+            alias: Turn off Chevet Nelly
+          - if:
+              - condition: numeric_state
+                entity_id: cover.volets_parents_state
+                above: 0
+            then:
+              - data: {}
+                target:
+                  entity_id: cover.volets_parents_state
+                action: cover.close_cover
+            alias: "Close volets "
+      - conditions:
+          - condition: template
+            value_template: "{{ is_state('media_player.tele_chambre_parents', 'off') }}"
+            alias: Télé Chambre Off
+        sequence:
+          - if:
+              - condition: state
+                entity_id: input_boolean.mode_auto_parents
+                state: "off"
+              - condition: state
+                entity_id: input_select.modes_maison
+                state: Journée
+            then:
+              - data: {}
+                target:
+                  entity_id: input_boolean.mode_auto_parents
+                action: input_boolean.turn_on
+            alias: Turn on Mode Auto Parents
 mode: single

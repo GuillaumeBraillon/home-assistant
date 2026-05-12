@@ -1,5 +1,5 @@
 alias: "[Mode] Mode Maison change (Absent Présent)"
-description: ""
+description: "Gère les actions lors du changement du mode maison (input_select.modes_maison) : ajuste volets, lumières, médias et scripts selon le mode."
 triggers:
   - entity_id:
       - input_select.modes_maison
@@ -122,6 +122,40 @@ actions:
           - action: script.volets_ajuster_volets_selon_mode
             metadata: {}
             data: {}
+          - if:
+              - alias: Volets Salon < 40%
+                condition: template
+                value_template: >-
+                  {{state_attr('cover.volets_salon_state', 'current_position') |
+                  int < 40}}
+            then:
+              - alias: Volets Salon 40%
+                data:
+                  position: 40
+                target:
+                  entity_id: cover.volets_salon_state
+                action: cover.set_cover_position
+            enabled: false
+          - if:
+              - condition: state
+                entity_id: input_boolean.mode_auto_parents
+                state: "on"
+                alias: Mode Auto Parents is 'Activé'
+              - condition: template
+                value_template: >-
+                  {{state_attr('cover.volets_parents_state', 'current_position')
+                  | int < 25}}
+                alias: Volets Parents < 25%
+            then:
+              - data:
+                  position: 25
+                target:
+                  entity_id:
+                    - cover.volets_parents_state
+                alias: Volets Parents 25%
+                action: cover.set_cover_position
+            alias: Mode Auto Parents is 'Activé' & Volets Parents < 25%
+            enabled: false
       - conditions:
           - condition: state
             entity_id: input_select.modes_maison
@@ -249,6 +283,29 @@ actions:
                       entity_id: cover.volets_oscar_state
                     alias: Volets Oscar 50%
                     action: cover.set_cover_position
+              - alias: " Mode Auto Eliott is 'Activé' & Volets Eliott < 50% & Motion"
+                if:
+                  - condition: template
+                    value_template: >-
+                      {{state_attr('cover.volets_eliott_state',
+                      'current_position') | int < 50}}
+                    alias: Volets Eliott < 50%
+                  - condition: state
+                    entity_id: input_boolean.mode_auto_eliott
+                    state: "on"
+                    alias: Mode Auto Eliott is 'Activé'
+                  - condition: state
+                    entity_id: binary_sensor.motion_eliott_occupancy
+                    state:
+                      - "on"
+                then:
+                  - data:
+                      position: 50
+                    target:
+                      entity_id: cover.volets_eliott_state
+                    alias: Volets Eliott 50%
+                    action: cover.set_cover_position
+            enabled: false
           - alias: "Turn Off : [Mode] Auto Mode Based on Motions (Morning)"
             if:
               - condition: template
@@ -280,6 +337,21 @@ actions:
           - action: script.volets_ajuster_volets_selon_mode
             metadata: {}
             data: {}
+          - if:
+              - condition: template
+                value_template: >-
+                  {{state_attr('cover.volets_salon_state', 'current_position') |
+                  int > 40}}
+                alias: Volets Salon > 40%
+            then:
+              - data:
+                  position: 40
+                target:
+                  entity_id: cover.volets_salon_state
+                alias: Volets Salon 40%
+                action: cover.set_cover_position
+            alias: Volets Salon > 40%
+            enabled: false
       - conditions:
           - condition: state
             entity_id: input_select.modes_maison
@@ -303,6 +375,37 @@ actions:
           - action: script.volets_ajuster_volets_selon_mode
             metadata: {}
             data: {}
+          - if:
+              - condition: state
+                entity_id: binary_sensor.motion_outside_occupancy
+                state: "on"
+            then:
+              - wait_for_trigger:
+                  - entity_id:
+                      - binary_sensor.motion_outside_occupancy
+                    from: "on"
+                    to: "off"
+                    trigger: state
+                alias: Wait until there is no motion
+                continue_on_timeout: false
+              - delay:
+                  hours: 0
+                  minutes: "{{ states('input_number.now_light_delay_off')|int}}"
+                  seconds: 0
+                  milliseconds: 0
+                alias: Wait the number of seconds that has been set
+              - data: {}
+                target:
+                  entity_id:
+                    - cover.volets_salon_state
+                action: cover.close_cover
+            else:
+              - data: {}
+                target:
+                  entity_id: cover.volets_salon_state
+                action: cover.close_cover
+            alias: Fermer Volets Salon
+            enabled: false
           - alias: "Turn On : [Mode] Auto Mode Based on Motions (Morning)"
             if:
               - condition: template
@@ -333,6 +436,53 @@ actions:
           - action: script.volets_ajuster_volets_selon_mode
             metadata: {}
             data: {}
+          - if:
+              - condition: state
+                entity_id: input_boolean.volets_salon_auto
+                state: "on"
+              - condition: state
+                entity_id: binary_sensor.motion_outside_occupancy
+                state: "on"
+              - condition: template
+                value_template: >-
+                  {{ state_attr('cover.volets_salon_state','current_position') >
+                  40}}
+                alias: current_position > 35
+            then:
+              - wait_for_trigger:
+                  - entity_id:
+                      - binary_sensor.motion_outside_occupancy
+                    from: "on"
+                    to: "off"
+                    trigger: state
+                alias: Wait until there is no motion
+                continue_on_timeout: false
+              - delay:
+                  hours: 0
+                  minutes: "{{ states('input_number.now_light_delay_off')|int}}"
+                  seconds: 0
+                  milliseconds: 0
+                alias: Wait the number of seconds that has been set
+              - data:
+                  position: 40
+                target:
+                  entity_id: cover.volets_salon_state
+                action: cover.set_cover_position
+            else:
+              - condition: state
+                entity_id: input_boolean.volets_salon_auto
+                state: "on"
+              - condition: template
+                value_template: >-
+                  {{ state_attr('cover.volets_salon_state','current_position') >
+                  40}}
+                alias: current_position > 35
+              - data:
+                  position: 40
+                target:
+                  entity_id: cover.volets_salon_state
+                action: cover.set_cover_position
+            enabled: false
           - data:
               value: unknown
             target:
@@ -379,6 +529,13 @@ actions:
         value_template: "{{ trigger.from_state.state == 'Alarme' }}"
         alias: From Mode Alarme
     then:
+      - action: automation.turn_on
+        metadata: {}
+        target:
+          entity_id:
+            - automation.set_brightness_for_chambres
+            - automation.set_brightness_for_salon
+        data: {}
       - alias: "Turn Off : [Mode] Auto Mode Based on Motions (Morning)"
         if:
           - condition: template
@@ -420,7 +577,7 @@ actions:
                 value_template: "{{ not is_state('vacuum.dreamebot_d10_plus', 'docked') }}"
                 alias: Aspirateur Not sur Base
             sequence:
-              - alias: Attendre Porte entrée change de Fermé à Ouvert ou 5 minutes
+              - alias: Attendre Porte entrée change de Fermé à Ouvert
                 wait_for_trigger:
                   - entity_id:
                       - binary_sensor.motion_hall_occupancy
@@ -431,7 +588,7 @@ actions:
                     trigger: state
                 timeout:
                   hours: 0
-                  minutes: 5
+                  minutes: 0
                   seconds: 0
                   milliseconds: 0
                 continue_on_timeout: true
@@ -464,7 +621,7 @@ actions:
                     minutes.
               - delay:
                   hours: 0
-                  minutes: 5
+                  minutes: 2
                   seconds: 0
                   milliseconds: 0
               - if:

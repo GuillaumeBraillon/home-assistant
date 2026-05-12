@@ -1,284 +1,284 @@
 alias: "[Mode] Auto Mode Based on Time of Day"
-description: ''
+description: "Basculer automatiquement les modes (Matin, Journée, Soir, Nuit) selon les horaires et conditions."
 triggers:
-- at: input_datetime.morning_start
-  alias: Matin Start
-  trigger: time
-- at: input_datetime.day_start
-  alias: Journée Start
-  trigger: time
-- at: input_datetime.evening_start
-  alias: Soir Start
-  trigger: time
-- at: input_datetime.evening_start_week_end
-  alias: Soir Start Weekend
-  trigger: time
-- at: input_datetime.night_start
-  alias: Nuit Start
-  trigger: time
-- at: input_datetime.night_start_week_end
-  alias: Nuit Start Weekend
-  trigger: time
-- entity_id:
-  - binary_sensor.freebox_player_pop_state
-  trigger: state
-  for:
-    hours: 0
-    minutes: 0
-    seconds: 0
+  - at: input_datetime.morning_start
+    alias: Matin Start
+    trigger: time
+  - at: input_datetime.day_start
+    alias: Journée Start
+    trigger: time
+  - at: input_datetime.evening_start
+    alias: Soir Start
+    trigger: time
+  - at: input_datetime.evening_start_week_end
+    alias: Soir Start Weekend
+    trigger: time
+  - at: input_datetime.night_start
+    alias: Nuit Start
+    trigger: time
+  - at: input_datetime.night_start_week_end
+    alias: Nuit Start Weekend
+    trigger: time
+  - entity_id:
+      - binary_sensor.freebox_player_pop_state
+    trigger: state
+    for:
+      hours: 0
+      minutes: 0
+      seconds: 0
 conditions:
-- condition: template
-  value_template: "{{ not is_state('input_select.modes_maison', 'Soirée Invités')
-    }}"
-  alias: Is Not Soirée Invités
-- condition: state
-  entity_id: group.persons
-  state: home
+  - condition: template
+    value_template: "{{ not is_state('input_select.modes_maison', 'Soirée Invités')
+      }}"
+    alias: Is Not Soirée Invités
+  - condition: state
+    entity_id: group.persons
+    state: home
 actions:
-- choose:
-  - conditions:
-    - condition: time
-      after: input_datetime.morning_start
-      before: input_datetime.day_start
-      alias: Matin
-    - condition: not
-      conditions:
-      - condition: state
-        entity_id: input_select.modes_maison
-        state: Matin
-      alias: Not Modes Matin
-    - condition: state
-      entity_id: binary_sensor.today_is_weekend
-      state: 'off'
-    - condition: state
-      entity_id: binary_sensor.today_is_holiday
-      state: 'off'
-    sequence:
-    - data:
-        option: Matin
-      target:
-        entity_id: input_select.modes_maison
-      alias: Mode Matin
-      action: input_select.select_option
-    alias: Passe en mode Matin
-  - conditions:
-    - condition: time
-      after: input_datetime.day_start
-      before: input_datetime.evening_start
-      alias: Journée
-    - condition: not
-      conditions:
-      - condition: state
-        entity_id: input_select.modes_maison
-        state: Journée
-      alias: Not Modes Journée
-    - condition: state
-      entity_id: binary_sensor.today_is_holiday
-      state: 'off'
-    - condition: state
-      entity_id: binary_sensor.today_is_weekend
-      state: 'off'
-    sequence:
-    - data:
-        option: Journée
-      target:
-        entity_id: input_select.modes_maison
-      alias: Mode Journée
-      action: input_select.select_option
-    alias: Passe en mode Journée
-  - conditions:
-    - condition: time
-      after: input_datetime.evening_start
-      before: input_datetime.night_start
-      alias: Soir
-    - condition: and
-      conditions:
-      - condition: state
-        entity_id: binary_sensor.freebox_player_pop_state
-        state: 'off'
-    - condition: state
-      entity_id: binary_sensor.tomorrow_is_holiday
-      state: 'off'
-    - condition: not
-      conditions:
-      - condition: state
-        entity_id: input_select.modes_maison
-        state: Soir
-      alias: Not Modes Soir
-    - condition: state
-      entity_id: binary_sensor.tomorrow_is_weekend
-      state: 'off'
-    sequence:
-    - data:
-        option: Soir
-      target:
-        entity_id: input_select.modes_maison
-      alias: Mode Soir
-      action: input_select.select_option
-    alias: Passe en mode Soir
-  - conditions:
-    - condition: time
-      after: input_datetime.evening_start_week_end
-      before: input_datetime.night_start_week_end
-      alias: Soir Weekend
-    - condition: not
-      conditions:
-      - condition: state
-        entity_id: input_select.modes_maison
-        state: Soir
-      alias: Not Modes Soir
-    - condition: state
-      entity_id: binary_sensor.freebox_player_pop_state
-      state: 'off'
-    - condition: or
-      conditions:
-      - condition: state
-        entity_id: binary_sensor.today_is_holiday
-        state: 'on'
-      - condition: state
-        entity_id: binary_sensor.today_is_weekend
-        state: 'on'
-      alias: Vacances ou Weekend
-    sequence:
-    - data:
-        option: Soir
-      target:
-        entity_id: input_select.modes_maison
-      alias: Mode Soir
-      action: input_select.select_option
-    alias: Passe en mode Soir Weekend
-  - conditions:
-    - condition: time
-      after: input_datetime.night_start
-      before: input_datetime.morning_start
-      alias: Nuit
-    - condition: state
-      entity_id: binary_sensor.today_is_holiday
-      state: 'off'
-    - condition: not
-      conditions:
-      - condition: state
-        entity_id: input_select.modes_maison
-        state: Nuit
-      alias: Not Modes Nuit
-    - condition: state
-      entity_id: binary_sensor.freebox_player_pop_state
-      state: 'off'
-    - condition: state
-      entity_id: binary_sensor.today_is_weekend
-      state: 'off'
-    sequence:
-    - data:
-        option: Nuit
-      target:
-        entity_id: input_select.modes_maison
-      alias: Mode Nuit
-      action: input_select.select_option
-    alias: Passe en mode Nuit
-  - conditions:
-    - condition: time
-      after: input_datetime.night_start_week_end
-      before: input_datetime.morning_start_week_end
-      alias: Nuit Weekend
-    - condition: not
-      conditions:
-      - condition: state
-        entity_id: input_select.modes_maison
-        state: Nuit
-      alias: Not Modes Nuit
-    - condition: state
-      entity_id: binary_sensor.freebox_player_pop_state
-      state: 'off'
-    - condition: or
-      conditions:
-      - condition: state
-        entity_id: binary_sensor.today_is_holiday
-        state: 'on'
-      - condition: state
-        entity_id: binary_sensor.today_is_weekend
-        state: 'on'
-      alias: Vacances ou Weekend
-    sequence:
-    - data:
-        option: Nuit
-      target:
-        entity_id: input_select.modes_maison
-      alias: Mode Nuit
-      action: input_select.select_option
-    alias: Passe en mode Nuit Weekend
-  - conditions:
-    - condition: time
-      after: input_datetime.evening_start
-      before: input_datetime.morning_start
-      alias: Soir OR Nuit
-    - alias: Freebox Player POP On
-      condition: device
-      device_id: 495f599191fa1de53c030211bc6695b6
-      domain: media_player
-      entity_id: e4056f88b0521f7f89767dcabeaea84a
-      type: is_on
-    - condition: state
-      entity_id: binary_sensor.tomorrow_is_holiday
-      state: 'off'
-    - condition: not
-      conditions:
-      - condition: state
-        entity_id: input_select.modes_maison
-        state: Soirée TV
-      alias: Not Modes Soirée TV
-    - condition: state
-      state: 'on'
-      entity_id: binary_sensor.freebox_player_pop_state
-    - condition: state
-      entity_id: binary_sensor.tomorrow_is_weekend
-      state: 'off'
-    sequence:
-    - delay:
-        hours: 0
-        minutes: 0
-        seconds: 5
-        milliseconds: 0
-    - data:
-        option: Soirée TV
-      target:
-        entity_id: input_select.modes_maison
-      alias: Mode Soirée TV
-      action: input_select.select_option
-    alias: Passe en mode Soirée TV
-  - conditions:
-    - condition: time
-      after: input_datetime.evening_start_week_end
-      before: input_datetime.morning_start_week_end
-      alias: Soir OR Nuit Weekend
-    - condition: not
-      conditions:
-      - condition: state
-        entity_id: input_select.modes_maison
-        state: Soirée TV
-      alias: Not Modes Soirée TV
-    - condition: state
-      state: 'on'
-      entity_id: binary_sensor.freebox_player_pop_state
-    - alias: Vacances ou Weekend
-      condition: or
-      conditions:
-      - condition: state
-        entity_id: binary_sensor.tomorrow_is_holiday
-        state: 'on'
-      - condition: state
-        entity_id: binary_sensor.tomorrow_is_weekend
-        state: 'on'
-    sequence:
-    - delay:
-        hours: 0
-        minutes: 0
-        seconds: 5
-        milliseconds: 0
-    - data:
-        option: Soirée TV
-      target:
-        entity_id: input_select.modes_maison
-      alias: Mode Soirée TV
-      action: input_select.select_option
-    alias: Passe en mode Soirée TV Weekend
+  - choose:
+      - conditions:
+          - condition: time
+            after: input_datetime.morning_start
+            before: input_datetime.day_start
+            alias: Matin
+          - condition: not
+            conditions:
+              - condition: state
+                entity_id: input_select.modes_maison
+                state: Matin
+            alias: Not Modes Matin
+          - condition: state
+            entity_id: binary_sensor.today_is_weekend
+            state: "off"
+          - condition: state
+            entity_id: binary_sensor.today_is_holiday
+            state: "off"
+        sequence:
+          - data:
+              option: Matin
+            target:
+              entity_id: input_select.modes_maison
+            alias: Mode Matin
+            action: input_select.select_option
+        alias: Passe en mode Matin
+      - conditions:
+          - condition: time
+            after: input_datetime.day_start
+            before: input_datetime.evening_start
+            alias: Journée
+          - condition: not
+            conditions:
+              - condition: state
+                entity_id: input_select.modes_maison
+                state: Journée
+            alias: Not Modes Journée
+          - condition: state
+            entity_id: binary_sensor.today_is_holiday
+            state: "off"
+          - condition: state
+            entity_id: binary_sensor.today_is_weekend
+            state: "off"
+        sequence:
+          - data:
+              option: Journée
+            target:
+              entity_id: input_select.modes_maison
+            alias: Mode Journée
+            action: input_select.select_option
+        alias: Passe en mode Journée
+      - conditions:
+          - condition: time
+            after: input_datetime.evening_start
+            before: input_datetime.night_start
+            alias: Soir
+          - condition: and
+            conditions:
+              - condition: state
+                entity_id: binary_sensor.freebox_player_pop_state
+                state: "off"
+          - condition: state
+            entity_id: binary_sensor.tomorrow_is_holiday
+            state: "off"
+          - condition: not
+            conditions:
+              - condition: state
+                entity_id: input_select.modes_maison
+                state: Soir
+            alias: Not Modes Soir
+          - condition: state
+            entity_id: binary_sensor.tomorrow_is_weekend
+            state: "off"
+        sequence:
+          - data:
+              option: Soir
+            target:
+              entity_id: input_select.modes_maison
+            alias: Mode Soir
+            action: input_select.select_option
+        alias: Passe en mode Soir
+      - conditions:
+          - condition: time
+            after: input_datetime.evening_start_week_end
+            before: input_datetime.night_start_week_end
+            alias: Soir Weekend
+          - condition: not
+            conditions:
+              - condition: state
+                entity_id: input_select.modes_maison
+                state: Soir
+            alias: Not Modes Soir
+          - condition: state
+            entity_id: binary_sensor.freebox_player_pop_state
+            state: "off"
+          - condition: or
+            conditions:
+              - condition: state
+                entity_id: binary_sensor.today_is_holiday
+                state: "on"
+              - condition: state
+                entity_id: binary_sensor.today_is_weekend
+                state: "on"
+            alias: Vacances ou Weekend
+        sequence:
+          - data:
+              option: Soir
+            target:
+              entity_id: input_select.modes_maison
+            alias: Mode Soir
+            action: input_select.select_option
+        alias: Passe en mode Soir Weekend
+      - conditions:
+          - condition: time
+            after: input_datetime.night_start
+            before: input_datetime.morning_start
+            alias: Nuit
+          - condition: state
+            entity_id: binary_sensor.today_is_holiday
+            state: "off"
+          - condition: not
+            conditions:
+              - condition: state
+                entity_id: input_select.modes_maison
+                state: Nuit
+            alias: Not Modes Nuit
+          - condition: state
+            entity_id: binary_sensor.freebox_player_pop_state
+            state: "off"
+          - condition: state
+            entity_id: binary_sensor.today_is_weekend
+            state: "off"
+        sequence:
+          - data:
+              option: Nuit
+            target:
+              entity_id: input_select.modes_maison
+            alias: Mode Nuit
+            action: input_select.select_option
+        alias: Passe en mode Nuit
+      - conditions:
+          - condition: time
+            after: input_datetime.night_start_week_end
+            before: input_datetime.morning_start_week_end
+            alias: Nuit Weekend
+          - condition: not
+            conditions:
+              - condition: state
+                entity_id: input_select.modes_maison
+                state: Nuit
+            alias: Not Modes Nuit
+          - condition: state
+            entity_id: binary_sensor.freebox_player_pop_state
+            state: "off"
+          - condition: or
+            conditions:
+              - condition: state
+                entity_id: binary_sensor.today_is_holiday
+                state: "on"
+              - condition: state
+                entity_id: binary_sensor.today_is_weekend
+                state: "on"
+            alias: Vacances ou Weekend
+        sequence:
+          - data:
+              option: Nuit
+            target:
+              entity_id: input_select.modes_maison
+            alias: Mode Nuit
+            action: input_select.select_option
+        alias: Passe en mode Nuit Weekend
+      - conditions:
+          - condition: time
+            after: input_datetime.evening_start
+            before: input_datetime.morning_start
+            alias: Soir OR Nuit
+          - alias: Freebox Player POP On
+            condition: device
+            device_id: 495f599191fa1de53c030211bc6695b6
+            domain: media_player
+            entity_id: e4056f88b0521f7f89767dcabeaea84a
+            type: is_on
+          - condition: state
+            entity_id: binary_sensor.tomorrow_is_holiday
+            state: "off"
+          - condition: not
+            conditions:
+              - condition: state
+                entity_id: input_select.modes_maison
+                state: Soirée TV
+            alias: Not Modes Soirée TV
+          - condition: state
+            state: "on"
+            entity_id: binary_sensor.freebox_player_pop_state
+          - condition: state
+            entity_id: binary_sensor.tomorrow_is_weekend
+            state: "off"
+        sequence:
+          - delay:
+              hours: 0
+              minutes: 0
+              seconds: 5
+              milliseconds: 0
+          - data:
+              option: Soirée TV
+            target:
+              entity_id: input_select.modes_maison
+            alias: Mode Soirée TV
+            action: input_select.select_option
+        alias: Passe en mode Soirée TV
+      - conditions:
+          - condition: time
+            after: input_datetime.evening_start_week_end
+            before: input_datetime.morning_start_week_end
+            alias: Soir OR Nuit Weekend
+          - condition: not
+            conditions:
+              - condition: state
+                entity_id: input_select.modes_maison
+                state: Soirée TV
+            alias: Not Modes Soirée TV
+          - condition: state
+            state: "on"
+            entity_id: binary_sensor.freebox_player_pop_state
+          - alias: Vacances ou Weekend
+            condition: or
+            conditions:
+              - condition: state
+                entity_id: binary_sensor.tomorrow_is_holiday
+                state: "on"
+              - condition: state
+                entity_id: binary_sensor.tomorrow_is_weekend
+                state: "on"
+        sequence:
+          - delay:
+              hours: 0
+              minutes: 0
+              seconds: 5
+              milliseconds: 0
+          - data:
+              option: Soirée TV
+            target:
+              entity_id: input_select.modes_maison
+            alias: Mode Soirée TV
+            action: input_select.select_option
+        alias: Passe en mode Soirée TV Weekend
 mode: single

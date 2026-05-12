@@ -1,68 +1,68 @@
 alias: "[Mode] Set Auto Mode"
-description: ''
+description: "Active ou désactive les modes automatiques selon la disponibilité des ampoules."
 trigger:
-- platform: state
-  entity_id:
-  - light.yeelight_color
-  - light.yeelight_mono
-  enabled: true
-  from: unavailable
-- platform: state
-  entity_id:
-  - light.yeelight_color
-  - light.yeelight_mono
-  enabled: true
-  to: unavailable
+  - platform: state
+    entity_id:
+      - light.yeelight_color
+      - light.yeelight_mono
+    enabled: true
+    from: unavailable
+  - platform: state
+    entity_id:
+      - light.yeelight_color
+      - light.yeelight_mono
+    enabled: true
+    to: unavailable
 condition:
-- condition: template
-  value_template: " {{ trigger.to_state.state != trigger.from_state.state}}"
+  - condition: template
+    value_template: " {{ trigger.to_state.state != trigger.from_state.state}}"
 action:
-- data:
-    message: "{{ trigger.entity_id }} : from:  {{ trigger.from_state.state }} to:
-      {{ trigger.to_state.state }}"
-  enabled: false
-  action: notify.persistent_notification
-- choose:
-  - conditions:
-    - alias: Oscar (ampoule_yeelink_white)
-      condition: template
-      value_template: "{{trigger.entity_id == 'light.yeelight_mono'}}"
-    sequence:
-    - if:
-      - alias: Online
-        condition: template
-        value_template: "{{ states('light.yeelight_mono') != 'unavailable' }}"
-      then:
-      - data: {}
-        target:
-          entity_id: input_boolean.mode_auto_oscar
-        alias: Turn on Mode Auto Oscar
-        action: input_boolean.turn_on
-      else:
-      - data: {}
-        target:
-          entity_id: input_boolean.mode_auto_oscar
-        alias: Turn off Mode Auto Oscar
-        action: input_boolean.turn_off
-  - conditions:
-    - alias: Eliott (ampoule_yeelink_color)
-      condition: template
-      value_template: "{{trigger.entity_id == 'light.yeelight_color'}}"
-    sequence:
-    - if:
-      - alias: Online
-        condition: template
-        value_template: "{{states('light.yeelight_color') != 'unavailable' }}"
-      then:
-      - data: {}
-        target:
-          entity_id: input_boolean.mode_auto_eliott
-        alias: Turn on Mode Auto Éliott
-        action: input_boolean.turn_on
-      else:
-      - data: {}
-        target:
-          entity_id: input_boolean.mode_auto_eliott
-        alias: Turn off Mode Auto Éliott
-        action: input_boolean.turn_off
+  - data:
+      message: "{{ trigger.entity_id }} : from:  {{ trigger.from_state.state }} to:
+        {{ trigger.to_state.state }}"
+    enabled: false
+    action: notify.persistent_notification
+  - choose:
+      - conditions:
+          - alias: Oscar (ampoule_yeelink_white)
+            condition: template
+            value_template: "{{trigger.entity_id == 'light.yeelight_mono'}}"
+        sequence:
+          - if:
+              - alias: Online
+                condition: template
+                value_template: "{{ states('light.yeelight_mono') != 'unavailable' }}"
+            then:
+              - data: {}
+                target:
+                  entity_id: input_boolean.mode_auto_oscar
+                alias: Turn on Mode Auto Oscar
+                action: input_boolean.turn_on
+            else:
+              - data: {}
+                target:
+                  entity_id: input_boolean.mode_auto_oscar
+                alias: Turn off Mode Auto Oscar
+                action: input_boolean.turn_off
+      - conditions:
+          - alias: Eliott (ampoule_yeelink_color)
+            condition: template
+            value_template: "{{trigger.entity_id == 'light.yeelight_color'}}"
+        sequence:
+          - if:
+              - alias: Online
+                condition: template
+                value_template: "{{states('light.yeelight_color') != 'unavailable' }}"
+            then:
+              - data: {}
+                target:
+                  entity_id: input_boolean.mode_auto_eliott
+                alias: Turn on Mode Auto Éliott
+                action: input_boolean.turn_on
+            else:
+              - data: {}
+                target:
+                  entity_id: input_boolean.mode_auto_eliott
+                alias: Turn off Mode Auto Éliott
+                action: input_boolean.turn_off
 mode: restart

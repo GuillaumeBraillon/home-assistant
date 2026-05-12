@@ -1,138 +1,138 @@
 alias: "[Multimedia] Freebox Player Pop"
-description: ''
+description: "Actions à appliquer lors du changement d'état du Freebox Player Pop (lumières, ampli...)."
 triggers:
-- entity_id:
-  - binary_sensor.freebox_player_pop_state
-  trigger: state
+  - entity_id:
+      - binary_sensor.freebox_player_pop_state
+    trigger: state
 conditions: []
 actions:
-- choose:
-  - conditions:
-    - condition: state
-      entity_id: binary_sensor.freebox_player_pop_state
-      state: 'on'
-    sequence:
-    - if:
-      - condition: template
-        value_template: "{{ is_state('input_boolean.mode_auto_salon', 'on') }}"
-        alias: Auto Salon is 'Activé'
-      then:
-      - data: {}
-        target:
-          entity_id: input_boolean.mode_auto_salon
-        action: input_boolean.turn_off
-      alias: Auto Salon
-    - if:
-      - condition: template
-        value_template: "{{ is_state('light.enki_lexman_e27_led_white_bulb_living_room',
-          'on') }}"
-        alias: Plafonnier Salon is 'Activé'
-      then:
-      - data: {}
-        target:
-          entity_id: light.enki_lexman_e27_led_white_bulb_living_room
-        action: light.turn_off
-      alias: 'Plafonnier '
-    - alias: 'Bibliothèque '
-      if:
-      - condition: template
-        value_template: "{{ is_state('light.ikea_tradfri_e27_1055lm_2', 'on') }}"
-        alias: Bibliothèque is 'Activé'
-      then:
-      - data: {}
-        target:
-          entity_id: light.ikea_tradfri_e27_1055lm_2
-        action: light.turn_off
-        enabled: true
-    - if:
-      - condition: template
-        value_template: "{{ is_state('light.sapin_local', 'on') }}"
-        alias: Sapin is 'Activé'
-      then:
-      - data: {}
-        target:
-          entity_id: light.sapin_local
-        action: light.turn_off
-      alias: 'Sapin '
-    - if:
-      - condition: template
-        value_template: "{{states('media_player.mi_smart_home_salon') != 'off' }}"
-        alias: Mi Smart Home Salon Not Off
-      then:
-      - data: {}
-        target:
-          entity_id:
-          - media_player.sejour
-          - media_player.mi_smart_home_salon
-        action: media_player.turn_off
-      alias: 'Google home '
-    - alias: Ampli
-      if:
-      - condition: state
-        entity_id: input_select.ampli_power_states
-        state: 'off'
-      then:
-      - data: {}
-        target:
-          entity_id: input_button.ampli_power
-        action: input_button.press
-      - delay:
-          hours: 0
-          minutes: 0
-          seconds: 15
-          milliseconds: 0
-        enabled: false
-      - data: {}
-        target:
-          entity_id: input_button.ampli_power
-        action: input_button.press
-        enabled: false
-      - delay:
-          hours: 0
-          minutes: 0
-          seconds: 5
-          milliseconds: 0
-        enabled: false
-      - data: {}
-        target:
-          entity_id: input_button.ampli_power
-        action: input_button.press
-        enabled: false
-    - data: {}
-      target:
-        entity_id: input_button.ampli_source_video
-      alias: Ampli Source Vidéo
-      action: input_button.press
-  - conditions:
-    - condition: state
-      entity_id: binary_sensor.freebox_player_pop_state
-      state: 'off'
-    sequence:
-    - if:
-      - condition: template
-        value_template: "{{ is_state('input_boolean.mode_auto_salon', 'off') }}"
-        alias: Auto Salon is Not 'Activé'
-      then:
-      - data: {}
-        target:
-          entity_id: input_boolean.mode_auto_salon
-        action: input_boolean.turn_on
-      alias: 'Auto Salon '
-    - if:
-      - condition: state
-        entity_id: input_select.ampli_power_states
-        state: 'on'
-      then:
-      - data: {}
-        target:
-          entity_id: input_button.ampli_power
-        action: input_button.press
-      alias: 'Ampli '
-    - metadata: {}
-      data:
-        skip_condition: true
-      target:
-        entity_id:
-        - automation.multimedia_video_projecteur_xgimi
-      action: automation.trigger
+  - choose:
+      - conditions:
+          - condition: state
+            entity_id: binary_sensor.freebox_player_pop_state
+            state: "on"
+        sequence:
+          - if:
+              - condition: template
+                value_template: "{{ is_state('input_boolean.mode_auto_salon', 'on') }}"
+                alias: Auto Salon is 'Activé'
+            then:
+              - data: {}
+                target:
+                  entity_id: input_boolean.mode_auto_salon
+                action: input_boolean.turn_off
+            alias: Auto Salon
+          - if:
+              - condition: template
+                value_template: "{{ is_state('light.enki_lexman_e27_led_white_bulb_living_room',
+                  'on') }}"
+                alias: Plafonnier Salon is 'Activé'
+            then:
+              - data: {}
+                target:
+                  entity_id: light.enki_lexman_e27_led_white_bulb_living_room
+                action: light.turn_off
+            alias: "Plafonnier "
+          - alias: "Bibliothèque "
+            if:
+              - condition: template
+                value_template: "{{ is_state('light.ikea_tradfri_e27_1055lm_2', 'on') }}"
+                alias: Bibliothèque is 'Activé'
+            then:
+              - data: {}
+                target:
+                  entity_id: light.ikea_tradfri_e27_1055lm_2
+                action: light.turn_off
+                enabled: true
+          - if:
+              - condition: template
+                value_template: "{{ is_state('light.sapin_local', 'on') }}"
+                alias: Sapin is 'Activé'
+            then:
+              - data: {}
+                target:
+                  entity_id: light.sapin_local
+                action: light.turn_off
+            alias: "Sapin "
+          - if:
+              - condition: template
+                value_template: "{{states('media_player.mi_smart_home_salon') != 'off' }}"
+                alias: Mi Smart Home Salon Not Off
+            then:
+              - data: {}
+                target:
+                  entity_id:
+                    - media_player.sejour
+                    - media_player.mi_smart_home_salon
+                action: media_player.turn_off
+            alias: "Google home "
+          - alias: Ampli
+            if:
+              - condition: state
+                entity_id: input_select.ampli_power_states
+                state: "off"
+            then:
+              - data: {}
+                target:
+                  entity_id: input_button.ampli_power
+                action: input_button.press
+              - delay:
+                  hours: 0
+                  minutes: 0
+                  seconds: 15
+                  milliseconds: 0
+                enabled: false
+              - data: {}
+                target:
+                  entity_id: input_button.ampli_power
+                action: input_button.press
+                enabled: false
+              - delay:
+                  hours: 0
+                  minutes: 0
+                  seconds: 5
+                  milliseconds: 0
+                enabled: false
+              - data: {}
+                target:
+                  entity_id: input_button.ampli_power
+                action: input_button.press
+                enabled: false
+          - data: {}
+            target:
+              entity_id: input_button.ampli_source_video
+            alias: Ampli Source Vidéo
+            action: input_button.press
+      - conditions:
+          - condition: state
+            entity_id: binary_sensor.freebox_player_pop_state
+            state: "off"
+        sequence:
+          - if:
+              - condition: template
+                value_template: "{{ is_state('input_boolean.mode_auto_salon', 'off') }}"
+                alias: Auto Salon is Not 'Activé'
+            then:
+              - data: {}
+                target:
+                  entity_id: input_boolean.mode_auto_salon
+                action: input_boolean.turn_on
+            alias: "Auto Salon "
+          - if:
+              - condition: state
+                entity_id: input_select.ampli_power_states
+                state: "on"
+            then:
+              - data: {}
+                target:
+                  entity_id: input_button.ampli_power
+                action: input_button.press
+            alias: "Ampli "
+          - metadata: {}
+            data:
+              skip_condition: true
+            target:
+              entity_id:
+                - automation.multimedia_video_projecteur_xgimi
+            action: automation.trigger
 mode: single

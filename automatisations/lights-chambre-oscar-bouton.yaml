@@ -1,101 +1,101 @@
 alias: "[Lights] Chambre Oscar Bouton"
-description: ''
+description: "Actions des boutons dans la chambre d'Oscar (lumières, modes)."
 triggers:
-- entity_id:
-  - event.xiaomi_wireless_wall_switch_action
-  trigger: state
+  - entity_id:
+      - event.xiaomi_wireless_wall_switch_action
+    trigger: state
 conditions:
-- alias: Avoid multiple runs in 2 seconds
-  condition: template
-  value_template: "{{ state_attr('automation.lights_chambre_oscar_bouton', 'last_triggered')
-    < now() - timedelta(seconds=2) }}"
-  enabled: false
+  - alias: Avoid multiple runs in 2 seconds
+    condition: template
+    value_template: "{{ state_attr('automation.lights_chambre_oscar_bouton', 'last_triggered')
+      < now() - timedelta(seconds=2) }}"
+    enabled: false
 actions:
-- alias: Buttons
-  choose:
-  - conditions:
-    - condition: state
-      entity_id: event.xiaomi_wireless_wall_switch_action
-      attribute: event_type
-      state: single_left
-    sequence:
-    - if:
-      - condition: state
-        entity_id: light.bureau_d_oscar_socket_1
-        state: 'on'
-        alias: Bureau On
-      then:
-      - data: {}
-        target:
-          entity_id: light.bureau_d_oscar_socket_1
-        alias: Turn off Bureau
-        action: light.turn_off
-      else:
-      - data: {}
-        target:
-          entity_id: light.bureau_d_oscar_socket_1
-        alias: Turn on Bureau
-        action: light.turn_on
-      enabled: false
-    - action: light.toggle
-      metadata: {}
-      data: {}
-      target:
-        entity_id: light.bureau_d_oscar_socket_1
-  - conditions:
-    - condition: state
-      entity_id: event.xiaomi_wireless_wall_switch_action
-      attribute: event_type
-      state: single_right
-    sequence:
-    - if:
-      - condition: state
-        entity_id: light.yeelight_mono
-        state: 'on'
-        alias: Plafonnier On
-      then:
-      - data: {}
-        target:
-          entity_id: light.yeelight_mono
-        alias: Turn off Plafonnier
-        action: light.turn_off
-      else:
-      - data: {}
-        target:
-          entity_id: light.yeelight_mono
-        alias: Turn on Plafonnier
-        action: light.turn_on
-  - conditions:
-    - condition: state
-      entity_id: event.xiaomi_wireless_wall_switch_action
-      attribute: event_type
-      state: single_both
-    sequence:
-    - alias: Mode Auto Oscar
-      if:
-      - condition: state
-        entity_id: input_boolean.mode_auto_oscar
-        state: 'on'
-        alias: Mode Auto Oscar 'Activé'
-      then:
-      - data: {}
-        target:
-          entity_id: input_boolean.mode_auto_oscar
-        alias: Turn off Mode Auto Oscar
-        action: input_boolean.turn_off
-      else:
-      - data: {}
-        target:
-          entity_id: input_boolean.mode_auto_oscar
-        alias: Turn on Mode Auto Oscar
-        action: input_boolean.turn_on
-- condition: state
-  entity_id: light.yeelight_mono
-  state: unavailable
-- data: {}
-  target:
-    entity_id:
-    - input_boolean.mode_auto_oscar
-  action: input_boolean.turn_off
+  - alias: Buttons
+    choose:
+      - conditions:
+          - condition: state
+            entity_id: event.xiaomi_wireless_wall_switch_action
+            attribute: event_type
+            state: single_left
+        sequence:
+          - if:
+              - condition: state
+                entity_id: light.bureau_d_oscar_socket_1
+                state: "on"
+                alias: Bureau On
+            then:
+              - data: {}
+                target:
+                  entity_id: light.bureau_d_oscar_socket_1
+                alias: Turn off Bureau
+                action: light.turn_off
+            else:
+              - data: {}
+                target:
+                  entity_id: light.bureau_d_oscar_socket_1
+                alias: Turn on Bureau
+                action: light.turn_on
+            enabled: false
+          - action: light.toggle
+            metadata: {}
+            data: {}
+            target:
+              entity_id: light.bureau_d_oscar_socket_1
+      - conditions:
+          - condition: state
+            entity_id: event.xiaomi_wireless_wall_switch_action
+            attribute: event_type
+            state: single_right
+        sequence:
+          - if:
+              - condition: state
+                entity_id: light.yeelight_mono
+                state: "on"
+                alias: Plafonnier On
+            then:
+              - data: {}
+                target:
+                  entity_id: light.yeelight_mono
+                alias: Turn off Plafonnier
+                action: light.turn_off
+            else:
+              - data: {}
+                target:
+                  entity_id: light.yeelight_mono
+                alias: Turn on Plafonnier
+                action: light.turn_on
+      - conditions:
+          - condition: state
+            entity_id: event.xiaomi_wireless_wall_switch_action
+            attribute: event_type
+            state: single_both
+        sequence:
+          - alias: Mode Auto Oscar
+            if:
+              - condition: state
+                entity_id: input_boolean.mode_auto_oscar
+                state: "on"
+                alias: Mode Auto Oscar 'Activé'
+            then:
+              - data: {}
+                target:
+                  entity_id: input_boolean.mode_auto_oscar
+                alias: Turn off Mode Auto Oscar
+                action: input_boolean.turn_off
+            else:
+              - data: {}
+                target:
+                  entity_id: input_boolean.mode_auto_oscar
+                alias: Turn on Mode Auto Oscar
+                action: input_boolean.turn_on
+  - condition: state
+    entity_id: light.yeelight_mono
+    state: unavailable
+  - data: {}
+    target:
+      entity_id:
+        - input_boolean.mode_auto_oscar
+    action: input_boolean.turn_off
 mode: parallel
 max: 10

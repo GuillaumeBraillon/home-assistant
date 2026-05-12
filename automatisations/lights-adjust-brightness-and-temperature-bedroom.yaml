@@ -1,46 +1,46 @@
 alias: "[Lights] Adjust Brightness and Temperature (bedroom)"
-description: ''
+description: "Ajuste luminosité et température des lumières de chambre selon valeurs 'now'."
 triggers:
-- entity_id:
-  - light.yeelight_color
-  - light.plafonnier_couloir
-  - light.yeelight_mono
-  - light.light_parents
-  - light.yeelight_bslamp1
-  - light.mibedsidelamp2
-  - light.livarno_lux_gu10
-  - light.enki_lexman_e27_led_white_hall_1
-  - light.enki_lexman_e27_led_white_hall_2
-  from: 'off'
-  to: 'on'
-  trigger: state
-  enabled: true
-- entity_id:
-  - light.yeelight_color
-  - light.yeelight_mono
-  from: unavailable
-  trigger: state
+  - entity_id:
+      - light.yeelight_color
+      - light.plafonnier_couloir
+      - light.yeelight_mono
+      - light.light_parents
+      - light.yeelight_bslamp1
+      - light.mibedsidelamp2
+      - light.livarno_lux_gu10
+      - light.enki_lexman_e27_led_white_hall_1
+      - light.enki_lexman_e27_led_white_hall_2
+    from: "off"
+    to: "on"
+    trigger: state
+    enabled: true
+  - entity_id:
+      - light.yeelight_color
+      - light.yeelight_mono
+    from: unavailable
+    trigger: state
 conditions:
-- condition: template
-  value_template: "{{ trigger.to_state.state == 'on' }}"
-  alias: Light is On
+  - condition: template
+    value_template: "{{ trigger.to_state.state == 'on' }}"
+    alias: Light is On
 actions:
-- target:
-    entity_id: "{{ trigger.entity_id }}"
-  data:
-    brightness_pct: "{{ states('input_number.now_light_lumi_chambres') | int }}"
-    color_temp_kelvin: "{{ states('input_number.now_light_temp_chambres') | int }}"
-  action: light.turn_on
-- delay:
-    hours: 0
-    minutes: 0
-    seconds: 0
-    milliseconds: 500
-- target:
-    entity_id: "{{ trigger.entity_id }}"
-  data:
-    brightness_pct: "{{ states('input_number.now_light_lumi_chambres') | int }}"
-    color_temp_kelvin: "{{ states('input_number.now_light_temp_chambres') | int }}"
-  action: light.turn_on
+  - target:
+      entity_id: "{{ trigger.entity_id }}"
+    data:
+      brightness_pct: "{{ states('input_number.now_light_lumi_chambres') | int }}"
+      color_temp_kelvin: "{{ states('input_number.now_light_temp_chambres') | int }}"
+    action: light.turn_on
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 0
+      milliseconds: 500
+  - target:
+      entity_id: "{{ trigger.entity_id }}"
+    data:
+      brightness_pct: "{{ states('input_number.now_light_lumi_chambres') | int }}"
+      color_temp_kelvin: "{{ states('input_number.now_light_temp_chambres') | int }}"
+    action: light.turn_on
 mode: parallel
 max: 10

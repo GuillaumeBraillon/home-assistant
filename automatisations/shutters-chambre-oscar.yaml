@@ -1,5 +1,5 @@
 alias: "[Shutters] Chambre Oscar"
-description: ""
+description: "Contrôle les volets de la chambre d'Oscar selon le mode et la présence."
 triggers:
   - entity_id:
       - binary_sensor.motion_oscar_occupancy

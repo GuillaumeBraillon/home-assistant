@@ -1,249 +1,249 @@
 alias: "[Lights] Salon Bouton"
-description: ''
+description: "Gère les actions des boutons du salon (contrôle volets et lumières)."
 triggers:
-- trigger: mqtt
-  options:
-    topic: zigbee2mqtt/Switch_Living_Room/action
-  enabled: false
-- trigger: state
-  entity_id:
-  - event.switch_living_room_action
+  - trigger: mqtt
+    options:
+      topic: zigbee2mqtt/Switch_Living_Room/action
+    enabled: false
+  - trigger: state
+    entity_id:
+      - event.switch_living_room_action
 conditions: []
 actions:
-- action: notify.persistent_notification
-  metadata: {}
-  data:
-    title: "[Lights] Salon Bouton"
-    message: "- to_state : {{ trigger.to_state.attributes.event_type }}"
-  enabled: false
-- alias: Buttons
-  choose:
-  - conditions:
-    - condition: state
-      entity_id: event.switch_living_room_action
-      attribute: event_type
-      state:
-      - arrow_left_click
-      alias: arrow_left_click
-    sequence:
-    - choose:
+  - action: notify.persistent_notification
+    metadata: {}
+    data:
+      title: "[Lights] Salon Bouton"
+      message: "- to_state : {{ trigger.to_state.attributes.event_type }}"
+    enabled: false
+  - alias: Buttons
+    choose:
       - conditions:
-        - condition: or
-          conditions:
           - condition: state
-            entity_id: cover.volets_salon_state
-            state: opening
-          - condition: state
-            entity_id: cover.volets_salon_state
-            state: closing
+            entity_id: event.switch_living_room_action
+            attribute: event_type
+            state:
+              - arrow_left_click
+            alias: arrow_left_click
         sequence:
-        - alias: Stop Volets Salon
-          action: cover.stop_cover
-          target:
-            entity_id:
-            - cover.volets_salon_state
-          data: {}
-      default:
-      - data: {}
-        target:
-          entity_id: cover.volets_salon_state
-        alias: Close Volets Salon
-        action: cover.close_cover
-  - conditions:
-    - condition: state
-      entity_id: event.switch_living_room_action
-      attribute: event_type
-      state:
-      - arrow_left_hold
-      alias: arrow_left_hold
-    sequence:
-    - data: {}
-      target:
-        entity_id: cover.volets_salon_state
-      alias: Close Volets Salon
-      action: cover.close_cover
-  - conditions:
-    - condition: state
-      entity_id: event.switch_living_room_action
-      attribute: event_type
-      state:
-      - arrow_left_release
-      alias: arrow_left_release
-    sequence:
-    - alias: Stop Volets Salon
-      action: cover.stop_cover
-      target:
-        entity_id:
-        - cover.volets_salon_state
-      data: {}
-  - conditions:
-    - condition: state
-      entity_id: event.switch_living_room_action
-      attribute: event_type
-      state:
-      - arrow_right_click
-      alias: arrow_right_click
-    sequence:
-    - choose:
+          - choose:
+              - conditions:
+                  - condition: or
+                    conditions:
+                      - condition: state
+                        entity_id: cover.volets_salon_state
+                        state: opening
+                      - condition: state
+                        entity_id: cover.volets_salon_state
+                        state: closing
+                sequence:
+                  - alias: Stop Volets Salon
+                    action: cover.stop_cover
+                    target:
+                      entity_id:
+                        - cover.volets_salon_state
+                    data: {}
+            default:
+              - data: {}
+                target:
+                  entity_id: cover.volets_salon_state
+                alias: Close Volets Salon
+                action: cover.close_cover
       - conditions:
-        - condition: or
-          conditions:
           - condition: state
-            entity_id: cover.volets_salon_state
-            state: opening
+            entity_id: event.switch_living_room_action
+            attribute: event_type
+            state:
+              - arrow_left_hold
+            alias: arrow_left_hold
+        sequence:
+          - data: {}
+            target:
+              entity_id: cover.volets_salon_state
+            alias: Close Volets Salon
+            action: cover.close_cover
+      - conditions:
           - condition: state
-            entity_id: cover.volets_salon_state
-            state: closing
+            entity_id: event.switch_living_room_action
+            attribute: event_type
+            state:
+              - arrow_left_release
+            alias: arrow_left_release
         sequence:
-        - alias: Stop Volets Salon
-          action: cover.stop_cover
-          target:
-            entity_id:
-            - cover.volets_salon_state
-          data: {}
-      default:
-      - alias: Open Volets Salon
-        action: cover.open_cover
-        target:
-          entity_id:
-          - cover.volets_salon_state
-        data: {}
-  - conditions:
-    - condition: state
-      entity_id: event.switch_living_room_action
-      attribute: event_type
-      state:
-      - arrow_right_hold
-      alias: arrow_right_hold
-    sequence:
-    - alias: Open Volets Salon
-      action: cover.open_cover
-      target:
-        entity_id:
-        - cover.volets_salon_state
-      data: {}
-  - conditions:
-    - alias: arrow_right_release
-      condition: state
-      entity_id: event.switch_living_room_action
-      attribute: event_type
-      state:
-      - arrow_right_release
-    sequence:
-    - alias: Stop Volets Salon
-      action: cover.stop_cover
-      target:
-        entity_id:
-        - cover.volets_salon_state
-      data: {}
-  - conditions:
-    - condition: state
-      entity_id: event.switch_living_room_action
-      attribute: event_type
-      state:
-      - brightness_move_up
-      alias: brightness_move_up
-    sequence:
-    - if:
-      - condition: state
-        entity_id: light.ikea_tradfri_e27_1055lm_2
-        state:
-        - 'off'
-      then:
-      - action: light.turn_on
-        target:
-          entity_id:
-          - light.ikea_tradfri_e27_1055lm_2
-        data:
-          brightness_pct: 1
-      alias: Allumer si éteint
-    - alias: Augmenter progressivement
-      repeat:
+          - alias: Stop Volets Salon
+            action: cover.stop_cover
+            target:
+              entity_id:
+                - cover.volets_salon_state
+            data: {}
+      - conditions:
+          - condition: state
+            entity_id: event.switch_living_room_action
+            attribute: event_type
+            state:
+              - arrow_right_click
+            alias: arrow_right_click
         sequence:
-        - action: light.turn_on
-          data:
-            brightness_step_pct: 10
-          target:
-            entity_id:
-            - light.ikea_tradfri_e27_1055lm_2
-        - delay:
-            milliseconds: 300
-        while:
-        - condition: state
-          entity_id: event.switch_living_room_action
-          attribute: event_type
-          state:
-          - brightness_move_up
-  - conditions:
-    - condition: state
-      entity_id: event.switch_living_room_action
-      attribute: event_type
-      state:
-      - brightness_move_down
-      alias: brightness_move_down
-    sequence:
-    - alias: Allumer si éteint
-      if:
-      - condition: state
-        entity_id: light.ikea_tradfri_e27_1055lm_2
-        state:
-        - 'off'
-      then:
-      - action: light.turn_on
-        target:
-          entity_id:
-          - light.ikea_tradfri_e27_1055lm_2
-        data:
-          brightness_pct: 100
-    - alias: Diminuer progressivement
-      repeat:
+          - choose:
+              - conditions:
+                  - condition: or
+                    conditions:
+                      - condition: state
+                        entity_id: cover.volets_salon_state
+                        state: opening
+                      - condition: state
+                        entity_id: cover.volets_salon_state
+                        state: closing
+                sequence:
+                  - alias: Stop Volets Salon
+                    action: cover.stop_cover
+                    target:
+                      entity_id:
+                        - cover.volets_salon_state
+                    data: {}
+            default:
+              - alias: Open Volets Salon
+                action: cover.open_cover
+                target:
+                  entity_id:
+                    - cover.volets_salon_state
+                data: {}
+      - conditions:
+          - condition: state
+            entity_id: event.switch_living_room_action
+            attribute: event_type
+            state:
+              - arrow_right_hold
+            alias: arrow_right_hold
         sequence:
-        - condition: numeric_state
-          entity_id: light.ikea_tradfri_e27_1055lm_2
-          above: 5
-          attribute: brightness
-        - action: light.turn_on
-          data:
-            brightness_step_pct: -10
-          target:
-            entity_id:
-            - light.ikea_tradfri_e27_1055lm_2
-        - delay:
-            milliseconds: 300
-        while:
-        - condition: state
-          entity_id: event.switch_living_room_action
-          attribute: event_type
-          state:
-          - brightness_move_down
-  - conditions:
-    - alias: 'on'
-      condition: state
-      entity_id: event.switch_living_room_action
-      attribute: event_type
-      state:
-      - 'on'
-    sequence:
-    - action: light.turn_on
-      metadata: {}
-      data: {}
-      target:
-        entity_id:
-        - light.ikea_tradfri_e27_1055lm_2
-  - conditions:
-    - alias: 'off'
-      condition: state
-      entity_id: event.switch_living_room_action
-      attribute: event_type
-      state:
-      - 'off'
-    sequence:
-    - action: light.turn_off
-      metadata: {}
-      data: {}
-      target:
-        entity_id:
-        - light.ikea_tradfri_e27_1055lm_2
-  default: []
-  enabled: true
+          - alias: Open Volets Salon
+            action: cover.open_cover
+            target:
+              entity_id:
+                - cover.volets_salon_state
+            data: {}
+      - conditions:
+          - alias: arrow_right_release
+            condition: state
+            entity_id: event.switch_living_room_action
+            attribute: event_type
+            state:
+              - arrow_right_release
+        sequence:
+          - alias: Stop Volets Salon
+            action: cover.stop_cover
+            target:
+              entity_id:
+                - cover.volets_salon_state
+            data: {}
+      - conditions:
+          - condition: state
+            entity_id: event.switch_living_room_action
+            attribute: event_type
+            state:
+              - brightness_move_up
+            alias: brightness_move_up
+        sequence:
+          - if:
+              - condition: state
+                entity_id: light.ikea_tradfri_e27_1055lm_2
+                state:
+                  - "off"
+            then:
+              - action: light.turn_on
+                target:
+                  entity_id:
+                    - light.ikea_tradfri_e27_1055lm_2
+                data:
+                  brightness_pct: 1
+            alias: Allumer si éteint
+          - alias: Augmenter progressivement
+            repeat:
+              sequence:
+                - action: light.turn_on
+                  data:
+                    brightness_step_pct: 10
+                  target:
+                    entity_id:
+                      - light.ikea_tradfri_e27_1055lm_2
+                - delay:
+                    milliseconds: 300
+              while:
+                - condition: state
+                  entity_id: event.switch_living_room_action
+                  attribute: event_type
+                  state:
+                    - brightness_move_up
+      - conditions:
+          - condition: state
+            entity_id: event.switch_living_room_action
+            attribute: event_type
+            state:
+              - brightness_move_down
+            alias: brightness_move_down
+        sequence:
+          - alias: Allumer si éteint
+            if:
+              - condition: state
+                entity_id: light.ikea_tradfri_e27_1055lm_2
+                state:
+                  - "off"
+            then:
+              - action: light.turn_on
+                target:
+                  entity_id:
+                    - light.ikea_tradfri_e27_1055lm_2
+                data:
+                  brightness_pct: 100
+          - alias: Diminuer progressivement
+            repeat:
+              sequence:
+                - condition: numeric_state
+                  entity_id: light.ikea_tradfri_e27_1055lm_2
+                  above: 5
+                  attribute: brightness
+                - action: light.turn_on
+                  data:
+                    brightness_step_pct: -10
+                  target:
+                    entity_id:
+                      - light.ikea_tradfri_e27_1055lm_2
+                - delay:
+                    milliseconds: 300
+              while:
+                - condition: state
+                  entity_id: event.switch_living_room_action
+                  attribute: event_type
+                  state:
+                    - brightness_move_down
+      - conditions:
+          - alias: "on"
+            condition: state
+            entity_id: event.switch_living_room_action
+            attribute: event_type
+            state:
+              - "on"
+        sequence:
+          - action: light.turn_on
+            metadata: {}
+            data: {}
+            target:
+              entity_id:
+                - light.ikea_tradfri_e27_1055lm_2
+      - conditions:
+          - alias: "off"
+            condition: state
+            entity_id: event.switch_living_room_action
+            attribute: event_type
+            state:
+              - "off"
+        sequence:
+          - action: light.turn_off
+            metadata: {}
+            data: {}
+            target:
+              entity_id:
+                - light.ikea_tradfri_e27_1055lm_2
+    default: []
+    enabled: true
 mode: restart

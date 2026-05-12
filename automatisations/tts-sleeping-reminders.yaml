@@ -1,5 +1,5 @@
 alias: "[TTS] Sleeping Time"
-description: ""
+description: "Messages TTS pour le brossage des dents et l'histoire du soir."
 triggers:
   - entity_id:
       - input_boolean.bouton_test

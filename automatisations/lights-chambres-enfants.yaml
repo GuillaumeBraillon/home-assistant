@@ -1,81 +1,81 @@
 alias: "[Lights] Chambres Enfants"
-description: ''
+description: "Allume/éteint les lumières des chambres d'enfants selon présence et mode."
 trigger:
-- platform: state
-  entity_id:
-  - binary_sensor.motion_oscar_occupancy
-  - binary_sensor.motion_eliott_occupancy
-  from: 'off'
-  to: 'on'
-- platform: state
-  entity_id:
-  - input_boolean.mode_auto_oscar
-  - input_boolean.mode_auto_eliott
-  - input_boolean.mode_auto_chambre_enfants
-  from: 'off'
-  to: 'on'
-condition:
-- condition: state
-  entity_id: input_boolean.mode_auto_chambre_enfants
-  state: 'on'
-- condition: state
-  entity_id: timer.minuterie_couloir
-  state: idle
-action:
-- if:
-  - condition: or
-    conditions:
-    - condition: and
-      conditions:
-      - condition: state
-        entity_id: input_boolean.mode_auto_oscar
-        state: 'on'
-      - condition: state
-        entity_id: binary_sensor.motion_oscar_occupancy
-        state: 'on'
-      alias: Oscar
-    - condition: and
-      conditions:
-      - condition: state
-        entity_id: input_boolean.mode_auto_eliott
-        state: 'on'
-      - condition: state
-        entity_id: binary_sensor.motion_eliott_occupancy
-        state: 'on'
-      alias: Eliott
-    alias: Mode Auto & Motion
-  then:
-  - alias: Turn on the light
-    service: light.turn_on
-    data: {}
-    target:
-      entity_id:
-      - light.plafonnier_couloir
-  - wait_for_trigger:
-    - platform: state
-      entity_id:
-      - binary_sensor.motion_eliott_occupancy
+  - platform: state
+    entity_id:
       - binary_sensor.motion_oscar_occupancy
-      from: 'on'
-      to: 'off'
-    timeout:
-      hours: 0
-      minutes: "{{ states('input_number.now_light_delay_off')|int}}"
-      seconds: 0
-      milliseconds: 0
-  - delay:
-      hours: 0
-      minutes: "{{ states('input_number.now_light_delay_off')|int}}"
-      seconds: 0
-      milliseconds: 0
-    alias: Wait the number of seconds that has been set
+      - binary_sensor.motion_eliott_occupancy
+    from: "off"
+    to: "on"
+  - platform: state
+    entity_id:
+      - input_boolean.mode_auto_oscar
+      - input_boolean.mode_auto_eliott
+      - input_boolean.mode_auto_chambre_enfants
+    from: "off"
+    to: "on"
+condition:
+  - condition: state
+    entity_id: input_boolean.mode_auto_chambre_enfants
+    state: "on"
   - condition: state
     entity_id: timer.minuterie_couloir
     state: idle
-  - alias: Turn off the light
-    service: light.turn_off
-    data: {}
-    target:
-      entity_id:
-      - light.plafonnier_couloir
+action:
+  - if:
+      - condition: or
+        conditions:
+          - condition: and
+            conditions:
+              - condition: state
+                entity_id: input_boolean.mode_auto_oscar
+                state: "on"
+              - condition: state
+                entity_id: binary_sensor.motion_oscar_occupancy
+                state: "on"
+            alias: Oscar
+          - condition: and
+            conditions:
+              - condition: state
+                entity_id: input_boolean.mode_auto_eliott
+                state: "on"
+              - condition: state
+                entity_id: binary_sensor.motion_eliott_occupancy
+                state: "on"
+            alias: Eliott
+        alias: Mode Auto & Motion
+    then:
+      - alias: Turn on the light
+        service: light.turn_on
+        data: {}
+        target:
+          entity_id:
+            - light.plafonnier_couloir
+      - wait_for_trigger:
+          - platform: state
+            entity_id:
+              - binary_sensor.motion_eliott_occupancy
+              - binary_sensor.motion_oscar_occupancy
+            from: "on"
+            to: "off"
+        timeout:
+          hours: 0
+          minutes: "{{ states('input_number.now_light_delay_off')|int}}"
+          seconds: 0
+          milliseconds: 0
+      - delay:
+          hours: 0
+          minutes: "{{ states('input_number.now_light_delay_off')|int}}"
+          seconds: 0
+          milliseconds: 0
+        alias: Wait the number of seconds that has been set
+      - condition: state
+        entity_id: timer.minuterie_couloir
+        state: idle
+      - alias: Turn off the light
+        service: light.turn_off
+        data: {}
+        target:
+          entity_id:
+            - light.plafonnier_couloir
 mode: restart

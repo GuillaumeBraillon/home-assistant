@@ -1,99 +1,99 @@
 alias: "[Reveil] Guillaume "
-description: ''
+description: "Gère le réveil de Guillaume : éclairage progressif et lecture radio."
 triggers:
-- at: sensor.oneplus_8t_next_alarm
-  id: AlarmOn
-  alias: Alarme On
-  trigger: time
+  - at: sensor.oneplus_8t_next_alarm
+    id: AlarmOn
+    alias: Alarme On
+    trigger: time
 conditions:
-- condition: state
-  entity_id: person.guillaume
-  state: home
-  enabled: true
-- condition: template
-  value_template: "{{states('sensor.oneplus_8t_next_alarm') != 'unavailable'}}"
-  alias: 'Alarme active '
+  - condition: state
+    entity_id: person.guillaume
+    state: home
+    enabled: true
+  - condition: template
+    value_template: "{{states('sensor.oneplus_8t_next_alarm') != 'unavailable'}}"
+    alias: "Alarme active "
 actions:
-- alias: Attendre Répétition dans 10 minutes
-  wait_template: |2
+  - alias: Attendre Répétition dans 10 minutes
+    wait_template: |2
         {% if states('sensor.oneplus_8t_next_alarm') != 'unavailable' %}
           {{ as_timestamp(states('sensor.oneplus_8t_next_alarm')) |
              timestamp_custom('%d/%m %H:%M', true) ==
              (as_timestamp(now()) + 600) |
              timestamp_custom('%d/%m %H:%M', true) }}
         {% endif %}
-  continue_on_timeout: true
-  timeout: 30
-- if:
-  - alias: Alarme Off
-    condition: template
-    value_template: |
-      {% if states('sensor.oneplus_8t_next_alarm') != 'unavailable' %}
-        {{ as_timestamp(states('sensor.oneplus_8t_next_alarm')) >
-         (as_timestamp(now()) + 600) }}
-      {% else %}
-        false
-      {% endif %}
-  then:
-  - metadata: {}
-    data: {}
-    target:
-      entity_id:
-      - light.mibedsidelamp2
-    action: light.turn_on
-  - wait_for_trigger:
-    - entity_id:
-      - light.mibedsidelamp2
-      from: 'off'
-      to: 'on'
-      for:
-        hours: 0
-        minutes: 0
-        seconds: 2
-      trigger: state
-    timeout:
-      hours: 0
-      minutes: 0
-      seconds: 5
-      milliseconds: 0
-  - metadata: {}
-    data:
-      color_temp_kelvin: 2000
-      brightness_pct: 1
-    target:
-      entity_id:
-      - light.mibedsidelamp2
-    action: light.turn_on
-  - metadata: {}
-    data:
-      skip_condition: false
-    target:
-      entity_id: automation.tts_agenda_famille_aujourd_hui_2
-    action: automation.trigger
-  - delay:
-      hours: 0
-      minutes: 0
-      seconds: 30
-      milliseconds: 0
-  - target:
-      entity_id: media_player.google_home_parents
-    data:
-      media:
-        media_content_id: media-source://radio_browser/d2bbffaf-5d67-4a65-9772-097d8c0269d3
-        media_content_type: audio/aac
-        metadata:
-          title: France Inter
-          thumbnail: https://canada-culture.org/wp-content/uploads/2018/05/logo-france-inter.png
-          media_class: music
-          children_media_class: 
-          navigateIds:
-          - {}
-          - media_content_type: app
-            media_content_id: media-source://radio_browser
-          - media_content_type: music
-            media_content_id: media-source://radio_browser/language
-          - media_content_type: music
-            media_content_id: media-source://radio_browser/language/fr
-    action: media_player.play_media
+    continue_on_timeout: true
+    timeout: 30
+  - if:
+      - alias: Alarme Off
+        condition: template
+        value_template: |
+          {% if states('sensor.oneplus_8t_next_alarm') != 'unavailable' %}
+            {{ as_timestamp(states('sensor.oneplus_8t_next_alarm')) >
+             (as_timestamp(now()) + 600) }}
+          {% else %}
+            false
+          {% endif %}
+    then:
+      - metadata: {}
+        data: {}
+        target:
+          entity_id:
+            - light.mibedsidelamp2
+        action: light.turn_on
+      - wait_for_trigger:
+          - entity_id:
+              - light.mibedsidelamp2
+            from: "off"
+            to: "on"
+            for:
+              hours: 0
+              minutes: 0
+              seconds: 2
+            trigger: state
+        timeout:
+          hours: 0
+          minutes: 0
+          seconds: 5
+          milliseconds: 0
+      - metadata: {}
+        data:
+          color_temp_kelvin: 2000
+          brightness_pct: 1
+        target:
+          entity_id:
+            - light.mibedsidelamp2
+        action: light.turn_on
+      - metadata: {}
+        data:
+          skip_condition: false
+        target:
+          entity_id: automation.tts_agenda_famille_aujourd_hui_2
+        action: automation.trigger
+      - delay:
+          hours: 0
+          minutes: 0
+          seconds: 30
+          milliseconds: 0
+      - target:
+          entity_id: media_player.google_home_parents
+        data:
+          media:
+            media_content_id: media-source://radio_browser/d2bbffaf-5d67-4a65-9772-097d8c0269d3
+            media_content_type: audio/aac
+            metadata:
+              title: France Inter
+              thumbnail: https://canada-culture.org/wp-content/uploads/2018/05/logo-france-inter.png
+              media_class: music
+              children_media_class:
+              navigateIds:
+                - {}
+                - media_content_type: app
+                  media_content_id: media-source://radio_browser
+                - media_content_type: music
+                  media_content_id: media-source://radio_browser/language
+                - media_content_type: music
+                  media_content_id: media-source://radio_browser/language/fr
+        action: media_player.play_media
 mode: queued
 max: 10

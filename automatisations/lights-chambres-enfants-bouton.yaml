@@ -1,124 +1,124 @@
 alias: "[Lights] Chambres Enfants Bouton"
-description: ''
+description: "Gère les boutons des chambres d'enfants pour contrôler lumières et minuterie."
 triggers:
-- entity_id:
-  - event.xiaomi_switch_aq2_action
-  trigger: state
-  id: 'Switch '
-- entity_id:
-  - timer.minuterie_couloir
-  to: idle
-  trigger: state
-  id: Timer
+  - entity_id:
+      - event.xiaomi_switch_aq2_action
+    trigger: state
+    id: "Switch "
+  - entity_id:
+      - timer.minuterie_couloir
+    to: idle
+    trigger: state
+    id: Timer
 conditions: []
 actions:
-- choose:
-  - conditions:
-    - condition: state
-      entity_id: event.xiaomi_switch_aq2_action
-      attribute: event_type
-      state: single
-    - condition: trigger
-      id:
-      - 'Switch '
-    sequence:
-    - if:
-      - condition: state
-        entity_id: light.plafonnier_couloir
-        state: 'on'
-      then:
-      - data: {}
-        target:
-          entity_id: light.plafonnier_couloir
-        action: light.turn_off
-      else:
-      - data: {}
-        target:
-          entity_id: light.plafonnier_couloir
-        action: light.turn_on
-  - conditions:
-    - condition: state
-      entity_id: event.xiaomi_switch_aq2_action
-      attribute: event_type
-      state: double
-    - condition: trigger
-      id:
-      - 'Switch '
-    sequence:
-    - if:
-      - condition: template
-        value_template: "{{state_attr('light.plafonnier_couloir', 'brightness')> 50}}"
-        alias: brightness > 50
-      then:
-      - data:
-          brightness_pct: 1
-        target:
-          entity_id: light.plafonnier_couloir
-        action: light.turn_on
-      else:
-      - data:
-          brightness_pct: 100
-        target:
-          entity_id: light.plafonnier_couloir
-        action: light.turn_on
-  - conditions:
-    - condition: state
-      entity_id: event.xiaomi_switch_aq2_action
-      attribute: event_type
-      state: triple
-    - condition: trigger
-      id:
-      - 'Switch '
-    sequence:
-    - target:
-        entity_id:
-        - light.yeelight_color
-        - light.ikea_tradfri_control_outlet
-        - light.yeelight_mono
-        - light.bureau_d_oscar_socket_1
-        - light.plafonnier_couloir
-        - light.plafonnier_couloir_none
-      data: {}
-      action: light.turn_off
-  - conditions:
-    - condition: state
-      entity_id: event.xiaomi_switch_aq2_action
-      attribute: event_type
-      state: quadruple
-    - condition: trigger
-      id:
-      - 'Switch '
-    sequence:
-    - data: {}
-      target:
-        entity_id: input_boolean.mode_auto_chambre_enfants
-      action: input_boolean.turn_off
-    - data: {}
-      target:
-        entity_id: timer.minuterie_couloir
-      action: timer.start
-  - conditions:
-    - condition: state
-      entity_id: timer.minuterie_couloir
-      state: idle
-    sequence:
-    - metadata: {}
-      data: {}
-      target:
-        entity_id:
-        - light.plafonnier_couloir
-        - light.yeelight_color
-        - light.ikea_tradfri_control_outlet
-      action: light.turn_off
-    - metadata: {}
-      data: {}
-      target:
-        entity_id:
-        - media_player.google_home_eliott
-      action: media_player.turn_off
-    - data: {}
-      target:
-        entity_id: input_boolean.mode_auto_chambre_enfants
-      action: input_boolean.turn_on
-  default: []
+  - choose:
+      - conditions:
+          - condition: state
+            entity_id: event.xiaomi_switch_aq2_action
+            attribute: event_type
+            state: single
+          - condition: trigger
+            id:
+              - "Switch "
+        sequence:
+          - if:
+              - condition: state
+                entity_id: light.plafonnier_couloir
+                state: "on"
+            then:
+              - data: {}
+                target:
+                  entity_id: light.plafonnier_couloir
+                action: light.turn_off
+            else:
+              - data: {}
+                target:
+                  entity_id: light.plafonnier_couloir
+                action: light.turn_on
+      - conditions:
+          - condition: state
+            entity_id: event.xiaomi_switch_aq2_action
+            attribute: event_type
+            state: double
+          - condition: trigger
+            id:
+              - "Switch "
+        sequence:
+          - if:
+              - condition: template
+                value_template: "{{state_attr('light.plafonnier_couloir', 'brightness')> 50}}"
+                alias: brightness > 50
+            then:
+              - data:
+                  brightness_pct: 1
+                target:
+                  entity_id: light.plafonnier_couloir
+                action: light.turn_on
+            else:
+              - data:
+                  brightness_pct: 100
+                target:
+                  entity_id: light.plafonnier_couloir
+                action: light.turn_on
+      - conditions:
+          - condition: state
+            entity_id: event.xiaomi_switch_aq2_action
+            attribute: event_type
+            state: triple
+          - condition: trigger
+            id:
+              - "Switch "
+        sequence:
+          - target:
+              entity_id:
+                - light.yeelight_color
+                - light.ikea_tradfri_control_outlet
+                - light.yeelight_mono
+                - light.bureau_d_oscar_socket_1
+                - light.plafonnier_couloir
+                - light.plafonnier_couloir_none
+            data: {}
+            action: light.turn_off
+      - conditions:
+          - condition: state
+            entity_id: event.xiaomi_switch_aq2_action
+            attribute: event_type
+            state: quadruple
+          - condition: trigger
+            id:
+              - "Switch "
+        sequence:
+          - data: {}
+            target:
+              entity_id: input_boolean.mode_auto_chambre_enfants
+            action: input_boolean.turn_off
+          - data: {}
+            target:
+              entity_id: timer.minuterie_couloir
+            action: timer.start
+      - conditions:
+          - condition: state
+            entity_id: timer.minuterie_couloir
+            state: idle
+        sequence:
+          - metadata: {}
+            data: {}
+            target:
+              entity_id:
+                - light.plafonnier_couloir
+                - light.yeelight_color
+                - light.ikea_tradfri_control_outlet
+            action: light.turn_off
+          - metadata: {}
+            data: {}
+            target:
+              entity_id:
+                - media_player.google_home_eliott
+            action: media_player.turn_off
+          - data: {}
+            target:
+              entity_id: input_boolean.mode_auto_chambre_enfants
+            action: input_boolean.turn_on
+    default: []
 mode: single
