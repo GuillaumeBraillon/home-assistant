@@ -2,48 +2,50 @@ alias: "[Info] Avertissement d'inactivité présence (3 days)"
 description: Avertissement si une entité de présence n'a pas changé d'état depuis
   3 jours
 trigger:
-- platform: time_pattern
-  hours: "/6"
+  - platform: time_pattern
+    hours: "/6"
 condition: []
 action:
-- variables:
-    entities_to_check:
-    - person.nelly
-    - device_tracker.nut_rose_presence
-    - device_tracker.xiaomi_nelly
-    - device_tracker.galaxy_a6_oscar
-    - person.oscar
-    - device_tracker.nut_vert_presence
-    - device_tracker.iphone_de_oscar
-    - device_tracker.apple_iphone_osca
-    - person.guillaume
-    - device_tracker.nut_blanc_presence
-    - device_tracker.smartphone_oneplus_8t
-    - device_tracker.one_plus_8t
-    - device_tracker.gtr2_presence
-    - device_tracker.smartphone_xiaomi_mi_a2
-    message: |
-      {% for entity in entities_to_check %}
-        {% set last_changed = as_timestamp(states[entity].last_changed) %}
-        {% set elapsed_time_seconds = as_timestamp(now()) - last_changed %}
-        {% set elapsed_days = elapsed_time_seconds // (24 * 3600) %}
-        {% if elapsed_days >= 3 and (states[entity].state == 'not_home' or states[entity].state == 'unavailable') %}<li>{{ states[entity].name }} n'a pas changé d'état depuis plus de {{ elapsed_days|int }} jours.({{ states[entity].state }})</li>{% endif %}
-      {% endfor %}
-    title: Alerte d'inactivité
-- condition: template
-  value_template: "{{ message != '' }}"
-- service: script.notify_send_notifications
-  data_template:
-    message: |-
-      {{ message | replace('
-      ', ' ') }}
-    title: "{{ title }}"
-    icon: mdi:alert
-    target: Guillaume
-    channel: Alert
-- service: notify.persistent_notification
-  metadata: {}
-  data:
-    message: "{{ message }}"
-    title: "{{ title }}"
+  - variables:
+      entities_to_check:
+        - person.nelly
+        - device_tracker.nut_rose_presence
+        - device_tracker.xiaomi_nelly
+        - device_tracker.galaxy_a6_oscar
+        - person.oscar
+        - device_tracker.nut_vert_presence
+        - device_tracker.iphone_de_oscar
+        - device_tracker.apple_iphone_osca
+        - person.guillaume
+        - device_tracker.nut_blanc_presence
+        - device_tracker.smartphone_oneplus_8t
+        - device_tracker.one_plus_8t
+        - device_tracker.gtr2_presence
+        - device_tracker.smartphone_xiaomi_mi_a2
+      message: |
+        {% for entity in entities_to_check %}
+          {% if states[entity] is not none and states[entity].last_changed is not none %}
+            {% set last_changed = as_timestamp(states[entity].last_changed) %}
+            {% set elapsed_time_seconds = as_timestamp(now()) - last_changed %}
+            {% set elapsed_days = elapsed_time_seconds // (24 * 3600) %}
+            {% if elapsed_days >= 3 and (states[entity].state == 'not_home' or states[entity].state == 'unavailable') %}<li>{{ states[entity].name }} n'a pas changé d'état depuis plus de {{ elapsed_days|int }} jours.({{ states[entity].state }})</li>{% endif %}
+          {% endif %}
+        {% endfor %}
+      title: Alerte d'inactivité
+  - condition: template
+    value_template: "{{ message != '' }}"
+  - service: script.notify_send_notifications
+    data_template:
+      message: |-
+        {{ message | replace('
+        ', ' ') }}
+      title: "{{ title }}"
+      icon: mdi:alert
+      target: Guillaume
+      channel: Alert
+  - service: notify.persistent_notification
+    metadata: {}
+    data:
+      message: "{{ message }}"
+      title: "{{ title }}"
 mode: single

@@ -171,3 +171,8 @@ entity_config:
     expose: true
     room: Chambre des Enfants
     name: Minuterie du couloir
+
+  switch.tapis_du_salon:
+    expose: true
+    room: Salon
+    name: Tapis du salon

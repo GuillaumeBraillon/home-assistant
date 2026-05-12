@@ -1,59 +1,61 @@
 alias: "[Info] Avertissement offline (1 hours)"
 description: Avertissement si une entité est offline depuis 1 heures
 trigger:
-- platform: time_pattern
-  hours: "/1"
+  - platform: time_pattern
+    hours: "/1"
 condition: []
 action:
-- variables:
-    entities_to_check:
-    - device_tracker.smartphone_xiaomi_mi_a2
-    - device_tracker.ampoule_filament_tuya_cuisine
-    - device_tracker.ampoule_yeelight_white_new
-    - device_tracker.tuya_smart_b6_1c_06
-    - device_tracker.shenzhen_bilian_electronicltd_7a_d9_61
-    - device_tracker.camera_ip_foscam
-    - device_tracker.dreamebot_d10_plus
-    - device_tracker.google_home_mini_parents
-    - device_tracker.google_home_mini_salle_de_bain
-    - device_tracker.google_nest_hub_max
-    - device_tracker.google_nest_mini_eliott
-    - device_tracker.google_nest_mini_oscar
-    - device_tracker.lampe_mi_bed_1
-    - device_tracker.lampe_mi_bed_2
-    - device_tracker.lampe_mi_strip
-    - device_tracker.lg_fridge
-    - device_tracker.mi_speaker
-    - device_tracker.smart_socket_2
-    - device_tracker.rpi_zero_w
-    - sensor.batterie_jpi
-    message: |
-      {% for entity in entities_to_check %}
-        {% set last_changed = as_timestamp(states[entity].last_changed) %}
-        {% set elapsed_time_seconds = as_timestamp(now()) - last_changed %}
-        {% if elapsed_time_seconds >= 7200 and (states[entity].state != 'home' or states[entity].state == 'unavailable' )%}
-        {% set hours = elapsed_time_seconds // 3600 %}
-        {% set minutes = (elapsed_time_seconds % 3600) // 60 %}
-          <li>{{ states[entity].name }} n'a pas changé d'état depuis plus de {{ hours|int }} heures et {{ minutes|int }} minutes.</li>
-        {% endif %}
-      {% endfor %}
-    title: Alerte d'inactivité
-- condition: template
-  value_template: "{{ message != '' }}"
-- service: script.notify_send_notifications
-  data_template:
-    message: |-
-      {{ message | replace('
-      ', ' ') }}
-    title: "{{ title }}"
-    icon: mdi:alert
-    target: Guillaume
-    channel: Alert
-- service: notify.persistent_notification
-  metadata: {}
-  data:
-    message: |-
-      <ul>{{ message | replace('
-       ', ' ') }}</ul>
-    title: "{{ title }}"
+  - variables:
+      entities_to_check:
+        - device_tracker.smartphone_xiaomi_mi_a2
+        - device_tracker.ampoule_filament_tuya_cuisine
+        - device_tracker.ampoule_yeelight_white_new
+        - device_tracker.tuya_smart_b6_1c_06
+        - device_tracker.shenzhen_bilian_electronicltd_7a_d9_61
+        - device_tracker.camera_ip_foscam
+        - device_tracker.dreamebot_d10_plus
+        - device_tracker.google_home_mini_parents
+        - device_tracker.google_home_mini_salle_de_bain
+        - device_tracker.google_nest_hub_max
+        - device_tracker.google_nest_mini_eliott
+        - device_tracker.google_nest_mini_oscar
+        - device_tracker.lampe_mi_bed_1
+        - device_tracker.lampe_mi_bed_2
+        - device_tracker.lampe_mi_strip
+        - device_tracker.lg_fridge
+        - device_tracker.mi_speaker
+        - device_tracker.smart_socket_2
+        - device_tracker.rpi_zero_w
+        - sensor.batterie_jpi
+      message: |
+        {% for entity in entities_to_check %}
+          {% if states[entity] is not none and states[entity].last_changed %}
+            {% set last_changed = as_timestamp(states[entity].last_changed) %}
+            {% set elapsed_time_seconds = as_timestamp(now()) - last_changed %}
+            {% if elapsed_time_seconds >= 7200 and (states[entity].state != 'home' or states[entity].state == 'unavailable' )%}
+            {% set hours = elapsed_time_seconds // 3600 %}
+            {% set minutes = (elapsed_time_seconds % 3600) // 60 %}
+              <li>{{ states[entity].name }} n'a pas changé d'état depuis plus de {{ hours|int }} heures et {{ minutes|int }} minutes.</li>
+            {% endif %}
+          {% endif %}
+        {% endfor %}
+      title: Alerte d'inactivité
+  - condition: template
+    value_template: "{{ message != '' }}"
+  - service: script.notify_send_notifications
+    data_template:
+      message: |-
+        {{ message | replace('
+        ', ' ') }}
+      title: "{{ title }}"
+      icon: mdi:alert
+      target: Guillaume
+      channel: Alert
+  - service: notify.persistent_notification
+    metadata: {}
+    data:
+      message: |-
+        <ul>{{ message | replace('
+         ', ' ') }}</ul>
+      title: "{{ title }}"
 mode: single
