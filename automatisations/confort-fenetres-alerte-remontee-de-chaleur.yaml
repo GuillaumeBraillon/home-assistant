@@ -13,7 +13,7 @@ triggers:
   - alias: Sécurité - température au-dessus de la température d'ouverture
     trigger: template
     value_template: >-
-      {{ states('sensor.temperatures_maison') | float(0) >=
+      {{ states('sensor.temperatures_maison') | float(0) | round(1) >
       states('input_number.temp_reference_aeration') | float(0) }}
     for:
       minutes: 5
@@ -25,12 +25,6 @@ conditions:
          is_state('binary_sensor.magnet_eliott_contact', 'on') or
          is_state('binary_sensor.magnet_parents_contact', 'on') or
          is_state('binary_sensor.magnet_living_room_left_contact', 'on') }}
-  - alias: Pas d'alerte dans la dernière heure (anti-spam)
-    condition: template
-    value_template: |-
-      {{ this.attributes.last_triggered is none or
-         (now() - this.attributes.last_triggered).total_seconds() > 3600 }}
-    enabled: false
 actions:
   - variables:
       temp_now: "{{ states('sensor.temperatures_maison') | float(0) | round(1) }}"
