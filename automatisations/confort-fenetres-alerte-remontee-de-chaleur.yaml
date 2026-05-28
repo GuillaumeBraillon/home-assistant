@@ -9,9 +9,7 @@ triggers:
       {{ states('sensor.temperatures_maison') | float(0) | round(1) >=
       states('input_number.temp_min_aeration') | float(0) + 0.5 }}
     for:
-      hours: 0
       minutes: 5
-      seconds: 0
   - alias: Sécurité - température au-dessus de la température d'ouverture
     trigger: template
     value_template: >-
@@ -35,7 +33,7 @@ conditions:
     enabled: false
 actions:
   - variables:
-      temp_moy: "{{ states('sensor.temperatures_maison') | float(0) | round(1) }}"
+      temp_now: "{{ states('sensor.temperatures_maison') | float(0) | round(1) }}"
       temp_ref: >-
         {{ states('input_number.temp_reference_aeration') | float(0) | round(1)
         }}
@@ -68,21 +66,23 @@ actions:
     action: script.tts_send_tts
     data:
       media_player: media_player.sejour
-      message: >-
-        Attention. La température remonte dans la maison. Elle était descendue
-        jusqu'à {{ temp_min }} degrés, il fait maintenant {{ temp_moy }} degrés
-        et ça continue de monter. Pensez à fermer les fenêtres pour garder le
-        frais.
+      message: |-
+        Attention.  {% if temp_now >= temp_ref %}
+          La température monte déjà. Il faisait {{ temp_ref }} degrés à l'ouverture, il fait maintenant {{ temp_now }} degrés.
+        {% else %}
+          La température remonte dans la maison. Elle était descendue jusqu'à {{ temp_min }} degrés et il fait maintenant {{ temp_now }} degrés.
+        {% endif %} Pensez à fermer les fenêtres pour garder le frais.
   - alias: Notification mobile
     action: script.notify_send_notifications
     data:
       target: guillaume
       title: "[Confort] 🌡️ Ferme les fenêtres !"
       message: >-
-        Tendance à la hausse détectée. Minimum atteint : {{ temp_min }}°C →
-        Maintenant : {{ temp_moy }}°C. Salon {{ temp_salon }}°C Parents {{
-        temp_parents }}°C Oscar {{ temp_oscar }}°C Eliott {{ temp_eliott }}°C.
-        Fenêtres ouvertes : {{  fenetres_ouvertes }}.
+        {% if temp_now >= temp_ref %}⚠️ Dépasse l'ouverture{% else %}📈 Tendance
+        hausse{% endif %} : Ouverture {{ temp_ref }}°C | Minimum {{ temp_min
+        }}°C | Maintenant {{ temp_now }}°C. Salon {{ temp_salon }}°C | Parents
+        {{ temp_parents }}°C | Oscar {{ temp_oscar }}°C | Eliott {{ temp_eliott
+        }}°C. Fenêtres : {{ fenetres_ouvertes }}.
       icon: mdi:thermometer-chevron-up
       channel: Alert
       preset: default
