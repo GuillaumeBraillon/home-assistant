@@ -1,0 +1,36 @@
+alias: "[Confort] Fenêtres - Mémorisation température ouverture"
+description: >-
+  Enregistre la température maison à la première ouverture de fenêtre.
+  Initialise aussi le minimum de suivi de tendance.
+triggers:
+  - trigger: state
+    entity_id:
+      - binary_sensor.magnet_oscar_contact
+      - binary_sensor.magnet_eliott_contact
+      - binary_sensor.magnet_parents_contact
+      - binary_sensor.magnet_living_room_left_contact
+    to: "on"
+conditions:
+  - alias: >-
+      Référence non définie depuis au moins 2 heures (anti-doublon ouvertures
+      simultanées)
+    condition: template
+    value_template: >-
+      {{ (now() -
+      states.input_number.temp_reference_aeration.last_updated).total_seconds()
+      > 7200 }}
+actions:
+  - variables:
+      temp_now: "{{ states('sensor.temperatures_maison') | float(0) | round(2) }}"
+  - action: input_number.set_value
+    target:
+      entity_id: input_number.temp_reference_aeration
+    data:
+      value: "{{ temp_now }}"
+  - action: input_number.set_value
+    target:
+      entity_id: input_number.temp_min_aeration
+    data:
+      value: "{{ temp_now }}"
+mode: single
+max_exceeded: silent
