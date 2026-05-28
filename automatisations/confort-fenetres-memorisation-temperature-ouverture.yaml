@@ -5,20 +5,19 @@ description: >-
 triggers:
   - trigger: state
     entity_id:
-      - binary_sensor.magnet_oscar_contact
-      - binary_sensor.magnet_eliott_contact
-      - binary_sensor.magnet_parents_contact
-      - binary_sensor.magnet_living_room_left_contact
-    to: "on"
+      - binary_sensor.fenetres_maison
+    to:
+      - "on"
 conditions:
-  - alias: Référence non définie depuis au moins 1 heure
-    condition: template
-    value_template: >-
-      {{ (now() -
-      states.input_number.temp_reference_aeration.last_updated).total_seconds()
-      > 3600 }}
-    enabled: true
+  - condition: state
+    entity_id: input_boolean.aeration_active
+    state:
+      - "off"
 actions:
+  - action: input_boolean.turn_on
+    target:
+      entity_id: input_boolean.aeration_active
+    data: {}
   - action: input_number.set_value
     target:
       entity_id: input_number.temp_reference_aeration
@@ -29,7 +28,7 @@ actions:
       entity_id: input_number.temp_min_aeration
     data:
       value: >-
-        {{ ((states('sensor.temperatures_maison') | float(0) * 10) | int / 10) |
-        round(1) }}
+        {{ ((states('sensor.temperatures_maison') | float(0) * 10) | int) / 10
+        }}
 mode: single
 max_exceeded: silent

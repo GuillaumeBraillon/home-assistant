@@ -20,11 +20,7 @@ triggers:
 conditions:
   - alias: Au moins une fenêtre ouverte
     condition: template
-    value_template: |-
-      {{ is_state('binary_sensor.magnet_oscar_contact', 'on') or
-         is_state('binary_sensor.magnet_eliott_contact', 'on') or
-         is_state('binary_sensor.magnet_parents_contact', 'on') or
-         is_state('binary_sensor.magnet_living_room_left_contact', 'on') }}
+    value_template: "{{ is_state('binary_sensor.fenetres_maison', 'on') }}"
 actions:
   - variables:
       temp_now: "{{ states('sensor.temperatures_maison') | float(0) | round(1) }}"

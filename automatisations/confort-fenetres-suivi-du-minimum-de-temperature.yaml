@@ -5,36 +5,42 @@ triggers:
     entity_id: sensor.temperatures_maison
   - trigger: state
     entity_id:
-      - binary_sensor.magnet_oscar_contact
-      - binary_sensor.magnet_eliott_contact
-      - binary_sensor.magnet_parents_contact
-      - binary_sensor.magnet_living_room_left_contact
-    to:
-      - "on"
+      - binary_sensor.fenetres_maison
     for:
       hours: 0
       minutes: 0
       seconds: 10
 conditions:
-  - alias: Au moins une fenêtre ouverte
-    condition: template
-    value_template: >-
-      {{ is_state('binary_sensor.magnet_oscar_contact', 'on') or
-      is_state('binary_sensor.magnet_eliott_contact', 'on') or
-      is_state('binary_sensor.magnet_parents_contact', 'on') or
-      is_state('binary_sensor.magnet_living_room_left_contact', 'on') }}
-  - alias: La température actuelle est inférieure ou égale au minimum enregistré
-    condition: template
-    value_template: >-
-      {{ states('sensor.temperatures_maison') | float(99) <=
-      states('input_number.temp_min_aeration') | float(99) }}
+  - condition: state
+    entity_id: input_boolean.aeration_active
+    state:
+      - "on"
 actions:
-  - action: input_number.set_value
-    target:
-      entity_id: input_number.temp_min_aeration
-    data:
-      value: >-
-        {{ ((states('sensor.temperatures_maison') | float(0) * 10) | int / 10) |
-        round(1) }}
+  - choose:
+      - conditions:
+          - condition: state
+            entity_id: binary_sensor.fenetres_maison
+            state: "on"
+          - condition: template
+            value_template: >-
+              {{ states('sensor.temperatures_maison') | float(99)<=
+              states('input_number.temp_min_aeration') | float(99) }}
+        sequence:
+          - action: input_number.set_value
+            target:
+              entity_id: input_number.temp_min_aeration
+            data:
+              value: >-
+
+                {{ ((states('sensor.temperatures_maison') | float(0) * 10) | int
+                / 10) }}
+      - conditions:
+          - condition: state
+            entity_id: binary_sensor.fenetres_maison
+            state: "off"
+        sequence:
+          - action: input_boolean.turn_off
+            target:
+              entity_id: input_boolean.aeration_active
 mode: single
 max_exceeded: silent
