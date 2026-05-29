@@ -21,6 +21,10 @@ conditions:
   - alias: Au moins une fenêtre ouverte
     condition: template
     value_template: "{{ is_state('binary_sensor.fenetres_maison', 'on') }}"
+  - condition: state
+    entity_id: input_boolean.aeration_active
+    state:
+      - "on"
 actions:
   - variables:
       temp_now: "{{ states('sensor.temperatures_maison') | float(0) | round(1) }}"
@@ -56,23 +60,34 @@ actions:
     action: script.tts_send_tts
     data:
       media_player: media_player.sejour
-      message: |-
-        Attention.  {% if temp_now >= temp_ref %}
-          La température monte déjà. Il faisait {{ temp_ref }} degrés à l'ouverture, il fait maintenant {{ temp_now }} degrés.
+      message: >-
+        Attention.
+        {% if temp_now > temp_ref %}
+          La température dépasse la valeur d'ouverture. Il faisait {{ temp_ref }} degrés à l'ouverture, et il fait maintenant {{ temp_now }} degrés.
+        {% elif temp_now == temp_ref %}
+          La température est revenue au niveau de l'ouverture à {{ temp_ref }} degrés.
         {% else %}
-          La température remonte dans la maison. Elle était descendue jusqu'à {{ temp_min }} degrés et il fait maintenant {{ temp_now }} degrés.
-        {% endif %} Pensez à fermer les fenêtres pour garder le frais.
+          La température remonte dans la maison. Elle était descendue jusqu'à {{ temp_min }} degrés et elle est maintenant à {{ temp_now }} degrés.
+        {% endif %}
+        Pensez à fermer les fenêtres pour garder le frais.
   - alias: Notification mobile
     action: script.notify_send_notifications
     data:
       target: guillaume
       title: "[Confort] 🌡️ Ferme les fenêtres !"
       message: >-
-        {% if temp_now >= temp_ref %}⚠️ Dépasse l'ouverture{% else %}📈 Tendance
-        hausse{% endif %} : Ouverture {{ temp_ref }}°C | Minimum {{ temp_min
-        }}°C | Maintenant {{ temp_now }}°C. Salon {{ temp_salon }}°C | Parents
-        {{ temp_parents }}°C | Oscar {{ temp_oscar }}°C | Eliott {{ temp_eliott
-        }}°C. Fenêtres : {{ fenetres_ouvertes }}.
+        {% if temp_now > temp_ref %}<b>⚠️ Dépassement ouverture</b>{% elif temp_now == temp_ref %}<b>📍 Niveau ouverture</b>{% else %}<b>📈 Remontée de température</b>{% endif %}<br>
+
+        Ouverture : <b>{{ temp_ref }}°C</b><br>
+        Minimum : <b>{{ temp_min }}°C</b><br>
+        Actuel : <b>{{ temp_now }}°C</b><br>
+
+        {% if temp_salon > 0 %}Salon : <b>{{ temp_salon }}°C</b><br>{% endif %}
+        {% if temp_parents > 0 %}Parents : <b>{{ temp_parents }}°C</b><br>{% endif %}
+        {% if temp_oscar > 0 %}Oscar : <b>{{ temp_oscar }}°C</b><br>{% endif %}
+        {% if temp_eliott > 0 %}Eliott : <b>{{ temp_eliott }}°C</b><br>{% endif %}
+
+        Fenêtres : <b>{{ fenetres_ouvertes }}</b>
       icon: mdi:thermometer-chevron-up
       channel: Alert
       preset: default

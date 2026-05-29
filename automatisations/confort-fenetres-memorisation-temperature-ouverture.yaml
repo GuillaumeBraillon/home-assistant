@@ -5,7 +5,11 @@ description: >-
 triggers:
   - trigger: state
     entity_id:
-      - binary_sensor.fenetres_maison
+      - binary_sensor.magnet_eliott_contact
+      - binary_sensor.magnet_oscar_contact
+      - binary_sensor.magnet_parents_contact
+      - binary_sensor.magnet_living_room_left_contact
+      - binary_sensor.magnet_living_room_right_contact
     to:
       - "on"
 conditions:

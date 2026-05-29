@@ -1,5 +1,7 @@
 alias: "[Shutters] Living Room"
-description: "Gère l'ouverture et la fermeture des volets du salon selon le mode et la présence extérieure."
+description: >-
+  Gère l'ouverture et la fermeture des volets du salon selon le mode et la
+  présence extérieure.
 triggers:
   - entity_id:
       - cover.volets_salon_state
@@ -9,122 +11,117 @@ triggers:
       - cover.volets_salon_state
     to: closing
     trigger: state
-conditions:
-  - condition: state
-    entity_id: input_boolean.volets_salon_auto
-    state: "on"
+conditions: []
 actions:
-  - condition: state
-    entity_id: input_boolean.volets_salon_auto
-    state: "on"
-  - alias: "Ouverture or Fermeture "
-    if:
-      - condition: state
-        entity_id: cover.volets_salon_state
-        state: opening
-        alias: En cours d'Ouverture
-    then:
-      - delay:
-          hours: 0
-          minutes: 1
-          seconds: 0
-          milliseconds: 0
-        alias: Attendre qu'il s'ouvre (1 minute)
-      - wait_template: "{{ is_state('binary_sensor.motion_outside_occupancy', 'on') }}"
-        continue_on_timeout: true
-        timeout: "1"
-        alias: Attendre un mouvement extérieur (1s)
-      - wait_template: "{{ is_state('binary_sensor.motion_outside_occupancy', 'off') }}"
-        continue_on_timeout: false
-        alias: Attendre la fin des mouvements extérieur
-      - delay:
-          hours: 0
-          minutes: "{{ states('input_number.now_light_delay_off')|int}}"
-          seconds: 0
-          milliseconds: 0
-        alias: Attendre délai d'extinction du mode en cours
-      - wait_template: "{{ is_state('binary_sensor.motion_outside_occupancy', 'off') }}"
-        continue_on_timeout: false
-        alias: Attendre la fin des mouvements extérieur (confirmation)
-      - action: script.volets_ajuster_volets_selon_mode
-        metadata: {}
-        data: {}
-        enabled: false
-      - condition: state
-        state:
-          - "on"
-        entity_id: input_boolean.volets_salon_auto
-        enabled: true
-      - alias: Set Position by mode
-        choose:
-          - conditions:
-              - alias: Mode Journée ET soleil couché OU Soir OU Soirée TV
-                condition: or
-                conditions:
-                  - condition: template
-                    value_template: "{{ is_state('input_select.modes_maison', 'Soir') }}"
-                    alias: Mode Soir
-                  - condition: template
-                    value_template: "{{ is_state('input_select.modes_maison', 'Soirée TV') }}"
-                    alias: Mode Soirée TV
-                  - condition: and
-                    conditions:
-                      - condition: template
-                        value_template: "{{ is_state('input_select.modes_maison', 'Journée') }}"
-                        alias: Mode Journée
-                      - condition: template
-                        value_template: "{{ is_state('sun.sun', 'below_horizon') }}"
-                        alias: Sun Down
-                    alias: Mode Journée & Soleil couché
-            sequence:
-              - alias: Volets Salon 40%
-                data:
-                  position: 40
-                target:
-                  entity_id: cover.volets_salon_state
-                enabled: true
-                action: cover.set_cover_position
-            alias: "Mode Journée & Soleil couché OU Soir OU Soirée TV "
-          - conditions:
-              - condition: template
-                value_template: "{{ is_state('input_select.modes_maison', 'Journée') }}"
-                alias: Mode Journée
-              - alias: Sun Up
-                condition: template
-                value_template: "{{ is_state('sun.sun', 'above_horizon') }}"
-            sequence:
-              - alias: Volets Salon 100%
-                data:
-                  position: 100
-                target:
-                  entity_id: cover.volets_salon_state
-                enabled: true
-                action: cover.set_cover_position
-            alias: Mode Journée & Soleil levé
-          - conditions:
-              - condition:
-                  - condition: template
-                    value_template: "{{ is_state('input_select.modes_maison', 'Nuit') }}"
-                alias: Mode Nuit
-            sequence:
-              - data: {}
-                target:
-                  entity_id: cover.volets_salon_state
-                alias: Close Volets Salon
-                enabled: true
-                action: cover.close_cover
-        enabled: true
-    else:
-      - if:
+  - choose:
+      - conditions:
           - condition: template
             value_template: "{{ is_state('binary_sensor.motion_outside_occupancy', 'on') }}"
             alias: Motion Outside
-        then:
-          - data: {}
+        sequence:
+          - action: cover.set_cover_position
+            metadata: {}
             target:
               entity_id: cover.volets_salon_state
-            alias: Stop Volets Salon
-            action: cover.stop_cover
-        alias: Fermeture
-        enabled: true
+            data:
+              position: 100
+      - conditions:
+          - condition: state
+            entity_id: cover.volets_salon_state
+            state: opening
+            alias: En cours d'Ouverture
+          - condition: state
+            entity_id: input_boolean.volets_salon_auto
+            state: "on"
+        sequence:
+          - delay:
+              hours: 0
+              minutes: 1
+              seconds: 0
+              milliseconds: 0
+            alias: Attendre qu'il s'ouvre (1 minute)
+          - wait_template: "{{ is_state('binary_sensor.motion_outside_occupancy', 'on') }}"
+            continue_on_timeout: true
+            timeout: "1"
+            alias: Attendre un mouvement extérieur (1s)
+          - wait_template: "{{ is_state('binary_sensor.motion_outside_occupancy', 'off') }}"
+            continue_on_timeout: false
+            alias: Attendre la fin des mouvements extérieur
+          - delay:
+              hours: 0
+              minutes: "{{ states('input_number.now_light_delay_off')|int}}"
+              seconds: 0
+              milliseconds: 0
+            alias: Attendre délai d'extinction du mode en cours
+          - wait_template: "{{ is_state('binary_sensor.motion_outside_occupancy', 'off') }}"
+            continue_on_timeout: false
+            alias: Attendre la fin des mouvements extérieur (confirmation)
+          - condition: state
+            state:
+              - "on"
+            entity_id: input_boolean.volets_salon_auto
+            enabled: true
+          - alias: Set Position by mode
+            choose:
+              - conditions:
+                  - alias: Mode Journée ET soleil couché OU Soir OU Soirée TV
+                    condition: or
+                    conditions:
+                      - condition: template
+                        value_template: "{{ is_state('input_select.modes_maison', 'Soir') }}"
+                        alias: Mode Soir
+                      - condition: template
+                        value_template: >-
+                          {{ is_state('input_select.modes_maison', 'Soirée TV')
+                          }}
+                        alias: Mode Soirée TV
+                      - condition: and
+                        conditions:
+                          - condition: template
+                            value_template: >-
+                              {{ is_state('input_select.modes_maison',
+                              'Journée') }}
+                            alias: Mode Journée
+                          - condition: template
+                            value_template: "{{ is_state('sun.sun', 'below_horizon') }}"
+                            alias: Sun Down
+                        alias: Mode Journée & Soleil couché
+                sequence:
+                  - alias: Volets Salon 40%
+                    data:
+                      position: 40
+                    target:
+                      entity_id: cover.volets_salon_state
+                    enabled: true
+                    action: cover.set_cover_position
+                alias: "Mode Journée & Soleil couché OU Soir OU Soirée TV "
+              - conditions:
+                  - condition: template
+                    value_template: "{{ is_state('input_select.modes_maison', 'Journée') }}"
+                    alias: Mode Journée
+                  - alias: Sun Up
+                    condition: template
+                    value_template: "{{ is_state('sun.sun', 'above_horizon') }}"
+                sequence:
+                  - alias: Volets Salon 100%
+                    data:
+                      position: 100
+                    target:
+                      entity_id: cover.volets_salon_state
+                    enabled: true
+                    action: cover.set_cover_position
+                alias: Mode Journée & Soleil levé
+              - conditions:
+                  - condition:
+                      - condition: template
+                        value_template: "{{ is_state('input_select.modes_maison', 'Nuit') }}"
+                    alias: Mode Nuit
+                sequence:
+                  - data: {}
+                    target:
+                      entity_id: cover.volets_salon_state
+                    alias: Close Volets Salon
+                    enabled: true
+                    action: cover.close_cover
+            enabled: true
 mode: restart

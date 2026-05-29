@@ -5,16 +5,16 @@ triggers:
     entity_id: sensor.temperatures_maison
   - trigger: state
     entity_id:
-      - binary_sensor.fenetres_maison
+      - binary_sensor.magnet_eliott_contact
+      - binary_sensor.magnet_oscar_contact
+      - binary_sensor.magnet_parents_contact
+      - binary_sensor.magnet_living_room_left_contact
+      - binary_sensor.magnet_living_room_right_contact
     for:
       hours: 0
       minutes: 0
       seconds: 10
-conditions:
-  - condition: state
-    entity_id: input_boolean.aeration_active
-    state:
-      - "on"
+conditions: []
 actions:
   - choose:
       - conditions:
@@ -25,6 +25,10 @@ actions:
             value_template: >-
               {{ states('sensor.temperatures_maison') | float(99)<=
               states('input_number.temp_min_aeration') | float(99) }}
+          - condition: state
+            entity_id: input_boolean.aeration_active
+            state:
+              - "on"
         sequence:
           - action: input_number.set_value
             target:
@@ -35,12 +39,22 @@ actions:
                 {{ ((states('sensor.temperatures_maison') | float(0) * 10) | int
                 / 10) }}
       - conditions:
-          - condition: state
-            entity_id: binary_sensor.fenetres_maison
-            state: "off"
+          - condition: or
+            conditions:
+              - condition: state
+                entity_id: binary_sensor.fenetres_maison
+                state: "off"
+              - condition: template
+                value_template: |-
+                  {{ (now() -
+                        states.input_number.temp_reference_aeration.last_updated).total_seconds()
+                        > 18000 }}
+                alias: Dernière température de référence > 5h
+            alias: Si Fenêtres fermées OU dernière référence > 5h
         sequence:
           - action: input_boolean.turn_off
             target:
               entity_id: input_boolean.aeration_active
+        alias: Si Fenêtres fermées OU dernière référence > 5h
 mode: single
 max_exceeded: silent
