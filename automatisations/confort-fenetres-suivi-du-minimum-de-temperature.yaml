@@ -13,7 +13,7 @@ triggers:
     for:
       hours: 0
       minutes: 0
-      seconds: 10
+      seconds: 45
 conditions: []
 actions:
   - choose:

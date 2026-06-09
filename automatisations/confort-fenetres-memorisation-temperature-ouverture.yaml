@@ -12,11 +12,21 @@ triggers:
       - binary_sensor.magnet_living_room_right_contact
     to:
       - "on"
+    for:
+      hours: 0
+      minutes: 0
+      seconds: 30
 conditions:
   - condition: state
     entity_id: input_boolean.aeration_active
     state:
       - "off"
+  - condition: template
+    value_template: |-
+      {{ (now() -
+            states.input_number.temp_reference_aeration.last_updated).total_seconds()
+            > 18000 }}
+    alias: Dernière température de référence > 5h
 actions:
   - action: input_boolean.turn_on
     target:

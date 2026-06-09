@@ -53,22 +53,27 @@ actions:
         %}
           {% set ns.r = ns.r + ['chambre parents'] %}
         {% endif %} {% if
-        is_state('binary_sensor.magnet_living_room_left_contact', 'on') %}
+        is_state('binary_sensor.magnet_living_room_left_contact', 'on') or
+        is_state('binary_sensor.magnet_living_room_right_contact', 'on')
+      %}
           {% set ns.r = ns.r + ['séjour'] %}
         {% endif %} {{ ns.r | join(', ') }}
   - alias: TTS alerte remontée
     action: script.tts_send_tts
     data:
       media_player: media_player.sejour
-      message: >-
-        Attention.
+      message: |-
+        Attention. 
         {% if temp_now > temp_ref %}
           La température dépasse la valeur d'ouverture. Il faisait {{ temp_ref }} degrés à l'ouverture, et il fait maintenant {{ temp_now }} degrés.
+          Les fenêtres ouvertes sont : {{ fenetres_ouvertes }}
         {% elif temp_now == temp_ref %}
           La température est revenue au niveau de l'ouverture à {{ temp_ref }} degrés.
+          Les fenêtres ouvertes sont : {{ fenetres_ouvertes }}
         {% else %}
           La température remonte dans la maison. Elle était descendue jusqu'à {{ temp_min }} degrés et elle est maintenant à {{ temp_now }} degrés.
-        {% endif %}
+          Les fenêtres ouvertes sont : {{ fenetres_ouvertes }}
+        {% endif %} 
         Pensez à fermer les fenêtres pour garder le frais.
   - alias: Notification mobile
     action: script.notify_send_notifications
