@@ -1,0 +1,68 @@
+alias: "[Info] Coût climatisation par unité"
+description: >-
+  Envoie une notification chaque fois que le coût de la climatisation franchit
+  un seuil entier supérieur à 2.
+triggers:
+  - entity_id: sensor.cout_salle_de_bain_energie_aujourd_hui
+    trigger: state
+conditions:
+  - condition: template
+    value_template: >-
+      {% set current = trigger.to_state.state | float(0) %} {% set previous =
+      trigger.from_state.state | float(0) %} {{ current >= 2.0 and (current |
+      int) > (previous | int) }}
+    alias: Montant change d'unité et > 2 €
+actions:
+  - action: sql.query
+    data:
+      query: >-
+        SELECT MIN(last_updated_ts) as last_updated_ts FROM ( SELECT
+        last_updated_ts, CAST(state AS FLOAT) as val FROM states INNER JOIN
+        states_meta ON states.metadata_id = states_meta.metadata_id WHERE
+        states_meta.entity_id ='sensor.ikea_inspelning_smart_plug_power' AND
+        states.state NOT IN ('unknown','unavailable') ORDER BY
+        states.last_updated_ts DESC ) WHERE val > 55 AND last_updated_ts >
+        COALESCE( (SELECT MAX(last_updated_ts) FROM states INNER JOIN
+        states_meta ON states.metadata_id = states_meta.metadata_id WHERE
+        states_meta.entity_id ='sensor.ikea_inspelning_smart_plug_power' AND
+        states.state NOT IN ('unknown','unavailable') AND CAST(states.state AS
+        FLOAT) <= 55), 0 );
+    response_variable: sql_result
+  - variables:
+      cout_brut: "{{ trigger.to_state.state | float(0) | round(2) }}"
+      msg_cout: >-
+        Le coût de la clim aujourd'hui est maintenant de {{
+        (trigger.to_state.state | float(0) | round(2)) | replace('.', ',') }} €.
+      msg_puissance: >-
+        {% if states('sensor.ikea_inspelning_smart_plug_power') | float(0) > 55
+        %}
+          {% if sql_result.result and sql_result.result[0].last_updated_ts is not none %}
+            {% set last_low_ts = sql_result.result[0].last_updated_ts | float %}
+            {% set minutes = ((now().timestamp() - last_low_ts) / 60) | int(0) %}
+            {% if minutes > 0 %}
+              Elle est en pleine puissance depuis {{ minutes }} minute{{ 's' if minutes > 1 else '' }}.
+            {% endif %}
+          {% endif %}
+        {% endif %}
+      msg_humidite: >-
+        {% set hum_actuelle = states('sensor.humidite_maison') | float(0) %} {%
+        set hum_ref = states('input_number.humid_reference_aeration') | float(0)
+        %} {% set hum_min = states('input_number.humid_min_aeration') | float(0)
+        %} {% if hum_actuelle <= hum_min %}
+          L'humidité est optimale, elle est descendue à son minimum de {{ hum_actuelle | int }} %.
+        {% elif hum_actuelle < hum_ref %}
+          L'humidité baisse bien, elle est actuellement à {{ hum_actuelle | int }} %.
+        {% else %}
+          L'humidité reste haute à {{ hum_actuelle | int }} %.
+        {% endif %}
+  - data:
+      title: "Changement d'unité : {{ cout_brut }} €"
+      message: "{{ msg_cout }} {{ msg_puissance }}"
+    action: notify.persistent_notification
+  - alias: Script TTS séjour
+    data:
+      media_player: media_player.sejour
+      message: "{{ msg_cout }} {{ msg_puissance }} {{ msg_humidite }}"
+    action: script.tts_send_tts
+    enabled: true
+mode: queued

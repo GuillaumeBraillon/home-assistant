@@ -32,11 +32,19 @@ actions:
     target:
       entity_id: input_boolean.aeration_active
     data: {}
+    alias: "Activer :"
   - action: input_number.set_value
     target:
       entity_id: input_number.temp_reference_aeration
     data:
       value: "{{ states('sensor.temperatures_maison') | float(0) | round(1) }}"
+    alias: "Mise à jour : "
+  - action: input_number.set_value
+    target:
+      entity_id: input_number.humid_reference_aeration
+    data:
+      value: "{{ states('sensor.humidite_maison') | float(0) | round(1) }}"
+    alias: "Mise à jour : "
   - action: input_number.set_value
     target:
       entity_id: input_number.temp_min_aeration
@@ -44,5 +52,12 @@ actions:
       value: >-
         {{ ((states('sensor.temperatures_maison') | float(0) * 10) | int) / 10
         }}
+    alias: "Mise à jour : "
+  - action: input_number.set_value
+    target:
+      entity_id: input_number.humid_min_aeration
+    data:
+      value: "{{ ((states('sensor.humidite_maison') | float(0) * 10) | int) / 10 }}"
+    alias: "Mise à jour : "
 mode: single
 max_exceeded: silent

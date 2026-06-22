@@ -1,0 +1,62 @@
+alias: "[Confort] Gestion climatisation salon selon ouvertures"
+description: >-
+  Éteint la prise de la clim si une fenêtre s'ouvre pendant 1 minute (uniquement
+  si la clim consomme). Rallume la prise si toutes les fenêtres se ferment
+  (uniquement si la prise était éteinte).
+mode: single
+triggers:
+  - alias: Détection d'une fenêtre ouverte (1 min)
+    entity_id:
+      - binary_sensor.magnet_living_room_left_contact
+      - binary_sensor.magnet_living_room_right_contact
+    to: "on"
+    for:
+      minutes: 1
+    id: fenetre_ouverte
+    trigger: state
+  - alias: Détection d'une fenêtre fermée (1 min)
+    entity_id:
+      - binary_sensor.magnet_living_room_left_contact
+      - binary_sensor.magnet_living_room_right_contact
+    to: "off"
+    for:
+      minutes: 1
+    id: fenetres_fermees
+    trigger: state
+conditions: []
+actions:
+  - choose:
+      - alias: Si déclenché par fenêtre ouverte et Clim en marche
+        conditions:
+          - condition: trigger
+            id: fenetre_ouverte
+          - condition: numeric_state
+            entity_id: sensor.ikea_inspelning_smart_plug_power
+            above: 3
+            alias: "Vérification : Puissance active > 3W (Hors veille)"
+        sequence:
+          - action: fan.turn_off
+            target:
+              entity_id: fan.ikea_inspelning_smart_plug
+            alias: "Action : Éteindre la prise de la climatisation"
+      - alias: Si déclenché par fenêtres fermées et clim eteinte
+        conditions:
+          - condition: trigger
+            id: fenetres_fermees
+          - condition: state
+            entity_id: binary_sensor.magnet_living_room_left_contact
+            state: "off"
+            alias: "Sécurité : Fenêtre gauche bien fermée"
+          - condition: state
+            entity_id: binary_sensor.magnet_living_room_right_contact
+            state: "off"
+            alias: "Sécurité : Fenêtre droite bien fermée"
+          - condition: state
+            entity_id: fan.ikea_inspelning_smart_plug
+            state: "off"
+            alias: "Vérification : Prise actuellement éteinte"
+        sequence:
+          - action: fan.turn_on
+            target:
+              entity_id: fan.ikea_inspelning_smart_plug
+            alias: "Action : Allumer la prise de la climatisation"

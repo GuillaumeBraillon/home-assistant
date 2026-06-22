@@ -1,14 +1,15 @@
 alias: "[Shutters] Chambre Oscar"
-description: "Contrôle les volets de la chambre d'Oscar selon le mode et la présence."
+description: Gestion automatique du volet d'Oscar sur détection de mouvement.
+mode: restart
 triggers:
-  - entity_id:
+  - alias: Détection d'un mouvement
+    entity_id:
       - binary_sensor.motion_oscar_occupancy
-    from:
-      - "off"
-    to:
-      - "on"
+    from: "off"
+    to: "on"
     trigger: state
-  - entity_id:
+  - alias: Activation du mode automatique
+    entity_id:
       - input_boolean.mode_auto_oscar
     from: "off"
     to: "on"
@@ -21,26 +22,49 @@ conditions:
     entity_id: input_boolean.mode_auto_oscar
     state: "on"
 actions:
-  - alias: Set Position by mode
+  - alias: Détermination de la position selon le contexte
     choose:
-      - conditions:
-          - condition: template
-            value_template: "{{ is_state('input_select.modes_maison', 'Journée') }}"
-            alias: Mode Journée
-          - condition: template
-            alias: Sun Up
-            value_template: "{{ is_state('sun.sun', 'above_horizon') }}"
+      - alias: Ouverture (Mode Journée ET il fait jour ET clim éteinte)
+        conditions:
+          - condition: state
+            entity_id: input_select.modes_maison
+            state: Journée
+            alias: Maison en mode Journée
+          - condition: state
+            entity_id: sun.sun
+            state: above_horizon
+            alias: Il fait jour
+          - condition: numeric_state
+            entity_id: sensor.ikea_inspelning_smart_plug_power
+            below: 3
+            alias: Prise sous les 3W (Pas de clim active)
         sequence:
-          - alias: Volets 100%
-            data:
+          - data:
               position: 50
             target:
               entity_id: cover.volets_oscar_state
             action: cover.set_cover_position
-    default:
-      - data: {}
-        target:
-          entity_id: cover.volets_oscar_state
-        alias: Close Volets
-        action: cover.close_cover
-mode: restart
+            alias: Régler la position à 50%
+      - alias: Fermeture (Pas mode Journée OU Clim active ET Volet Ouvert)
+        conditions:
+          - condition: numeric_state
+            entity_id: cover.volets_oscar_state
+            attribute: current_position
+            above: 0
+            alias: Le volet est ouvert (Position > 0)
+          - condition: or
+            conditions:
+              - alias: Maison en mode pas en Journée
+                condition: template
+                value_template: "{{ states('input_select.modes_maison') not in ['Journée'] }}"
+              - condition: numeric_state
+                entity_id: sensor.ikea_inspelning_smart_plug_power
+                above: 2
+                alias: La clim est en marche (> 2W) -> Protection chaleur
+            alias: Pas en mode Journée OU Clim en marche
+        sequence:
+          - data: {}
+            target:
+              entity_id: cover.volets_oscar_state
+            action: cover.close_cover
+            alias: Fermer le volet d'Oscar

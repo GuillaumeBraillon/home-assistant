@@ -25,6 +25,7 @@ actions:
             value_template: >-
               {{ states('sensor.temperatures_maison') | float(99)<=
               states('input_number.temp_min_aeration') | float(99) }}
+            alias: Temp maison <= Temp mini
           - condition: state
             entity_id: input_boolean.aeration_active
             state:
@@ -38,6 +39,16 @@ actions:
 
                 {{ ((states('sensor.temperatures_maison') | float(0) * 10) | int
                 / 10) }}
+            alias: "Mise à jour : "
+          - action: input_number.set_value
+            target:
+              entity_id: input_number.humid_min_aeration
+            data:
+              value: >-
+
+                {{ ((states('sensor.humidite_maison') | float(0) * 10) | int /
+                10) }}
+            alias: "Mise à jour : "
       - conditions:
           - condition: or
             conditions:
@@ -55,6 +66,7 @@ actions:
           - action: input_boolean.turn_off
             target:
               entity_id: input_boolean.aeration_active
+            alias: "Désactiver :"
         alias: Si Fenêtres fermées OU dernière référence > 5h
 mode: single
 max_exceeded: silent
