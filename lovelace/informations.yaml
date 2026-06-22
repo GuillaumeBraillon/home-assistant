@@ -1,0 +1,216 @@
+title: Informations
+path: informations
+icon: mdi:information-box-outline
+visible:
+  - user: c7447f6dbd744a97a1aafc8d1d5d6305
+  - user: 2e7b70c51f3e453cb5ec7131df051882
+badges:
+  - type: entity
+    entity: input_select.modes_maison
+    display_type: complete
+  - type: entity
+    entity: group.persons
+    display_type: complete
+    show_entity_picture: false
+  - type: entity
+    entity: person.guillaume
+    show_entity_picture: true
+  - type: entity
+    entity: person.nelly
+    show_entity_picture: true
+  - type: entity
+    entity: person.oscar
+    show_entity_picture: true
+cards:
+  - type: vertical-stack
+    cards:
+      - type: entities
+        entities:
+          - entity: automation.tts_agenda_famille_vacances
+            secondary_info: last-triggered
+            name: "[TTS] Agenda Famille Salon "
+          - entity: automation.tts_agenda_famille_aujourd_hui_2
+            secondary_info: last-triggered
+            name: "[TTS] Agenda (Parents)"
+          - entity: automation.reveil_guillaume_2
+            secondary_info: last-triggered
+      - type: conditional
+        conditions:
+          - condition: state
+            entity: input_text.notifications
+            state_not: unknown
+        card:
+          type: markdown
+          content: "{{ states('input_text.notifications') }}"
+      - type: markdown
+        content: >-
+          {% set calendar_state = states('calendar.calendrier_scolaire_zone_a')
+          %}
+
+          {% if calendar_state != 'unavailable' and calendar_state !=
+          'unknown'%}
+
+          {% set school_calendar =
+          state_attr('calendar.calendrier_scolaire_zone_a', 'message') |
+          default('') %}
+
+          {% set school_start_time =
+          as_timestamp(state_attr('calendar.calendrier_scolaire_zone_a',
+          'start_time')) | default(0) %}
+
+          {% set school_end_time =
+          as_timestamp(state_attr('calendar.calendrier_scolaire_zone_a',
+          'end_time')) | default(0) %}
+
+          {% set holiday_calendar =
+          state_attr('calendar.jours_feries_en_france', 'message') | default('')
+          %}
+
+          {% set holiday_start_time =
+          as_timestamp(state_attr('calendar.jours_feries_en_france',
+          'start_time')) | default(0) %}
+
+          {% set holiday_end_time =
+          as_timestamp(state_attr('calendar.jours_feries_en_france',
+          'end_time')) | default(0) %}
+
+          {% set family_calendar = state_attr('calendar.famille', 'message') |
+          default('') %}
+
+          {% set family_start_time = as_timestamp(state_attr('calendar.famille',
+          'start_time')) | default(0) %}
+
+          {% set family_end_time = as_timestamp(state_attr('calendar.famille',
+          'end_time')) | default(0) %}
+
+          {% set current_time = as_timestamp(now()) | default(0) %}
+
+          {% set family_start_time_formatted = 
+
+          as_timestamp(state_attr('calendar.famille', 'start_time')) |
+          timestamp_custom('%A %-d %B') | 
+
+          replace('Monday', 'Lundi') | 
+
+          replace('Tuesday', 'Mardi') | 
+
+          replace('Wednesday', 'Mercredi') | 
+
+          replace('Thursday', 'Jeudi') | 
+
+          replace('Friday', 'Vendredi') | 
+
+          replace('Saturday', 'Samedi') | 
+
+          replace('Sunday', 'Dimanche') | 
+
+          replace('January', 'janvier') | 
+
+          replace('February', 'février') | 
+
+          replace('March', 'mars') | 
+
+          replace('April', 'avril') | 
+
+          replace('May', 'mai') | 
+
+          replace('June', 'juin') | 
+
+          replace('July', 'juillet') | 
+
+          replace('August', 'août') | 
+
+          replace('September', 'septembre') | 
+
+          replace('October', 'octobre') | 
+
+          replace('November', 'novembre') | 
+
+          replace('December', 'décembre') %}     
+
+
+          # Agenda
+
+          **{{ family_calendar }}**, {% if is_state('calendar.famille', 'on')
+          %}{% set remaining_time = family_end_time - current_time %}{% if
+          state_attr('calendar.famille', 'all_day') %}{% if (remaining_time /
+          86400) | int == 0 %}toute la journée{% else %}se termine dans {{
+          (remaining_time / 86400) | int }} jours.{% endif %}{% else %}se
+          termine dans {{ (remaining_time / 3600) | int }}h{{ (remaining_time %
+          3600) // 60 }}m.{% endif %}{% else %}{% if
+          family_start_time|timestamp_custom('%Y%m%d') ==
+          current_time|timestamp_custom('%Y%m%d') %}{% if
+          state_attr('calendar.famille', 'all_day') %}aujourd'hui.{% else
+          %}aujourd'hui à {{ family_start_time|timestamp_custom('%Hh%M') }}{%
+          endif %}{% elif family_start_time|timestamp_custom('%Y%m%d') ==
+          (current_time + 86400)|timestamp_custom('%Y%m%d') %}{% if
+          state_attr('calendar.famille', 'all_day') %}demain.{% else %}demain à
+          {{ family_start_time|timestamp_custom('%Hh%M') }}{% endif %}{% else
+          %}le {{family_start_time_formatted}} {{
+          family_start_time|timestamp_custom('à %Hh%M') }}{% endif %}{% endif
+          %}.
+
+          **{{ school_calendar }}**{% if
+          is_state('calendar.calendrier_scolaire_zone_a', 'off') %} dans **{{
+          ((school_start_time - current_time) / 86400 + 1) | int }} jours**, le
+          {{ school_start_time | timestamp_custom('%d/%m/%Y') }}.{% else %} se
+          terminent dans {{ ((school_end_time - current_time) / 86400) | int }}
+          jours, le {{ school_end_time | timestamp_custom('%d/%m/%Y') }}.{%
+          endif %}
+
+          **{{ holiday_calendar }}**{% if
+          is_state('calendar.jours_feries_en_france', 'off') %} dans **{{
+          ((holiday_start_time - current_time) / 86400 + 1) | int }} jours**, le
+          {{ holiday_start_time | timestamp_custom('%d/%m/%Y') }}.{% else %} se
+          terminent dans {{ ((holiday_end_time - current_time) / 86400) | int }}
+          jours, le {{ holiday_end_time | timestamp_custom('%d/%m/%Y') }}.{%
+          endif %}
+
+          {% endif %}
+        theme: macOS Theme
+      - show_name: true
+        show_icon: true
+        type: button
+        entity: button.dashboard
+        show_state: true
+        tap_action:
+          action: toggle
+      - show_name: true
+        show_icon: true
+        type: button
+        tap_action:
+          action: more-info
+        entity: automation.tts_agenda_famille_aujourd_hui_2
+        name: Agenda Guillaume (Parents)
+        show_state: true
+        icon: mdi:calendar-account
+        icon_height: 50px
+      - show_name: true
+        show_icon: true
+        type: button
+        icon: mdi:chat
+        show_state: true
+        name: Agenda du jour (Séjour)
+        entity: automation.tts_agenda_famille_vacances
+        icon_height: 50px
+        tap_action:
+          action: more-info
+      - type: entities
+        entities:
+          - entity: calendar.calendrier_scolaire_zone_a
+            secondary_info: last-changed
+          - entity: binary_sensor.tomorrow_holidays_zone_a
+            secondary_info: last-changed
+          - entity: binary_sensor.today_is_holiday
+            secondary_info: last-changed
+          - entity: binary_sensor.tomorrow_is_holiday
+            secondary_info: last-changed
+          - entity: binary_sensor.today_is_weekend
+            secondary_info: last-changed
+          - entity: binary_sensor.tomorrow_is_weekend
+            secondary_info: last-changed
+          - entity: sensor.prochain_jour_ferie
+            name: Prochain Jour férié
+            secondary_info: last-changed
+        title: Calendrier
+        state_color: true

@@ -1,0 +1,215 @@
+theme: Backend-selected
+path: default_view
+title: Home
+icon: mdi:home
+visible:
+  - user: c7447f6dbd744a97a1aafc8d1d5d6305
+  - user: 2e7b70c51f3e453cb5ec7131df051882
+badges:
+  - type: entity
+    show_name: true
+    show_state: true
+    show_icon: true
+    entity: input_select.modes_maison
+    state_content:
+      - state
+      - last_changed
+  - type: entity
+    show_name: true
+    show_state: true
+    show_icon: true
+    entity: group.persons
+    state_content:
+      - state
+      - last_changed
+  - type: entity
+    show_name: false
+    show_state: true
+    show_icon: true
+    entity: person.guillaume
+    show_entity_picture: true
+    state_content:
+      - state
+      - last_changed
+  - type: entity
+    show_name: false
+    show_state: true
+    show_icon: true
+    entity: person.nelly
+    show_entity_picture: true
+    state_content:
+      - state
+      - last_changed
+  - type: entity
+    show_name: false
+    show_state: true
+    show_icon: true
+    entity: person.oscar
+    show_entity_picture: true
+    state_content:
+      - state
+      - last_changed
+cards:
+  - type: alarm-panel
+    states:
+      - arm_home
+      - arm_away
+    entity: alarm_control_panel.logement
+    name: Alarme
+    theme: macOS Theme
+  - type: entities
+    title: 📍 Suivi de Présence
+    state_color: true
+    show_header_toggle: false
+    entities:
+      - type: section
+        label: Statuts Globaux
+      - entity: group.persons
+        secondary_info: last-changed
+      - entity: sensor.maison_appareil_le_plus_proche
+        secondary_info: last-changed
+      - entity: sensor.maison_nearest_direction_of_travel
+        secondary_info: last-changed
+        name: "Direction "
+      - entity: sensor.maison_distance_la_plus_proche
+        secondary_info: last-changed
+        name: "Distance "
+      - entity: automation.zone_custom
+        secondary_info: last-triggered
+        name: Notifications présence parents
+        icon: mdi:shield-lock-outline
+      - type: section
+        label: Guillaume
+      - entity: person.guillaume
+        secondary_info: last-changed
+      - entity: sensor.oneplus_8t_next_alarm
+        secondary_info: last-changed
+      - entity: sensor.maison_direction_du_deplacement_de_guillaume
+        secondary_info: last-changed
+      - entity: sensor.maison_distance_guillaume
+        secondary_info: last-changed
+      - entity: device_tracker.one_plus_8t
+        secondary_info: last-changed
+        name: Smartphone (GPS)
+      - entity: device_tracker.smartphone_oneplus_8t
+        secondary_info: last-changed
+        name: Smartphone (Wifi)
+      - entity: device_tracker.gtr2_presence
+        secondary_info: last-changed
+      - entity: device_tracker.nut_blanc_presence
+        secondary_info: last-changed
+      - entity: sensor.nut_blanc_battery
+        secondary_info: last-changed
+      - type: section
+        label: Nelly
+      - entity: person.nelly
+        secondary_info: last-changed
+      - entity: sensor.maison_distance_nelly
+        secondary_info: last-changed
+        name: "Distance "
+      - entity: sensor.maison_direction_du_deplacement_de_nelly
+        secondary_info: last-changed
+        name: Direction
+      - entity: sensor.samsung_e10_next_alarm
+        secondary_info: last-changed
+        name: "Alarme "
+      - entity: device_tracker.samsung_e10
+        name: Smartphone (GPS)
+        secondary_info: last-changed
+      - entity: device_tracker.samsung_galaxy_s10e
+        secondary_info: last-changed
+        name: Smartphone Wifi (Nmap)
+      - entity: device_tracker.smartphone_galaxy_s10e
+        secondary_info: last-changed
+        name: Smartphone Wifi (Freebox)
+      - entity: device_tracker.nut_rose_presence
+        secondary_info: last-changed
+      - entity: sensor.nut_rose_battery
+        secondary_info: last-changed
+      - entity: input_boolean.nelly_active
+        secondary_info: last-changed
+      - type: section
+        label: Oscar
+      - entity: person.oscar
+        secondary_info: last-changed
+      - entity: sensor.maison_direction_du_deplacement_de_guillaume
+        secondary_info: last-changed
+      - entity: sensor.maison_distance_oscar
+        secondary_info: last-changed
+        name: Distance
+      - entity: device_tracker.samsung_a55
+        secondary_info: last-changed
+      - entity: device_tracker.a55_de_oscar
+        secondary_info: last-changed
+      - entity: device_tracker.nmap_tracker_1a_d6_c6_43_dc_ff
+        secondary_info: last-changed
+      - entity: device_tracker.nut_vert_presence
+        secondary_info: last-changed
+      - entity: sensor.nut_vert_battery
+        secondary_info: last-changed
+      - entity: input_boolean.oscar_active
+        secondary_info: last-changed
+      - entity: button.change_presence_nut_oscar
+        secondary_info: last-changed
+        icon: mdi:cellphone-key
+        name: Changer Nut Vert Presence
+      - entity: input_boolean.oscar_trace_zone
+        secondary_info: last-changed
+        name: Tracking
+      - type: section
+        label: Invités
+      - entity: person.invites
+        secondary_info: last-changed
+      - entity: device_tracker.nut_2_presence
+        secondary_info: last-changed
+      - entity: input_boolean.invites_active
+        secondary_info: last-changed
+      - entity: input_text.telephone_invite
+        secondary_info: last-changed
+      - entity: device_tracker.lewis
+        secondary_info: last-changed
+  - type: entities
+    title: 🪟 Gestion des Volets
+    state_color: true
+    show_header_toggle: false
+    entities:
+      - type: section
+        label: Pièces à vivre
+      - entity: input_boolean.volets_salon_auto
+        name: Automatisation Salon
+        secondary_info: last-changed
+      - entity: cover.volets_salon_state
+        name: Salon
+        secondary_info: position
+      - type: section
+        label: Chambres
+      - entity: cover.volets_parents_state
+        name: Parents
+        secondary_info: position
+      - entity: cover.volets_oscar_state
+        name: Oscar
+        secondary_info: position
+      - entity: cover.volets_eliott_state
+        name: Eliott
+        secondary_info: position
+  - type: vertical-stack
+    cards:
+      - show_state: false
+        show_name: true
+        camera_view: auto
+        type: picture-entity
+        entity: camera.camera_xiaomi_a2
+        name: Salon
+      - show_state: false
+        show_name: true
+        camera_view: auto
+        type: picture-entity
+        entity: camera.alfawise_mainstreamprofile
+        name: "Entrée "
+      - show_state: false
+        show_name: true
+        camera_view: auto
+        type: picture-entity
+        entity: camera.fi9803p
+        camera_image: camera.fi9803p
+        name: Extérieur

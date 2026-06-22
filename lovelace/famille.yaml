@@ -1,0 +1,468 @@
+theme: Backend-selected
+title: Famille
+icon: mdi:human-male-female-child
+visible:
+  - user: c7447f6dbd744a97a1aafc8d1d5d6305
+  - user: 2e7b70c51f3e453cb5ec7131df051882
+  - user: 2ff2cdef1e4a45709c03849f9cf9420a
+badges:
+  - type: entity
+    entity: input_select.modes_maison
+    display_type: complete
+  - type: entity
+    entity: group.persons
+    display_type: complete
+  - type: entity
+    entity: person.guillaume
+    show_entity_picture: true
+  - type: entity
+    entity: person.nelly
+    show_entity_picture: true
+  - type: entity
+    entity: person.oscar
+    show_entity_picture: true
+cards: []
+type: sections
+sections:
+  - type: grid
+    cards:
+      - type: vertical-stack
+        cards:
+          - features:
+              - type: area-controls
+                controls:
+                  - light
+                  - cover-blind
+            alert_classes:
+              - window
+              - motion
+            sensor_classes:
+              - temperature
+              - humidity
+            display_type: compact
+            type: area
+            area: chambre_d_oscar
+            name: Oscar
+            features_position: inline
+            tap_action:
+              action: navigate
+              navigation_path: /lovelace/oscar
+            vertical: false
+          - features:
+              - type: area-controls
+                controls:
+                  - light
+                  - cover-blind
+            alert_classes:
+              - window
+              - motion
+            sensor_classes:
+              - temperature
+              - humidity
+            display_type: compact
+            type: area
+            area: chambre_d_eliott
+            features_position: inline
+            vertical: false
+            name: "Eliott "
+            tap_action:
+              action: navigate
+              navigation_path: /lovelace/eliott
+      - type: entities
+        title: ⚙️ Système
+        show_header_toggle: false
+        state_color: true
+        entities:
+          - entity: automation.zone_custom
+            name: Notifications Parents
+            icon: mdi:shield-lock-outline
+            secondary_info: last-triggered
+          - entity: button.refresh_jeedom_mqtt
+            name: Sync Jeedom
+            icon: mdi:sync
+            secondary_info: state
+          - entity: button.change_presence_nut_oscar
+            name:
+              type: entity
+            secondary_info: state
+          - entity: input_boolean.oscar_trace_zone
+            secondary_info: last-changed
+      - type: entities
+        show_header_toggle: false
+        state_color: true
+        entities:
+          - entity: sensor.maison_appareil_le_plus_proche
+            name: Le plus proche
+          - entity: sensor.maison_distance_la_plus_proche
+            name: Distance
+          - entity: sensor.maison_nearest_direction_of_travel
+            name: Direction
+    column_span: 4
+  - type: grid
+    cards:
+      - type: vertical-stack
+        cards:
+          - type: entities
+            show_header_toggle: false
+            state_color: true
+            entities:
+              - entity: person.guillaume
+                secondary_info: last-changed
+              - type: section
+                label: ⚖️ Santé
+              - show_name: true
+                show_icon: false
+                show_state: true
+                type: custom:hui-glance-card
+                entities:
+                  - entity: sensor.poids_guillaume
+                    name: Poids
+                  - entity: input_number.poids_guillaume_difference
+                    name: Écart
+                  - entity: sensor.imc_label_guillaume
+                    name: IMC
+                  - entity: sensor.imc_guillaume
+                    name: IMC (val)
+                columns: 4
+              - show_name: true
+                show_icon: false
+                show_state: true
+                type: custom:hui-glance-card
+                entities:
+                  - entity: input_number.poids_guillaume_min
+                    name: Min
+                  - entity: sensor.poids_guillaume_prise
+                    name: Prise
+                  - entity: input_number.poids_guillaume_max
+                    name: Max
+                  - entity: sensor.poids_guillaume_perte
+                    name: Perte
+                columns: 4
+              - type: section
+                label: 📍 Localisation
+              - entity: device_tracker.one_plus_8t
+                name: Smartphone (GPS)
+                secondary_info: last-changed
+              - entity: sensor.oneplus_8t_geocoded_location
+                name: Adresse actuelle
+                secondary_info: last-changed
+              - entity: sensor.maison_distance_guillaume
+                name: Distance maison
+                secondary_info: last-changed
+              - entity: sensor.maison_direction_du_deplacement_de_guillaume
+                name: Direction du mouvement
+                secondary_info: last-changed
+              - entity: device_tracker.smartphone_oneplus_8t
+                name: Présence Wi-Fi
+                secondary_info: last-changed
+              - type: section
+                label: 📲 État du Smartphone
+              - entity: sensor.oneplus_8t_battery_level
+                name: Batterie
+                secondary_info: last-changed
+              - entity: binary_sensor.oneplus_8t_is_charging
+                name: En charge
+                secondary_info: last-changed
+              - entity: binary_sensor.oneplus_8t_device_secure
+                name: Téléphone verrouillé
+                secondary_info: last-changed
+              - entity: sensor.oneplus_8t_detected_activity
+                name: Activité détectée
+                secondary_info: last-changed
+              - entity: sensor.oneplus_8t_public_ip_address
+                name: Adresse IP Publique
+                secondary_info: last-changed
+              - type: section
+                label: ⏰ Réveil & Accessoires
+              - entity: sensor.oneplus_8t_next_alarm
+                name: Prochaine Alarme
+                secondary_info: last-changed
+              - entity: automation.reveil_guillaume_2
+                name: Automatisme Réveil
+                secondary_info: last-triggered
+              - entity: binary_sensor.oneplus_8t_android_auto
+                name: Android Auto
+                secondary_info: last-changed
+              - type: divider
+              - entity: device_tracker.gtr2_presence
+                name: Montre GTR 2
+                secondary_info: last-changed
+              - entity: device_tracker.nut_blanc_presence
+                name: Nut Blanc (Présence)
+                secondary_info: last-changed
+              - entity: sensor.nut_blanc_battery
+                name: Batterie Nut Blanc
+                secondary_info: last-changed
+          - type: map
+            auto_fit: true
+            entities:
+              - entity: person.guillaume
+            theme_mode: auto
+            hours_to_show: 4
+      - type: vertical-stack
+        cards:
+          - type: entities
+            show_header_toggle: false
+            state_color: true
+            entities:
+              - entity: person.nelly
+                secondary_info: last-changed
+              - entity: input_boolean.nelly_active
+                name: Clés Actives
+                secondary_info: last-changed
+              - type: section
+                label: ⚖️ Santé
+              - show_name: true
+                show_icon: false
+                show_state: true
+                type: custom:hui-glance-card
+                entities:
+                  - entity: sensor.poids_nelly
+                    name: Poids
+                  - entity: input_number.poids_nelly_difference
+                    name: Écart
+                  - entity: sensor.imc_label_nelly
+                    name: IMC
+                  - entity: sensor.imc_nelly
+                    name: IMC (val)
+                columns: 4
+              - show_name: true
+                show_icon: false
+                show_state: true
+                type: custom:hui-glance-card
+                entities:
+                  - entity: input_number.poids_nelly_min
+                    name: Min
+                  - entity: sensor.poids_nelly_prise
+                    name: Prise
+                  - entity: input_number.poids_nelly_max
+                    name: Max
+                  - entity: sensor.poids_nelly_perte
+                    name: Perte
+                columns: 4
+              - type: section
+                label: 📍 Localisation
+              - entity: device_tracker.samsung_e10
+                name: Smartphone (GPS)
+                secondary_info: last-changed
+              - entity: sensor.samsung_e10_geocoded_location
+                name: Adresse actuelle
+                secondary_info: last-changed
+              - entity: sensor.maison_distance_nelly
+                name: Distance maison
+                secondary_info: last-changed
+              - entity: sensor.maison_direction_du_deplacement_de_nelly
+                name: Direction du mouvement
+                secondary_info: last-changed
+              - entity: device_tracker.samsung_galaxy_s10e
+                secondary_info: last-changed
+                name: Smartphone (Nmap)
+              - entity: device_tracker.smartphone_galaxy_s10e
+                name: Smartphone (Freebox)
+                secondary_info: last-changed
+              - type: section
+                label: 📲 État du Smartphone
+              - entity: sensor.samsung_e10_battery_level
+                name: Batterie
+                secondary_info: last-changed
+              - entity: binary_sensor.samsung_e10_is_charging
+                name: En charge
+                secondary_info: last-changed
+              - entity: binary_sensor.samsung_e10_power_save
+                name: Économie d'énergie
+                secondary_info: last-changed
+              - entity: binary_sensor.samsung_e10_device_locked
+                name: Téléphone verrouillé
+                secondary_info: last-changed
+              - entity: sensor.samsung_e10_detected_activity
+                name: Activité détectée
+                secondary_info: last-changed
+              - type: section
+                label: ⚙️ Connectivité & Accessoires
+              - entity: binary_sensor.samsung_e10_high_accuracy_mode
+                name: GPS haute précision
+                secondary_info: last-changed
+              - entity: binary_sensor.samsung_e10_android_auto
+                name: Android Auto
+                secondary_info: last-changed
+              - entity: sensor.samsung_e10_public_ip_address
+                name: Adresse IP Publique
+                secondary_info: last-changed
+              - type: divider
+              - entity: device_tracker.nut_rose_presence
+                name: Nut Rose (Présence)
+                secondary_info: last-changed
+              - entity: sensor.nut_rose_battery
+                name: Batterie Nut Rose
+                secondary_info: last-changed
+          - type: map
+            entities:
+              - entity: person.nelly
+            theme_mode: auto
+            hours_to_show: 48
+      - type: vertical-stack
+        cards:
+          - type: entities
+            show_header_toggle: false
+            state_color: true
+            entities:
+              - entity: person.oscar
+                secondary_info: last-changed
+              - entity: input_boolean.oscar_active
+                name: Clés Actives
+                secondary_info: last-changed
+              - type: section
+                label: ⚖️ Santé
+              - show_name: true
+                show_icon: false
+                show_state: true
+                type: custom:hui-glance-card
+                entities:
+                  - entity: sensor.poids_oscar
+                    name: Poids
+                  - entity: input_number.poids_oscar_difference
+                    name: Écart
+                  - entity: sensor.imc_label_oscar
+                    name: IMC
+                  - entity: sensor.imc_oscar
+                    name: IMC (val)
+                columns: 4
+              - type: section
+                label: 📍 Localisation
+              - entity: device_tracker.samsung_a55
+                name: Smartphone (GPS)
+                secondary_info: last-changed
+              - entity: sensor.samsung_a55_geocoded_location
+                name: Adresse actuelle
+                secondary_info: last-changed
+              - entity: sensor.maison_distance_oscar
+                name: Distance maison
+                secondary_info: last-changed
+              - entity: input_boolean.oscar_trace_zone
+                name: Activer Tracking Oscar
+                secondary_info: last-changed
+              - type: section
+                label: 📲 État du Smartphone
+              - entity: sensor.samsung_a55_battery_level
+                name: Batterie
+                secondary_info: last-changed
+              - entity: sensor.samsung_a55_battery_state
+                name: État de charge
+                secondary_info: last-changed
+              - entity: sensor.samsung_a55_detected_activity
+                name: Activité détectée
+                secondary_info: last-changed
+              - type: section
+                label: ⚙️ Accessoires
+              - entity: device_tracker.nut_vert_presence
+                name: Nut Vert (Présence)
+                secondary_info: last-changed
+              - entity: button.change_presence_nut_oscar
+                name: Forcer état Nut Vert
+                icon: mdi:sync
+          - type: map
+            entities:
+              - entity: person.oscar
+            hours_to_show: 27
+            theme_mode: auto
+          - type: history-graph
+            entities:
+              - entity: sensor.oneplus_8t_battery_level
+                name: Guillaume
+              - entity: sensor.samsung_e10_battery_level
+                name: Nelly
+              - entity: sensor.samsung_a55_battery_level
+                name: Oscar
+              - entity: sensor.lewis_battery
+              - entity: binary_sensor.oneplus_8t_device_locked
+                name: Guillaume
+              - entity: binary_sensor.samsung_e10_device_locked
+                name: Nelly
+              - entity: binary_sensor.samsung_a55_device_locked
+                name: Oscar
+            hours_to_show: 12
+            title: Smartphones
+      - type: vertical-stack
+        cards:
+          - type: entities
+            title: 🐈‍⬛ Lewis
+            show_header_toggle: false
+            state_color: true
+            entities:
+              - entity: device_tracker.lewis
+                name: Position actuelle
+                secondary_info: last-changed
+              - entity: sensor.poids_lewis
+                name: Poids du chat
+                icon: mdi:cat
+              - show_name: true
+                show_icon: true
+                show_state: true
+                type: custom:hui-glance-card
+                entities:
+                  - entity: button.lewis_refresh_location
+                    name: Refresh
+                  - entity: button.lewis_activate_super_live
+                    name: Live
+                  - entity: button.lewis_ring
+                    name: Sonner
+                  - entity: button.lewis_vibrate
+                    name: Vibrer
+                columns: 4
+                state_color: true
+              - type: section
+                label: 📡 État & Connexion
+              - entity: sensor.lewis_battery
+                name: Batterie
+                secondary_info: last-changed
+              - entity: binary_sensor.lewis_is_online
+                name: En ligne
+              - entity: binary_sensor.lewis_valid_signal
+                name: Signal GPS valide
+              - entity: sensor.lewis_gps_satellites
+                name: Satellites captés
+              - entity: sensor.lewis_gsm_strength
+                name: Force du signal GSM
+              - entity: select.lewis_update_rate
+                name: Fréquence de mise à jour
+              - type: section
+                label: 💳 Abonnement & Système
+              - entity: sensor.lewis_subscription_remaining_days
+                name: Jours restants
+              - entity: sensor.lewis_phone_call_available
+                name: Appels restants
+              - entity: sensor.lewis_sms_available
+                name: SMS restants
+              - type: section
+                label: ⚙️ Détails Techniques
+              - entity: sensor.lewis_last_message_received
+                name: Dernier message
+              - entity: sensor.lewis_sensor_mode
+                name: Mode actuel
+              - entity: sensor.lewis_cell_tower_id
+                name: ID Cellule GSM
+          - type: map
+            auto_fit: true
+            entities:
+              - entity: device_tracker.lewis
+            hours_to_show: 24
+            theme_mode: auto
+          - type: entities
+            show_header_toggle: false
+            state_color: true
+            entities:
+              - entity: person.invites
+                name: État Invités
+                secondary_info: last-changed
+              - entity: input_boolean.invites_active
+                name: Clés Actives
+              - entity: device_tracker.nut_2_presence
+                name: Nut Invité (Présence)
+              - entity: input_text.telephone_invite
+                name: N° Téléphone
+            title: 🫥 Invités
+    column_span: 4
+  - type: grid
+    cards: []
+max_columns: 4
+path: famille

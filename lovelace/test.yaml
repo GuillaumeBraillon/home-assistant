@@ -1,0 +1,337 @@
+theme: Backend-selected
+title: Test
+visible:
+  - user: c7447f6dbd744a97a1aafc8d1d5d6305
+badges:
+  - type: entity
+    entity: input_select.modes_maison
+    display_type: complete
+  - type: entity
+    entity: group.persons
+    display_type: complete
+  - type: entity
+    entity: person.guillaume
+    show_entity_picture: true
+  - type: entity
+    entity: person.nelly
+    show_entity_picture: true
+  - type: entity
+    entity: person.oscar
+    show_entity_picture: true
+  - type: entity
+    entity: person.invites
+    show_entity_picture: true
+cards: []
+type: sections
+sections:
+  - type: grid
+    cards:
+      - type: heading
+        heading: Boutons de test
+        heading_style: title
+      - show_name: true
+        show_icon: true
+        type: button
+        tap_action:
+          action: toggle
+        entity: input_boolean.bouton_test
+        show_state: true
+      - type: button
+        tap_action:
+          action: call-service
+          service: input_text.set_value
+          service_data:
+            value: unknown
+            entity_id: input_text.notifications
+        entity: input_text.notifications
+        icon: mdi:backspace-outline
+        name: Notifications
+      - type: glance
+        title: 🌬️ Gestion Aération
+        columns: 5
+        state_color: true
+        entities:
+          - entity: input_boolean.aeration_active
+            name: Active
+          - entity: binary_sensor.fenetres_maison
+            name: Fenêtres
+          - entity: input_number.temp_reference_aeration
+            name: Ouverture
+          - entity: input_number.temp_min_aeration
+            name: Minimale
+          - entity: sensor.temperatures_maison
+            name: Actuelle
+        card_mod:
+          style:
+            div.entity:
+              $: |
+                div {
+                  display: flex !important;
+                  flex-direction: column !important;
+                  align-items: center !important;
+                }
+                span.state {
+                  font-size: 14px !important;
+                  font-weight: bold !important;
+                  margin-top: 4px !important;
+                  display: block !important;
+                }
+            .: |
+              div.entity:nth-child(1)::after {
+                content: "{% set t = (now() - states.input_boolean.aeration_active.last_changed).total_seconds() %}{% if t < 60 %}Maintenant{% elif t < 3600 %}{{ (t / 60) | int }} min{% elif t < 86400 %}{{ (t / 3600) | int }} h{% else %}{{ (t / 86400) | int }} j{% endif %}";
+                font-size: 10px; color: var(--secondary-text-color); display: block; text-align: center; margin-top: 2px;
+              }
+              div.entity:nth-child(2)::after {
+                content: "{% set t = (now() - states.binary_sensor.fenetres_maison.last_changed).total_seconds() %}{% if t < 60 %}Maintenant{% elif t < 3600 %}{{ (t / 60) | int }} min{% elif t < 86400 %}{{ (t / 3600) | int }} h{% else %}{{ (t / 86400) | int }} j{% endif %}";
+                font-size: 10px; color: var(--secondary-text-color); display: block; text-align: center; margin-top: 2px;
+              }
+              div.entity:nth-child(3)::after {
+                content: "{% set t = (now() - states.input_number.temp_reference_aeration.last_changed).total_seconds() %}{% if t < 60 %}Maintenant{% elif t < 3600 %}{{ (t / 60) | int }} min{% elif t < 86400 %}{{ (t / 3600) | int }} h{% else %}{{ (t / 86400) | int }} j{% endif %}";
+                font-size: 10px; color: var(--secondary-text-color); display: block; text-align: center; margin-top: 2px;
+              }
+              div.entity:nth-child(4)::after {
+                content: "{% set t = (now() - states.input_number.temp_min_aeration.last_changed).total_seconds() %}{% if t < 60 %}Maintenant{% elif t < 3600 %}{{ (t / 60) | int }} min{% elif t < 86400 %}{{ (t / 3600) | int }} h{% else %}{{ (t / 86400) | int }} j{% endif %}";
+                font-size: 10px; color: var(--secondary-text-color); display: block; text-align: center; margin-top: 2px;
+              }
+              div.entity:nth-child(5)::after {
+                content: "{% set t = (now() - states.sensor.temperatures_maison.last_changed).total_seconds() %}{% if t < 60 %}Maintenant{% elif t < 3600 %}{{ (t / 60) | int }} min{% elif t < 86400 %}{{ (t / 3600) | int }} h{% else %}{{ (t / 86400) | int }} j{% endif %}";
+                font-size: 10px; color: var(--secondary-text-color); display: block; text-align: center; margin-top: 2px;
+              }
+  - type: grid
+    cards:
+      - type: heading
+        heading: Test Presence (2h)
+        heading_style: title
+      - type: history-graph
+        entities:
+          - entity: group.persons
+          - entity: alarm_control_panel.logement
+          - entity: automation.mode_auto_mode_based_on_motions_morning
+          - entity: input_select.modes_maison
+          - entity: binary_sensor.magnet_hall_contact
+          - entity: binary_sensor.motion_hall_occupancy
+          - entity: binary_sensor.motion_kitchen_occupancy
+          - entity: person.nelly
+          - entity: person.oscar
+          - entity: person.guillaume
+          - entity: person.invites
+        hours_to_show: 2
+  - type: grid
+    cards:
+      - type: grid
+        square: true
+        columns: 3
+        cards:
+          - type: button
+            entity: button.videoprojecteur_remote_toggle
+            name: Power Toggle
+            icon: mdi:power-cycle
+          - type: button
+            entity: button.videoprojecteur_remote_arrow_up
+            name: Haut
+            icon: mdi:arrow-up-bold
+          - type: button
+            entity: button.videoprojecteur_remote_back
+            name: Retour
+            icon: mdi:arrow-left-top-bold
+          - type: button
+            entity: button.videoprojecteur_remote_arrow_left
+            name: Gauche
+            icon: mdi:arrow-left-bold
+          - type: button
+            entity: button.videoprojecteur_remote_select
+            name: OK
+            icon: mdi:checkbox-blank-circle
+          - type: button
+            entity: button.videoprojecteur_remote_arrow_right
+            name: Droite
+            icon: mdi:arrow-right-bold
+          - type: button
+            entity: button.videoprojecteur_remote_turn_on
+            name: "ON"
+            icon: mdi:power
+            icon_color: green
+          - type: button
+            entity: button.videoprojecteur_remote_arrow_down
+            name: Bas
+            icon: mdi:arrow-down-bold
+          - type: button
+            entity: button.videoprojecteur_remote_turn_off
+            name: "OFF"
+            icon: mdi:power-off
+            icon_color: red
+      - type: tile
+        entity: button.garage_open
+        features:
+          - type: button
+      - type: tile
+        entity: button.garage_open_tilt
+        features:
+          - type: button
+  - type: grid
+    cards:
+      - type: markdown
+        content: >
+          # Cheatsheet notifications mobiles
+
+
+          ## Choix rapide
+
+
+          1. Notification normale : `preset: default`
+
+          2. Notification urgente : `preset: alarm`
+
+          3. Notification urgente avec lecture vocale mobile : `preset:
+          alarm_tts`
+
+          4. Question avec boutons : utiliser `script.notify_ask_mobile`
+
+
+          ## Quel `channel` choisir ?
+
+
+          | Besoin | Channel recommande | Preset recommande |
+
+          | --- | --- | --- |
+
+          | Presence, arrivee, depart | `presence` | `default` |
+
+          | Question de presence | `presence` | `alarm_tts` |
+
+          | Sante, poids, mesures | `health` | `default` |
+
+          | SMS converti en notif | `sms` | `default` |
+
+          | Alerte forte, simulation d'appel, alarme | `alarm_stream` | `alarm`
+          ou `alarm_tts` |
+
+          | Alerte technique | `Alert` | `default` ou `alarm` |
+
+          | Evenement JPI | `JPI` | `default` |
+
+          | Question interactive hors presence | `questions` ou channel metier |
+          `alarm` |
+
+
+          ## Quand reutiliser un channel existant ?
+
+
+          - Reutiliser si la notif appartient a une famille deja connue :
+          `presence`, `health`, `sms`, `Alert`, `JPI`
+
+          - Utiliser `alarm_stream` si la notif est urgente et ne rentre dans
+          aucune famille claire
+
+          - Creer un nouveau `channel` seulement si tu veux un regroupement ou
+          un comportement Android distinct
+
+
+          ## Quel script utiliser ?
+
+
+          ### Envoi simple
+
+
+          Utiliser `script.notify_send_notifications`
+
+
+          ```yaml
+
+          action: script.notify_send_notifications
+
+          data:
+            target: guillaume
+            title: "[Presence]"
+            message: "Oscar est arrive."
+            icon: mdi:map-marker
+            channel: presence
+            preset: default
+          ```
+
+
+          ### Alerte urgente
+
+
+          Utiliser `script.notify_send_notifications`
+
+
+          ```yaml
+
+          action: script.notify_send_notifications
+
+          data:
+            target: guillaume;nelly
+            title: "[Alarme]"
+            message: "La porte d'entree est ouverte."
+            icon: mdi:door-open
+            channel: alarm_stream
+            preset: alarm
+          ```
+
+
+          ### Alerte urgente avec voix sur le telephone
+
+
+          Utiliser `script.notify_send_notifications`
+
+
+          ```yaml
+
+          action: script.notify_send_notifications
+
+          data:
+            target: guillaume
+            title: "[Alarme]"
+            message: "La porte d'entree est ouverte."
+            icon: mdi:door-open
+            channel: alarm_stream
+            preset: alarm_tts
+            mobile_tts_text: "Attention. La porte d'entree est ouverte."
+          ```
+
+
+          ### Question avec reponse Oui / Non
+
+
+          Utiliser `script.notify_ask_mobile`
+
+
+          ```yaml
+
+          action: script.notify_ask_mobile
+
+          data:
+            target: guillaume;nelly
+            ask_tag: ask_presence
+            title: "[Presence]"
+            message: "Oscar est-il seul a la maison ?"
+            icon: mdi:account-question-outline
+            channel: presence
+            preset: alarm_tts
+            yes_title: "Oui"
+            no_title: "Non"
+            timeout: 300
+          response_variable: ask_result
+
+          ```
+
+
+          ## Regles utiles
+
+
+          - `default` = notification standard
+
+          - `alarm` = visibilite maximale, sans TTS mobile
+
+          - `alarm_tts` = visibilite maximale + lecture vocale mobile
+
+          - `mobile_tts_text` n'est utile qu'avec `preset: alarm_tts`
+
+          - pour une question interactive, preferer `script.notify_ask_mobile`
+
+          - si tu hesites entre deux channels, privilegie le channel metier deja
+          existant
+path: test
+max_columns: 3
+dense_section_placement: true

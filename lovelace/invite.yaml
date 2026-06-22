@@ -1,0 +1,860 @@
+title: Invité
+path: invite
+icon: mdi:briefcase-account-outline
+badges:
+  - type: entity
+    entity: group.persons
+    display_type: complete
+  - type: entity
+    entity: input_select.modes_maison
+    display_type: complete
+  - type: entity
+    entity: person.invites
+    show_entity_picture: true
+visible:
+  - user: c7447f6dbd744a97a1aafc8d1d5d6305
+  - user: 449e4cf9fbb6446c97735100446b1e09
+  - user: 2e7b70c51f3e453cb5ec7131df051882
+cards:
+  - type: vertical-stack
+    cards:
+      - type: alarm-panel
+        states:
+          - arm_home
+          - arm_away
+        entity: alarm_control_panel.logement
+        name: Alarme
+        theme: macOS Theme
+      - type: entities
+        entities:
+          - entity: person.invites
+            secondary_info: last-changed
+          - entity: device_tracker.nut_2_presence
+            secondary_info: last-changed
+            name: Clés
+        state_color: true
+        show_header_toggle: false
+  - type: entities
+    entities:
+      - entity: binary_sensor.magnet_hall_contact
+        name: Entrée
+        secondary_info: last-changed
+      - entity: binary_sensor.magnet_parents_contact
+        name: Parents
+        secondary_info: last-changed
+      - entity: cover.volets_parents_state
+        secondary_info: position
+        name: Parents
+      - entity: binary_sensor.magnet_living_room_left_contact
+        name: Salon Gauche
+        secondary_info: last-changed
+      - entity: binary_sensor.magnet_living_room_right_contact
+        secondary_info: last-changed
+        name: Salon Droite
+      - entity: cover.volets_salon_state
+        secondary_info: position
+        name: Salon
+      - entity: input_boolean.volets_salon_auto
+        secondary_info: last-changed
+      - entity: binary_sensor.magnet_oscar_contact
+        name: Oscar
+        secondary_info: last-changed
+      - entity: cover.volets_oscar_state
+        secondary_info: position
+        name: Oscar
+      - entity: binary_sensor.magnet_eliott_contact
+        name: "Eliott "
+        secondary_info: last-changed
+      - entity: cover.volets_eliott_state
+        name: Eliott
+        secondary_info: position
+    show_header_toggle: false
+    title: Ouvrants
+    state_color: true
+  - type: entities
+    title: Lumières
+    state_color: true
+    entities:
+      - entity: light.enki_lexman_e27_led_white_hall_1
+        type: custom:multiple-entity-row
+        secondary_info: last-changed
+        toggle: true
+        entities:
+          - attribute: brightness
+            name: Int.
+            format: brightness
+            hide_if: 0
+            hide_unavailable: true
+          - attribute: color_temp_kelvin
+            name: T°
+            unit: K
+            hide_if: 0
+            hide_unavailable: true
+      - entity: light.enki_lexman_e27_led_white_hall_2
+        type: custom:multiple-entity-row
+        secondary_info: last-changed
+        toggle: true
+        entities:
+          - attribute: brightness
+            name: Int.
+            format: brightness
+            hide_if: 0
+            hide_unavailable: true
+          - attribute: color_temp_kelvin
+            name: T°
+            unit: K
+            hide_if: 0
+            hide_unavailable: true
+      - entity: light.prise_entree
+        secondary_info: last-changed
+      - entity: light.livarno_lux_gu10
+        type: custom:multiple-entity-row
+        secondary_info: last-changed
+        toggle: true
+        entities:
+          - attribute: brightness
+            name: Int.
+            format: brightness
+            hide_if: 0
+            hide_unavailable: true
+          - attribute: color_temp_kelvin
+            name: T°
+            unit: K
+            hide_if: 0
+            hide_unavailable: true
+      - entity: light.light_parents
+        type: custom:multiple-entity-row
+        secondary_info: last-changed
+        toggle: true
+        entities:
+          - attribute: brightness
+            name: Int.
+            format: brightness
+            hide_if: 0
+            hide_unavailable: true
+          - attribute: color_temp_kelvin
+            name: T°
+            unit: K
+            hide_if: 0
+            hide_unavailable: true
+      - entity: light.yeelight_bslamp1
+        name: Chevet Nelly
+        icon: mdi:desk-lamp
+        type: custom:multiple-entity-row
+        secondary_info: last-changed
+        toggle: true
+        entities:
+          - attribute: brightness
+            name: Int.
+            format: brightness
+            hide_if: 0
+            hide_unavailable: true
+          - attribute: color_temp_kelvin
+            name: T°
+            unit: K
+            hide_if: 0
+            hide_unavailable: true
+      - entity: light.mibedsidelamp2
+        type: custom:multiple-entity-row
+        secondary_info: last-changed
+        toggle: true
+        entities:
+          - attribute: brightness
+            name: Int.
+            format: brightness
+            hide_if: 0
+      - entity: sensor.snzb_06p_zigbee_occupancy_sensor_illumination
+        secondary_info: last-changed
+        name: Luminosité Cuisine
+      - entity: light.enki_lexman_e27_led_white_bulb_kitchen
+        type: custom:multiple-entity-row
+        secondary_info: last-changed
+        toggle: true
+        entities:
+          - attribute: brightness
+            format: brightness
+            hide_if: 0
+            hide_unavailable: true
+          - attribute: color_temp_kelvin
+            unit: K
+            hide_if: 0
+            hide_unavailable: true
+      - entity: light.yeelight_ct_bulb
+        type: custom:multiple-entity-row
+        secondary_info: last-changed
+        toggle: true
+        entities:
+          - attribute: brightness
+            format: brightness
+            hide_if: 0
+            hide_unavailable: true
+          - attribute: color_temp_kelvin
+            unit: K
+            hide_if: 0
+            hide_unavailable: true
+      - entity: light.ptitlampe
+        type: custom:multiple-entity-row
+        secondary_info: last-changed
+        toggle: true
+        entities:
+          - attribute: brightness
+            format: brightness
+            hide_if: 0
+            hide_unavailable: true
+      - entity: sensor.living_room_illuminance_old
+        name: Luminosité Salon
+        secondary_info: last-changed
+      - entity: input_number.luminosite_min
+        name: Luminosité minimale
+        secondary_info: last-changed
+      - entity: light.tradfri_bulb_e27_ww_g95_cl_470lm
+        type: custom:multiple-entity-row
+        secondary_info: last-changed
+        toggle: true
+        entities:
+          - attribute: brightness
+            name: Int.
+            format: brightness
+            hide_if: 0
+            hide_unavailable: true
+          - attribute: color_temp_kelvin
+            name: T°
+            unit: K
+            hide_if: 0
+            hide_unavailable: true
+      - entity: light.ikea_tradfri_e27_1055lm_2
+        type: custom:multiple-entity-row
+        secondary_info: last-changed
+        toggle: true
+        entities:
+          - attribute: brightness
+            format: brightness
+            hide_if: 0
+            hide_unavailable: true
+          - attribute: color_temp_kelvin
+            unit: K
+            hide_if: 0
+            hide_unavailable: true
+      - entity: light.sapin_local
+        secondary_info: last-changed
+      - entity: light.yeelight_stripe_local
+        type: custom:multiple-entity-row
+        secondary_info: last-changed
+        toggle: true
+        entities:
+          - attribute: brightness
+            format: brightness
+            hide_if: 0
+            hide_unavailable: true
+          - attribute: color_temp_kelvin
+            unit: K
+            hide_if: 0
+            hide_unavailable: true
+      - entity: light.yeelight_terrasse
+        type: custom:multiple-entity-row
+        secondary_info: last-changed
+        toggle: true
+        entities:
+          - attribute: brightness
+            format: brightness
+            hide_if: 0
+            hide_unavailable: true
+          - attribute: color_temp_kelvin
+            unit: K
+            hide_if: 0
+            hide_unavailable: true
+      - entity: light.plafonnier_couloir
+        type: custom:multiple-entity-row
+        secondary_info: last-changed
+        toggle: true
+        entities:
+          - attribute: brightness
+            format: brightness
+            hide_if: 0
+            hide_unavailable: true
+      - entity: switch.minuterie_couloir
+        secondary_info: last-changed
+      - entity: timer.minuterie_couloir
+        secondary_info: none
+        name: Durée
+      - entity: light.yeelight_mono
+        type: custom:multiple-entity-row
+        secondary_info: last-changed
+        toggle: true
+        entities:
+          - attribute: brightness
+            format: brightness
+            hide_if: 0
+            hide_unavailable: true
+          - attribute: color_temp_kelvin
+            unit: K
+            hide_if: 0
+            hide_unavailable: true
+      - entity: light.atelier_smart_socket_4
+        secondary_info: last-changed
+        name: Bureau Oscar
+      - entity: light.yeelight_color
+        type: custom:multiple-entity-row
+        secondary_info: last-changed
+        toggle: true
+        entities:
+          - attribute: brightness
+            format: brightness
+            hide_if: 0
+            hide_unavailable: true
+          - attribute: color_temp_kelvin
+            unit: K
+            hide_if: 0
+            hide_unavailable: true
+      - entity: light.ikea_tradfri_control_outlet
+        secondary_info: last-changed
+  - type: grid
+    square: false
+    columns: 1
+    cards:
+      - type: custom:xiaomi-vacuum-map-card
+        map_source:
+          camera: camera.dreamebot_d10_plus_map
+        calibration_source:
+          camera: true
+        entity: vacuum.dreamebot_d10_plus
+        vacuum_platform: Tasshack/dreame-vacuum
+        title: Dreamebot D10 Plus
+        map_locked: true
+        two_finger_pan: true
+        icons:
+          - icon: mdi:play
+            conditions:
+              - entity: vacuum.dreamebot_d10_plus
+                value_not: cleaning
+              - entity: vacuum.dreamebot_d10_plus
+                value_not: error
+              - entity: vacuum.dreamebot_d10_plus
+                value_not: returning
+            tooltip: Start
+            tap_action:
+              action: call-service
+              service: vacuum.start
+              service_data:
+                entity_id: vacuum.dreamebot_d10_plus
+          - icon: mdi:pause
+            conditions:
+              - entity: vacuum.dreamebot_d10_plus
+                value_not: docked
+              - entity: vacuum.dreamebot_d10_plus
+                value_not: idle
+              - entity: vacuum.dreamebot_d10_plus
+                value_not: error
+              - entity: vacuum.dreamebot_d10_plus
+                value_not: paused
+            tooltip: Pause
+            tap_action:
+              action: call-service
+              service: vacuum.pause
+              service_data:
+                entity_id: vacuum.dreamebot_d10_plus
+          - icon: mdi:stop
+            conditions:
+              - entity: vacuum.dreamebot_d10_plus
+                value_not: docked
+              - entity: vacuum.dreamebot_d10_plus
+                value_not: idle
+              - entity: vacuum.dreamebot_d10_plus
+                value_not: error
+              - entity: vacuum.dreamebot_d10_plus
+                value_not: paused
+            tooltip: Stop
+            tap_action:
+              action: call-service
+              service: vacuum.stop
+              service_data:
+                entity_id: vacuum.dreamebot_d10_plus
+          - icon: mdi:home-map-marker
+            conditions:
+              - entity: vacuum.dreamebot_d10_plus
+                value_not: docked
+              - entity: vacuum.dreamebot_d10_plus
+                value_not: returning
+            tooltip: Return to base
+            tap_action:
+              action: call-service
+              service: vacuum.return_to_base
+              service_data:
+                entity_id: vacuum.dreamebot_d10_plus
+          - icon: mdi:map-marker
+            tooltip: Locate
+            tap_action:
+              action: call-service
+              service: vacuum.locate
+              service_data:
+                entity_id: vacuum.dreamebot_d10_plus
+          - menu_id: fan_speed
+            icon: mdi:fan-remove
+            label: Silent
+            conditions:
+              - entity: vacuum.dreamebot_d10_plus
+                attribute: fan_speed
+                value: Silent
+            tooltip: Change fan speed
+            tap_action:
+              action: call-service
+              service: vacuum.set_fan_speed
+              service_data:
+                entity_id: vacuum.dreamebot_d10_plus
+                fan_speed: Silent
+          - menu_id: fan_speed
+            icon: mdi:fan-speed-1
+            label: Standard
+            conditions:
+              - entity: vacuum.dreamebot_d10_plus
+                attribute: fan_speed
+                value: Standard
+            tooltip: Change fan speed
+            tap_action:
+              action: call-service
+              service: vacuum.set_fan_speed
+              service_data:
+                entity_id: vacuum.dreamebot_d10_plus
+                fan_speed: Standard
+          - menu_id: fan_speed
+            icon: mdi:fan-speed-2
+            label: Strong
+            conditions:
+              - entity: vacuum.dreamebot_d10_plus
+                attribute: fan_speed
+                value: Strong
+            tooltip: Change fan speed
+            tap_action:
+              action: call-service
+              service: vacuum.set_fan_speed
+              service_data:
+                entity_id: vacuum.dreamebot_d10_plus
+                fan_speed: Strong
+          - menu_id: fan_speed
+            icon: mdi:fan-speed-3
+            label: Turbo
+            conditions:
+              - entity: vacuum.dreamebot_d10_plus
+                attribute: fan_speed
+                value: Turbo
+            tooltip: Change fan speed
+            tap_action:
+              action: call-service
+              service: vacuum.set_fan_speed
+              service_data:
+                entity_id: vacuum.dreamebot_d10_plus
+                fan_speed: Turbo
+          - icon: mdi:fan-alert
+            conditions:
+              - entity: vacuum.dreamebot_d10_plus
+                attribute: fan_speed
+                value_not: Silent
+              - entity: vacuum.dreamebot_d10_plus
+                attribute: fan_speed
+                value_not: Standard
+              - entity: vacuum.dreamebot_d10_plus
+                attribute: fan_speed
+                value_not: Strong
+              - entity: vacuum.dreamebot_d10_plus
+                attribute: fan_speed
+                value_not: Turbo
+            tooltip: Change fan speed
+            tap_action:
+              action: call-service
+              service: vacuum.set_fan_speed
+              service_data:
+                entity_id: vacuum.dreamebot_d10_plus
+                fan_speed: Silent
+        tiles:
+          - tile_id: status
+            entity: vacuum.dreamebot_d10_plus
+            label: null
+            state: states('vacuum.dreamebot_d10_plus')
+            icon: mdi:robot-vacuum
+            translations:
+              starting: Starting
+              charger disconnected: Charger disconnected
+              idle: Idle
+              remote control active: Remote control active
+              cleaning: Cleaning
+              returning home: Returning home
+              manual mode: Manual mode
+              charging: Charging
+              charging problem: Charging problem
+              paused: Paused
+              spot cleaning: Spot cleaning
+              error: Error
+              shutting down: Shutting down
+              updating: Updating
+              docking: Docking
+              going to target: Going to target
+              zoned cleaning: Zoned cleaning
+              segment cleaning: Segment cleaning
+              emptying the bin: Emptying the bin
+              charging complete: Charging complete
+              device offline: Device offline
+          - tile_id: state
+            entity: sensor.dreamebot_d10_plus_state
+            label: null
+            icon_source: sensor.dreamebot_d10_plus_state.attributes.icon
+          - tile_id: task
+            entity: sensor.dreamebot_d10_plus_task_status
+            label: null
+            icon_source: sensor.dreamebot_d10_plus_task_status.attributes.icon
+          - tile_id: battery_level
+            entity: vacuum.dreamebot_d10_plus
+            label: null
+            attribute: battery_level
+            icon_source: vacuum.dreamebot_d10_plus.attributes.battery_icon
+            unit: "%"
+          - tile_id: fan_speed
+            entity: vacuum.dreamebot_d10_plus
+            label: null
+            attribute: fan_speed
+            icon: mdi:fan
+            translations:
+              silent: Silent
+              standard: Standard
+              medium: Medium
+              turbo: Turbo
+              auto: Auto
+              gentle: Gentle
+          - tile_id: cleaning_count
+            attribute: cleaning_count
+            label: Nb nettoyages
+            icon: mdi:counter
+            entity: vacuum.dreamebot_d10_plus
+            precision: 0
+            translations: {}
+          - tile_id: sensor_dirty_left
+            attribute: sensor_dirty_left
+            label: Capteurs
+            icon: mdi:eye-outline
+            unit: h
+            hold_action:
+              action: call-service
+              service: vacuum.send_command
+              confirmation: {}
+              service_data:
+                command: reset_consumable
+                params: sensor_dirty_time
+                entity_id: vacuum.dreamebot_d10_plus
+            entity: vacuum.dreamebot_d10_plus
+            precision: 0
+            translations: {}
+          - tile_id: filter_left
+            attribute: filter_left
+            label: Filtre
+            icon: mdi:air-filter
+            unit: h
+            hold_action:
+              action: call-service
+              service: vacuum.send_command
+              confirmation: {}
+              service_data:
+                command: reset_consumable
+                params: filter_work_time
+                entity_id: vacuum.dreamebot_d10_plus
+            entity: vacuum.dreamebot_d10_plus
+            precision: 0
+            translations: {}
+          - tile_id: main_brush_left
+            attribute: main_brush_left
+            label: Brosse principal
+            icon_source: button.dreamebot_d10_plus_reset_main_brush.attributes.icon
+            unit: h
+            hold_action:
+              action: call-service
+              service: vacuum.send_command
+              confirmation: {}
+              service_data:
+                command: reset_consumable
+                params: main_brush_work_time
+                entity_id: vacuum.dreamebot_d10_plus
+            entity: vacuum.dreamebot_d10_plus
+            precision: 0
+            translations: {}
+          - tile_id: side_brush_left
+            attribute: side_brush_left
+            label: Brosse latérale
+            icon_source: button.dreamebot_d10_plus_reset_side_brush.attributes.icon
+            unit: h
+            hold_action:
+              action: call-service
+              service: vacuum.send_command
+              confirmation: {}
+              service_data:
+                command: reset_consumable
+                params: side_brush_work_time
+                entity_id: vacuum.dreamebot_d10_plus
+            entity: vacuum.dreamebot_d10_plus
+            precision: 0
+            translations: {}
+        map_modes:
+          - name: Zone cleanup
+            icon: mdi:select-drag
+            run_immediately: false
+            coordinates_rounding: true
+            coordinates_to_meters_divider: 1000
+            selection_type: MANUAL_RECTANGLE
+            max_selections: 5
+            repeats_type: EXTERNAL
+            max_repeats: 3
+            service_call_schema:
+              service: dreame_vacuum.vacuum_clean_zone
+              service_data:
+                zone: "[[selection]]"
+                repeats: "[[repeats]]"
+                entity_id: "[[entity_id]]"
+            predefined_selections: []
+            variables: {}
+          - name: Pin & Go
+            icon: mdi:map-marker-plus
+            run_immediately: false
+            coordinates_rounding: true
+            coordinates_to_meters_divider: 1000
+            selection_type: MANUAL_POINT
+            max_selections: 999
+            repeats_type: NONE
+            max_repeats: 1
+            service_call_schema:
+              service: xiaomi_miio.vacuum_goto
+              service_data:
+                x_coord: "[[point_x]]"
+                y_coord: "[[point_y]]"
+                entity_id: "[[entity_id]]"
+            predefined_selections: []
+            variables: {}
+          - name: Points
+            icon: mdi:map-marker
+            run_immediately: false
+            coordinates_rounding: true
+            coordinates_to_meters_divider: 1000
+            selection_type: PREDEFINED_POINT
+            max_selections: 20
+            repeats_type: EXTERNAL
+            max_repeats: 3
+            service_call_schema:
+              service: dreame_vacuum.vacuum_clean_spot
+              service_data:
+                points: "[[selection]]"
+                repeats: "[[repeats]]"
+                entity_id: "[[entity_id]]"
+            predefined_selections:
+              - position:
+                  - -1964
+                  - -3436
+                label:
+                  text: Emptying
+                  x: -1964
+                  "y": -3436
+                  offset_y: 35
+                icon:
+                  name: mdi:broom
+                  x: -1964
+                  "y": -3436
+            variables: {}
+          - name: Zones list
+            icon: mdi:vector-selection
+            run_immediately: false
+            coordinates_rounding: true
+            coordinates_to_meters_divider: 1000
+            selection_type: PREDEFINED_RECTANGLE
+            max_selections: 20
+            repeats_type: EXTERNAL
+            max_repeats: 3
+            service_call_schema:
+              service: dreame_vacuum.vacuum_clean_zone
+              service_data:
+                zone: "[[selection]]"
+                repeats: "[[repeats]]"
+                entity_id: "[[entity_id]]"
+            predefined_selections:
+              - zones:
+                  - - -2200
+                    - -3051
+                    - -157
+                    - -180
+                label:
+                  text: Table
+                  x: -1150
+                  "y": -1500
+                  offset_y: 35
+                icon:
+                  name: mdi:table-furniture
+                  x: -1150
+                  "y": -1500
+              - zones:
+                  - - -6012
+                    - -2414
+                    - -4584
+                    - -229
+                label:
+                  text: Toilettes
+                  x: -5500
+                  "y": -1000
+                  offset_y: 35
+                icon:
+                  name: mdi:toilet
+                  x: -5500
+                  "y": -1000
+            variables: {}
+        additional_presets: []
+      - type: entities
+        entities:
+          - entity: input_select.vaccum_room
+            secondary_info: last-changed
+            icon: mdi:home-variant
+          - entity: sensor.dreamebot_d10_plus_current_room
+            secondary_info: last-changed
+          - entity: sensor.dreamebot_d10_plus_error
+            secondary_info: last-changed
+            name: Info
+            icon: mdi:information-slab-circle-outline
+          - entity: sensor.dreamebot_d10_plus_cleaning_history
+            secondary_info: last-changed
+        state_color: true
+  - type: entities
+    entities:
+      - entity: sensor.temperatures_maison
+        secondary_info: last-changed
+      - entity: sensor.temperature_parents_temperature
+        secondary_info: last-changed
+        name: Parents
+      - entity: sensor.temperature_parents_humidity
+        secondary_info: last-changed
+        name: "Humidité "
+      - entity: sensor.temperature_salon
+        secondary_info: last-changed
+        name: Salon
+      - entity: sensor.humidite_salon
+        secondary_info: last-changed
+        name: "Humidité "
+      - entity: sensor.temperature_oscar_temperature
+        secondary_info: last-changed
+        name: "Oscar "
+      - entity: sensor.temperature_oscar_humidity
+        name: Humidité
+        secondary_info: last-changed
+      - entity: sensor.temperature_eliott_temperature
+        secondary_info: last-changed
+        name: "Éliott "
+      - entity: sensor.temperature_eliott_humidity
+        secondary_info: last-changed
+        name: Humidité
+    title: Températures & humidité
+  - type: vertical-stack
+    cards:
+      - show_state: false
+        show_name: true
+        camera_view: auto
+        type: picture-entity
+        entity: camera.camera_xiaomi_a2
+        name: Salon
+      - show_state: false
+        show_name: true
+        camera_view: auto
+        type: picture-entity
+        entity: camera.alfawise_mainstreamprofile
+        name: "Entrée "
+      - show_state: false
+        show_name: true
+        camera_view: auto
+        type: picture-entity
+        entity: camera.fi9803p
+        camera_image: camera.fi9803p
+        name: Extérieur
+  - type: entities
+    entities:
+      - entity: binary_sensor.motion_hall_occupancy
+        name: Entrée
+        secondary_info: last-changed
+      - entity: binary_sensor.tradfri_motion_sensor_occupancy
+        secondary_info: last-changed
+      - entity: binary_sensor.motion_parents_occupancy
+        name: Parents
+        secondary_info: last-changed
+      - entity: binary_sensor.motion_kitchen_occupancy
+        secondary_info: last-changed
+        name: Cuisine
+      - entity: binary_sensor.motion_living_room_occupancy
+        secondary_info: last-changed
+        name: Salon
+      - entity: binary_sensor.motion_outside_occupancy
+        secondary_info: last-changed
+        name: Extérieur
+      - entity: binary_sensor.motion_oscar_occupancy
+        secondary_info: last-changed
+        name: Oscar
+      - entity: binary_sensor.motion_eliott_occupancy
+        name: Éliott
+        secondary_info: last-changed
+    title: Mouvements
+  - type: entities
+    entities:
+      - entity: input_boolean.mode_auto_entree
+        secondary_info: last-changed
+        name: Entrée
+      - entity: input_boolean.mode_auto_parents
+        name: Chambre Parents
+        secondary_info: last-changed
+      - entity: input_boolean.mode_auto_cuisine
+        secondary_info: last-changed
+        name: Cuisine
+      - entity: input_boolean.mode_auto_salon
+        name: Salon
+        secondary_info: last-changed
+      - entity: input_boolean.mode_auto_exterieur
+        name: Extérieur
+        secondary_info: last-changed
+      - entity: input_boolean.mode_auto_chambre_enfants
+        secondary_info: last-changed
+        name: Chambre Enfants
+      - entity: input_boolean.mode_auto_eliott
+        secondary_info: last-changed
+        name: Chambre Eliott
+      - entity: input_boolean.mode_auto_oscar
+        name: Chambre Oscar
+        secondary_info: last-changed
+    state_color: true
+    title: Éclairage Automatique
+  - type: vertical-stack
+    cards:
+      - type: entities
+        entities:
+          - entity: binary_sensor.xiaomi_wleak_aq1_water_leak
+            name: Capteur
+            secondary_info: last-changed
+          - entity: sensor.xiaomi_wleak_aq1_battery
+            secondary_info: last-changed
+            name: Batterie
+          - entity: sensor.xiaomi_wleak_aq1_linkquality
+            secondary_info: last-changed
+            name: Connectivité
+        title: Fuite d'eau
+        state_color: true
+      - type: entities
+        entities:
+          - entity: binary_sensor.smoke_living_room_smoke
+            secondary_info: last-changed
+            name: Fumée
+          - entity: sensor.smoke_living_room_smoke_density
+            secondary_info: last-changed
+            name: Densité de la fumée
+          - entity: binary_sensor.smoke_living_room_test
+            name: Siréne
+            secondary_info: last-changed
+          - entity: binary_sensor.smoke_living_room_tamper
+            name: Sabotage
+            secondary_info: last-changed
+          - entity: select.smoke_living_room_sensitivity
+            name: Sensibilité du capteur
+            secondary_info: last-changed
+          - entity: sensor.smoke_living_room_battery
+            secondary_info: last-changed
+            name: Batterie
+          - entity: sensor.smoke_living_room_linkquality
+            name: Connectivité
+            secondary_info: last-changed
+        state_color: true
+        title: Détecteur de fumée

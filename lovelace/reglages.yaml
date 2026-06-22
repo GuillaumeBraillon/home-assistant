@@ -1,0 +1,321 @@
+theme: Backend-selected
+title: Réglages
+path: reglages
+icon: mdi:cog
+visible:
+  - user: c7447f6dbd744a97a1aafc8d1d5d6305
+badges:
+  - type: entity
+    entity: input_select.modes_maison
+    display_type: complete
+  - type: entity
+    entity: group.persons
+    display_type: complete
+  - type: entity
+    entity: person.guillaume
+    show_entity_picture: true
+  - type: entity
+    entity: person.nelly
+    show_entity_picture: true
+  - type: entity
+    entity: person.oscar
+    show_entity_picture: true
+cards:
+  - type: entities
+    title: ⚙️Actuellement
+    show_header_toggle: false
+    state_color: true
+    entities:
+      - type: section
+        label: ⏰ Horaires
+      - entity: input_datetime.now_start
+        name: Début
+        secondary_info: last-changed
+      - type: section
+        label: 💡 ÉCLAIRAGE
+      - entity: input_number.now_light_lumi_salon
+        name: "Salon : Intensité"
+        secondary_info: last-changed
+      - entity: input_number.now_light_temp_salon
+        name: "Salon : Température"
+        icon: mdi:thermometer
+        secondary_info: last-changed
+      - entity: input_number.now_light_lumi_chambres
+        name: "Chambres : Intensité"
+        secondary_info: last-changed
+      - entity: input_number.now_light_temp_chambres
+        name: "Chambres : Température"
+        icon: mdi:thermometer
+        secondary_info: last-changed
+      - type: section
+        label: ⚙️ Paramètres
+      - entity: input_number.now_light_delay_off
+        name: Délai d'extinction
+        secondary_info: last-changed
+      - entity: input_number.now_volume
+        name: Volume Audio
+        secondary_info: last-changed
+      - entity: input_button.refresh_maintenant
+        secondary_info: last-changed
+  - type: entities
+    title: ⚙️Matin
+    show_header_toggle: false
+    state_color: true
+    entities:
+      - type: section
+        label: ⏰ Horaires
+      - entity: input_datetime.morning_start
+        name: Semaine
+        secondary_info: last-changed
+      - entity: input_datetime.morning_start_week_end
+        name: Week-End
+        secondary_info: last-changed
+      - type: section
+        label: 💡 ÉCLAIRAGE
+      - entity: input_number.morning_light_lumi_salon
+        name: "Salon : Intensité"
+        secondary_info: last-changed
+      - entity: input_number.morning_light_temp_salon
+        name: "Salon : Température"
+        icon: mdi:thermometer
+        secondary_info: last-changed
+      - entity: input_number.morning_light_lumi_chambres
+        name: "Chambres : Intensité"
+        secondary_info: last-changed
+      - entity: input_number.morning_light_temp_chambres
+        name: "Chambres : Température"
+        icon: mdi:thermometer
+        secondary_info: last-changed
+      - type: section
+        label: ⚙️ Paramètres
+      - entity: input_number.morning_light_delay_off
+        name: Délai d'extinction
+        secondary_info: last-changed
+      - entity: input_number.morning_volume
+        name: Volume Audio
+        secondary_info: last-changed
+      - entity: input_datetime.morning_timer
+        name: Minuterie
+        secondary_info: last-changed
+  - type: entities
+    title: ⚙️Journée
+    show_header_toggle: false
+    state_color: true
+    entities:
+      - type: section
+        label: ⏰ Horaires
+      - entity: input_datetime.day_start
+        name: Semaine
+        secondary_info: last-changed
+      - entity: input_datetime.day_start_week_end
+        name: Week-End
+        secondary_info: last-changed
+      - type: section
+        label: 💡 ÉCLAIRAGE
+      - entity: input_number.day_light_lumi_salon
+        name: "Salon : Intensité"
+        secondary_info: last-changed
+      - entity: input_number.day_light_temp_salon
+        name: "Salon : Température"
+        icon: mdi:thermometer
+        secondary_info: last-changed
+      - entity: input_number.day_light_lumi_chambres
+        name: "Chambres : Intensité"
+        secondary_info: last-changed
+      - entity: input_number.day_light_temp_chambres
+        name: "Chambres : Température"
+        icon: mdi:thermometer
+        secondary_info: last-changed
+      - type: section
+        label: ⚙️ Paramètres
+      - entity: input_number.day_light_delay_off
+        name: Délai d'extinction
+        secondary_info: last-changed
+      - entity: input_number.day_volume
+        name: Volume Audio
+        secondary_info: last-changed
+      - entity: input_datetime.day_timer
+        name: Minuterie
+        secondary_info: last-changed
+  - type: entities
+    title: ⚙️Soir
+    show_header_toggle: false
+    state_color: true
+    entities:
+      - type: section
+        label: ⏰ Horaires
+      - entity: input_datetime.evening_start
+        name: Semaine
+        secondary_info: last-changed
+      - entity: input_datetime.evening_start_week_end
+        name: Week-End
+        secondary_info: last-changed
+      - type: section
+        label: 💡 ÉCLAIRAGE
+      - entity: input_number.evening_light_lumi_salon
+        name: "Salon : Intensité"
+        secondary_info: last-changed
+      - entity: input_number.evening_light_temp_salon
+        name: "Salon : Température"
+        icon: mdi:thermometer
+        secondary_info: last-changed
+      - entity: input_number.evening_light_lumi_chambres
+        name: "Chambres : Intensité"
+        secondary_info: last-changed
+      - entity: input_number.evening_light_temp_chambres
+        name: "Chambres : Température"
+        icon: mdi:thermometer
+        secondary_info: last-changed
+      - type: section
+        label: ⚙️ Paramètres
+      - entity: input_number.evening_light_delay_off
+        name: Délai d'extinction
+        secondary_info: last-changed
+      - entity: input_number.evening_volume
+        name: Volume Audio
+        secondary_info: last-changed
+      - entity: input_datetime.evening_timer
+        name: Minuterie
+        secondary_info: last-changed
+  - type: entities
+    title: ⚙️Nuit
+    show_header_toggle: false
+    state_color: true
+    entities:
+      - type: section
+        label: ⏰ Horaires
+      - entity: input_datetime.night_start
+        name: Semaine
+        secondary_info: last-changed
+      - entity: input_datetime.night_start_week_end
+        name: Week-End
+        secondary_info: last-changed
+      - type: section
+        label: 💡 ÉCLAIRAGE
+      - entity: input_number.night_light_lumi_salon
+        name: "Salon : Intensité"
+        secondary_info: last-changed
+      - entity: input_number.night_light_temp_salon
+        name: "Salon : Température"
+        icon: mdi:thermometer
+        secondary_info: last-changed
+      - entity: input_number.night_light_lumi_chambres
+        name: "Chambres : Intensité"
+        secondary_info: last-changed
+      - entity: input_number.night_light_temp_chambres
+        name: "Chambres : Température"
+        icon: mdi:thermometer
+        secondary_info: last-changed
+      - type: section
+        label: ⚙️ Paramètres
+      - entity: input_number.night_light_delay_off
+        name: Délai d'extinction
+        secondary_info: last-changed
+      - entity: input_number.night_volume
+        name: Volume Audio
+        secondary_info: last-changed
+      - entity: input_datetime.night_timer
+        name: Minuterie
+        secondary_info: last-changed
+  - type: entities
+    title: 🏫 Gestion École
+    show_header_toggle: false
+    state_color: true
+    entities:
+      - type: section
+        label: 📅 AUJOURD'HUI
+      - entity: input_boolean.school
+        name: École active aujourd'hui
+        secondary_info: last-changed
+      - entity: input_datetime.school_start_today
+        name: Début effectif
+        secondary_info: last-changed
+      - entity: input_datetime.school_start_timer
+        name: Minuterie début
+        secondary_info: last-changed
+      - entity: input_datetime.school_end_today
+        name: Fin effective
+        secondary_info: last-changed
+      - entity: input_datetime.school_end_timer
+        secondary_info: last-changed
+        name: Minuterie fin
+      - type: section
+        label: ⏰ HORAIRES DE LA SEMAINE
+      - entity: input_datetime.school_start_monday
+        name: Lundi (Début)
+        icon: mdi:calendar-clock
+        secondary_info: last-changed
+      - entity: input_datetime.school_end_monday
+        name: ↳ Fin
+        icon: mdi:clock-end
+        secondary_info: last-changed
+      - entity: input_datetime.school_start_tuesday
+        name: Mardi (Début)
+        icon: mdi:calendar-clock
+        secondary_info: last-changed
+      - entity: input_datetime.school_end_tuesday
+        name: ↳ Fin
+        icon: mdi:clock-end
+        secondary_info: last-changed
+      - entity: input_datetime.school_start_wednesday
+        name: Mercredi (Début)
+        icon: mdi:calendar-clock
+        secondary_info: last-changed
+      - entity: input_datetime.school_end_wednesday
+        name: ↳ Fin
+        icon: mdi:clock-end
+        secondary_info: last-changed
+      - entity: input_datetime.school_start_thursday
+        name: Jeudi (Début)
+        icon: mdi:calendar-clock
+        secondary_info: last-changed
+      - entity: input_datetime.school_end_thursday
+        name: ↳ Fin
+        icon: mdi:clock-end
+        secondary_info: last-changed
+      - entity: input_datetime.school_start_friday
+        name: Vendredi (Début)
+        icon: mdi:calendar-clock
+        secondary_info: last-changed
+      - entity: input_datetime.school_end_friday
+        name: ↳ Fin
+        icon: mdi:clock-end
+        secondary_info: last-changed
+  - type: entities
+    title: 🛁 Routines Quotidiennes
+    show_header_toggle: false
+    state_color: true
+    entities:
+      - type: section
+        label: 🚿 DOUCHE
+      - entity: input_boolean.shower
+        name: Activer la routine
+        secondary_info: last-changed
+      - entity: input_datetime.shower_time
+        name: Horaire de début
+        icon: mdi:clock-start
+        secondary_info: last-changed
+      - type: section
+        label: 🍽️ REPAS
+      - entity: input_boolean.diner
+        name: Activer la routine
+        secondary_info: last-changed
+      - entity: input_datetime.diner_time
+        name: Horaire de début
+        icon: mdi:clock-start
+        secondary_info: last-changed
+      - entity: input_datetime.diner_time_timer
+        name: Minuterie (Durée)
+        secondary_info: last-changed
+      - type: section
+        label: 📖 HISTOIRE (COUCHÉ)
+      - entity: input_boolean.sleeping
+        name: Activer la routine
+        secondary_info: last-changed
+      - entity: input_datetime.sleeping_time
+        name: Horaire de début
+        icon: mdi:clock-start
+        secondary_info: last-changed
+      - entity: input_datetime.sleeping_time_timer
+        name: Minuterie (Durée)
+        secondary_info: last-changed

@@ -1,0 +1,686 @@
+theme: Backend-selected
+title: Electroménagers
+path: household-appliances
+icon: mdi:robot-vacuum
+visible:
+  - user: c7447f6dbd744a97a1aafc8d1d5d6305
+  - user: 2e7b70c51f3e453cb5ec7131df051882
+badges:
+  - type: entity
+    entity: input_select.modes_maison
+    display_type: complete
+  - type: entity
+    entity: group.persons
+    display_type: complete
+  - type: entity
+    entity: person.guillaume
+    show_entity_picture: true
+  - type: entity
+    entity: person.nelly
+    show_entity_picture: true
+  - type: entity
+    entity: person.oscar
+    show_entity_picture: true
+cards: []
+type: sections
+sections:
+  - type: grid
+    cards:
+      - type: custom:xiaomi-vacuum-map-card
+        map_source:
+          camera: camera.dreamebot_d10_plus_map
+        calibration_source:
+          camera: true
+        entity: vacuum.dreamebot_d10_plus
+        vacuum_platform: Tasshack/dreame-vacuum
+        title: Dreamebot D10 Plus
+        map_locked: true
+        two_finger_pan: true
+        icons:
+          - icon: mdi:play
+            conditions:
+              - entity: vacuum.dreamebot_d10_plus
+                value_not: cleaning
+              - entity: vacuum.dreamebot_d10_plus
+                value_not: error
+              - entity: vacuum.dreamebot_d10_plus
+                value_not: returning
+            tooltip: Start
+            tap_action:
+              action: call-service
+              service: vacuum.start
+              service_data:
+                entity_id: vacuum.dreamebot_d10_plus
+          - icon: mdi:pause
+            conditions:
+              - entity: vacuum.dreamebot_d10_plus
+                value_not: docked
+              - entity: vacuum.dreamebot_d10_plus
+                value_not: idle
+              - entity: vacuum.dreamebot_d10_plus
+                value_not: error
+              - entity: vacuum.dreamebot_d10_plus
+                value_not: paused
+            tooltip: Pause
+            tap_action:
+              action: call-service
+              service: vacuum.pause
+              service_data:
+                entity_id: vacuum.dreamebot_d10_plus
+          - icon: mdi:stop
+            conditions:
+              - entity: vacuum.dreamebot_d10_plus
+                value_not: docked
+              - entity: vacuum.dreamebot_d10_plus
+                value_not: idle
+              - entity: vacuum.dreamebot_d10_plus
+                value_not: error
+              - entity: vacuum.dreamebot_d10_plus
+                value_not: paused
+            tooltip: Stop
+            tap_action:
+              action: call-service
+              service: vacuum.stop
+              service_data:
+                entity_id: vacuum.dreamebot_d10_plus
+          - icon: mdi:home-map-marker
+            conditions:
+              - entity: vacuum.dreamebot_d10_plus
+                value_not: docked
+              - entity: vacuum.dreamebot_d10_plus
+                value_not: returning
+            tooltip: Return to base
+            tap_action:
+              action: call-service
+              service: vacuum.return_to_base
+              service_data:
+                entity_id: vacuum.dreamebot_d10_plus
+          - icon: mdi:map-marker
+            tooltip: Locate
+            tap_action:
+              action: call-service
+              service: vacuum.locate
+              service_data:
+                entity_id: vacuum.dreamebot_d10_plus
+          - menu_id: fan_speed
+            icon: mdi:fan-remove
+            label: Silent
+            conditions:
+              - entity: vacuum.dreamebot_d10_plus
+                attribute: fan_speed
+                value: Silent
+            tooltip: Change fan speed
+            tap_action:
+              action: call-service
+              service: vacuum.set_fan_speed
+              service_data:
+                entity_id: vacuum.dreamebot_d10_plus
+                fan_speed: Silent
+          - menu_id: fan_speed
+            icon: mdi:fan-speed-1
+            label: Standard
+            conditions:
+              - entity: vacuum.dreamebot_d10_plus
+                attribute: fan_speed
+                value: Standard
+            tooltip: Change fan speed
+            tap_action:
+              action: call-service
+              service: vacuum.set_fan_speed
+              service_data:
+                entity_id: vacuum.dreamebot_d10_plus
+                fan_speed: Standard
+          - menu_id: fan_speed
+            icon: mdi:fan-speed-2
+            label: Strong
+            conditions:
+              - entity: vacuum.dreamebot_d10_plus
+                attribute: fan_speed
+                value: Strong
+            tooltip: Change fan speed
+            tap_action:
+              action: call-service
+              service: vacuum.set_fan_speed
+              service_data:
+                entity_id: vacuum.dreamebot_d10_plus
+                fan_speed: Strong
+          - menu_id: fan_speed
+            icon: mdi:fan-speed-3
+            label: Turbo
+            conditions:
+              - entity: vacuum.dreamebot_d10_plus
+                attribute: fan_speed
+                value: Turbo
+            tooltip: Change fan speed
+            tap_action:
+              action: call-service
+              service: vacuum.set_fan_speed
+              service_data:
+                entity_id: vacuum.dreamebot_d10_plus
+                fan_speed: Turbo
+          - icon: mdi:fan-alert
+            conditions:
+              - entity: vacuum.dreamebot_d10_plus
+                attribute: fan_speed
+                value_not: Silent
+              - entity: vacuum.dreamebot_d10_plus
+                attribute: fan_speed
+                value_not: Standard
+              - entity: vacuum.dreamebot_d10_plus
+                attribute: fan_speed
+                value_not: Strong
+              - entity: vacuum.dreamebot_d10_plus
+                attribute: fan_speed
+                value_not: Turbo
+            tooltip: Change fan speed
+            tap_action:
+              action: call-service
+              service: vacuum.set_fan_speed
+              service_data:
+                entity_id: vacuum.dreamebot_d10_plus
+                fan_speed: Silent
+        tiles:
+          - tile_id: status
+            entity: vacuum.dreamebot_d10_plus
+            label: null
+            state: states('vacuum.dreamebot_d10_plus')
+            icon: mdi:robot-vacuum
+            translations:
+              starting: Starting
+              charger disconnected: Charger disconnected
+              idle: Idle
+              remote control active: Remote control active
+              cleaning: Cleaning
+              returning home: Returning home
+              manual mode: Manual mode
+              charging: Charging
+              charging problem: Charging problem
+              paused: Paused
+              spot cleaning: Spot cleaning
+              error: Error
+              shutting down: Shutting down
+              updating: Updating
+              docking: Docking
+              going to target: Going to target
+              zoned cleaning: Zoned cleaning
+              segment cleaning: Segment cleaning
+              emptying the bin: Emptying the bin
+              charging complete: Charging complete
+              device offline: Device offline
+          - tile_id: state
+            entity: sensor.dreamebot_d10_plus_state
+            label: null
+            icon_source: sensor.dreamebot_d10_plus_state.attributes.icon
+          - tile_id: task
+            entity: sensor.dreamebot_d10_plus_task_status
+            label: null
+            icon_source: sensor.dreamebot_d10_plus_task_status.attributes.icon
+          - tile_id: battery_level
+            entity: vacuum.dreamebot_d10_plus
+            label: null
+            attribute: battery_level
+            icon_source: vacuum.dreamebot_d10_plus.attributes.battery_icon
+            unit: "%"
+          - tile_id: fan_speed
+            entity: vacuum.dreamebot_d10_plus
+            label: null
+            attribute: fan_speed
+            icon: mdi:fan
+            translations:
+              silent: Silent
+              standard: Standard
+              medium: Medium
+              turbo: Turbo
+              auto: Auto
+              gentle: Gentle
+          - tile_id: cleaning_count
+            attribute: cleaning_count
+            label: Nb nettoyages
+            icon: mdi:counter
+            entity: vacuum.dreamebot_d10_plus
+            precision: 0
+            translations: {}
+          - tile_id: sensor_dirty_left
+            attribute: sensor_dirty_left
+            label: Capteurs
+            icon: mdi:eye-outline
+            unit: h
+            hold_action:
+              action: call-service
+              service: vacuum.send_command
+              confirmation: {}
+              service_data:
+                command: reset_consumable
+                params: sensor_dirty_time
+                entity_id: vacuum.dreamebot_d10_plus
+            entity: vacuum.dreamebot_d10_plus
+            precision: 0
+            translations: {}
+          - tile_id: filter_left
+            attribute: filter_left
+            label: Filtre
+            icon: mdi:air-filter
+            unit: h
+            hold_action:
+              action: call-service
+              service: vacuum.send_command
+              confirmation: {}
+              service_data:
+                command: reset_consumable
+                params: filter_work_time
+                entity_id: vacuum.dreamebot_d10_plus
+            entity: vacuum.dreamebot_d10_plus
+            precision: 0
+            translations: {}
+          - tile_id: main_brush_left
+            attribute: main_brush_left
+            label: Brosse principal
+            icon_source: button.dreamebot_d10_plus_reset_main_brush.attributes.icon
+            unit: h
+            hold_action:
+              action: call-service
+              service: vacuum.send_command
+              confirmation: {}
+              service_data:
+                command: reset_consumable
+                params: main_brush_work_time
+                entity_id: vacuum.dreamebot_d10_plus
+            entity: vacuum.dreamebot_d10_plus
+            precision: 0
+            translations: {}
+          - tile_id: side_brush_left
+            attribute: side_brush_left
+            label: Brosse latérale
+            icon_source: button.dreamebot_d10_plus_reset_side_brush.attributes.icon
+            unit: h
+            hold_action:
+              action: call-service
+              service: vacuum.send_command
+              confirmation: {}
+              service_data:
+                command: reset_consumable
+                params: side_brush_work_time
+                entity_id: vacuum.dreamebot_d10_plus
+            entity: vacuum.dreamebot_d10_plus
+            precision: 0
+            translations: {}
+        map_modes:
+          - name: Zone cleanup
+            icon: mdi:select-drag
+            run_immediately: false
+            coordinates_rounding: true
+            coordinates_to_meters_divider: 1000
+            selection_type: MANUAL_RECTANGLE
+            max_selections: 5
+            repeats_type: EXTERNAL
+            max_repeats: 3
+            service_call_schema:
+              service: dreame_vacuum.vacuum_clean_zone
+              service_data:
+                zone: "[[selection]]"
+                repeats: "[[repeats]]"
+                entity_id: "[[entity_id]]"
+            predefined_selections: []
+            variables: {}
+          - name: Pin & Go
+            icon: mdi:map-marker-plus
+            run_immediately: false
+            coordinates_rounding: true
+            coordinates_to_meters_divider: 1000
+            selection_type: MANUAL_POINT
+            max_selections: 999
+            repeats_type: NONE
+            max_repeats: 1
+            service_call_schema:
+              service: xiaomi_miio.vacuum_goto
+              service_data:
+                x_coord: "[[point_x]]"
+                y_coord: "[[point_y]]"
+                entity_id: "[[entity_id]]"
+            predefined_selections: []
+            variables: {}
+          - name: Points
+            icon: mdi:map-marker
+            run_immediately: false
+            coordinates_rounding: true
+            coordinates_to_meters_divider: 1000
+            selection_type: PREDEFINED_POINT
+            max_selections: 20
+            repeats_type: EXTERNAL
+            max_repeats: 3
+            service_call_schema:
+              service: dreame_vacuum.vacuum_clean_spot
+              service_data:
+                points: "[[selection]]"
+                repeats: "[[repeats]]"
+                entity_id: "[[entity_id]]"
+            predefined_selections:
+              - position:
+                  - -1964
+                  - -3436
+                label:
+                  text: Emptying
+                  x: -1964
+                  "y": -3436
+                  offset_y: 35
+                icon:
+                  name: mdi:broom
+                  x: -1964
+                  "y": -3436
+            variables: {}
+          - name: Zones list
+            icon: mdi:vector-selection
+            run_immediately: false
+            coordinates_rounding: true
+            coordinates_to_meters_divider: 1000
+            selection_type: PREDEFINED_RECTANGLE
+            max_selections: 20
+            repeats_type: EXTERNAL
+            max_repeats: 3
+            service_call_schema:
+              service: dreame_vacuum.vacuum_clean_zone
+              service_data:
+                zone: "[[selection]]"
+                repeats: "[[repeats]]"
+                entity_id: "[[entity_id]]"
+            predefined_selections:
+              - zones:
+                  - - -2200
+                    - -3051
+                    - -157
+                    - -180
+                label:
+                  text: Table
+                  x: -1150
+                  "y": -1500
+                  offset_y: 35
+                icon:
+                  name: mdi:table-furniture
+                  x: -1150
+                  "y": -1500
+              - zones:
+                  - - -6012
+                    - -2414
+                    - -4584
+                    - -229
+                label:
+                  text: Toilettes
+                  x: -5500
+                  "y": -1000
+                  offset_y: 35
+                icon:
+                  name: mdi:toilet
+                  x: -5500
+                  "y": -1000
+            variables: {}
+        additional_presets: []
+    column_span: 1
+  - type: grid
+    cards:
+      - type: entities
+        entities:
+          - entity: sensor.dreamebot_d10_plus_state
+            secondary_info: last-changed
+          - entity: sensor.dreamebot_d10_plus_current_room
+            secondary_info: last-changed
+          - entity: input_select.vaccum_room
+            secondary_info: last-changed
+            icon: mdi:home-variant
+          - entity: sensor.dreamebot_d10_plus_battery_level
+            secondary_info: last-changed
+          - entity: sensor.dreamebot_d10_plus_task_status
+            secondary_info: last-changed
+          - entity: button.entree
+            secondary_info: last-changed
+          - entity: button.toilettes
+            secondary_info: last-changed
+          - entity: button.sous_la_table
+            secondary_info: last-changed
+          - entity: switch.tapis_du_salon
+          - entity: button.salle_de_bain
+            secondary_info: last-changed
+          - entity: sensor.dreamebot_d10_plus_charging_status
+            secondary_info: last-changed
+          - entity: sensor.dreamebot_d10_plus_error
+            secondary_info: last-changed
+            name: Info
+            icon: mdi:information-slab-circle-outline
+          - entity: sensor.dreamebot_d10_plus_cleaning_history
+            secondary_info: last-changed
+          - entity: sensor.dreamebot_d10_plus_cleaned_area
+          - entity: sensor.dreamebot_d10_plus_cleaning_time
+            secondary_info: last-changed
+          - entity: sensor.dreamebot_d10_plus_water_tank
+          - entity: sensor.dreamebot_d10_plus_auto_empty_status
+            secondary_info: last-changed
+          - entity: sensor.dreamebot_d10_plus_total_cleaned_area
+            secondary_info: last-changed
+          - entity: sensor.dreamebot_d10_plus_total_cleaning_time
+            secondary_info: last-changed
+          - entity: sensor.dreamebot_d10_plus_relocation_status
+            secondary_info: last-changed
+        state_color: true
+  - type: grid
+    cards:
+      - type: entities
+        entities:
+          - entity: select.dreamebot_d10_plus_cleaning_mode
+            secondary_info: last-changed
+          - entity: switch.dreamebot_d10_plus_auto_dust_collecting
+            secondary_info: last-changed
+          - entity: sensor.dreamebot_d10_plus_dust_collection
+            secondary_info: last-changed
+          - entity: button.dreamebot_d10_plus_start_auto_empty
+            secondary_info: last-changed
+          - entity: select.dreamebot_d10_plus_auto_empty_frequency
+            secondary_info: last-changed
+          - entity: switch.dreamebot_d10_plus_carpet_boost
+            secondary_info: last-changed
+          - entity: select.dreamebot_d10_plus_carpet_sensitivity
+            secondary_info: last-changed
+          - entity: switch.dreamebot_d10_plus_tight_mopping
+            secondary_info: last-changed
+          - entity: switch.dreamebot_d10_plus_dnd
+            secondary_info: last-changed
+          - entity: switch.dreamebot_d10_plus_child_lock
+            secondary_info: last-changed
+          - entity: switch.dreamebot_d10_plus_resume_cleaning
+            secondary_info: last-changed
+          - entity: number.dreamebot_d10_plus_dnd_start_hour
+          - entity: number.dreamebot_d10_plus_dnd_start_minute
+          - entity: number.dreamebot_d10_plus_dnd_end_hour
+          - entity: number.dreamebot_d10_plus_dnd_end_minute
+        state_color: true
+  - type: grid
+    cards:
+      - type: entities
+        entities:
+          - entity: number.dreamebot_d10_plus_mop_cleaning_remainder
+            secondary_info: last-changed
+          - entity: button.dreamebot_d10_plus_reset_filter
+            secondary_info: last-changed
+          - entity: button.dreamebot_d10_plus_reset_main_brush
+            secondary_info: last-changed
+          - entity: button.dreamebot_d10_plus_reset_sensor
+            secondary_info: last-changed
+          - entity: button.dreamebot_d10_plus_reset_side_brush
+            secondary_info: last-changed
+          - entity: button.dreamebot_d10_plus_clear_warning
+          - entity: button.dreamebot_d10_plus_start_fast_mapping
+            secondary_info: last-changed
+          - entity: number.dreamebot_d10_plus_volume
+            secondary_info: last-changed
+        state_color: true
+  - type: grid
+    cards:
+      - type: entities
+        entities:
+          - entity: switch.dreamebot_d10_plus_customized_cleaning
+            secondary_info: last-changed
+          - entity: select.dreamebot_d10_plus_suction_level
+            secondary_info: last-changed
+          - entity: select.dreamebot_d10_plus_water_volume
+            secondary_info: last-changed
+          - entity: switch.dreamebot_d10_plus_cleaning_sequence
+            secondary_info: last-changed
+        state_color: true
+        title: Toutes les pièces
+        show_header_toggle: false
+      - type: entities
+        entities:
+          - entity: select.dreamebot_d10_plus_room_2_name
+          - entity: select.dreamebot_d10_plus_room_2_order
+          - entity: select.dreamebot_d10_plus_room_2_cleaning_times
+          - entity: select.dreamebot_d10_plus_room_2_suction_level
+          - entity: select.dreamebot_d10_plus_room_2_water_volume
+        title: Entrée
+        state_color: true
+      - type: entities
+        entities:
+          - entity: select.dreamebot_d10_plus_room_8_name
+          - entity: select.dreamebot_d10_plus_room_8_order
+          - entity: select.dreamebot_d10_plus_room_8_cleaning_times
+          - entity: select.dreamebot_d10_plus_room_8_suction_level
+          - entity: select.dreamebot_d10_plus_room_8_water_volume
+        title: Toilettes
+        state_color: true
+  - type: grid
+    cards:
+      - type: entities
+        entities:
+          - entity: select.dreamebot_d10_plus_room_6_name
+          - entity: select.dreamebot_d10_plus_room_6_order
+          - entity: select.dreamebot_d10_plus_room_6_cleaning_times
+          - entity: select.dreamebot_d10_plus_room_6_suction_level
+          - entity: select.dreamebot_d10_plus_room_6_water_volume
+        title: Cuisine
+        state_color: true
+      - type: entities
+        entities:
+          - entity: select.dreamebot_d10_plus_room_5_name
+          - entity: select.dreamebot_d10_plus_room_5_order
+          - entity: select.dreamebot_d10_plus_room_5_cleaning_times
+          - entity: select.dreamebot_d10_plus_room_5_suction_level
+          - entity: select.dreamebot_d10_plus_room_5_water_volume
+        title: Salon
+        state_color: true
+      - type: entities
+        entities:
+          - entity: select.dreamebot_d10_plus_room_1_name
+          - entity: select.dreamebot_d10_plus_room_1_order
+          - entity: select.dreamebot_d10_plus_room_1_cleaning_times
+          - entity: select.dreamebot_d10_plus_room_1_suction_level
+          - entity: select.dreamebot_d10_plus_room_1_water_volume
+        title: Parents
+        state_color: true
+  - type: grid
+    cards:
+      - type: entities
+        entities:
+          - entity: select.dreamebot_d10_plus_room_7_name
+          - entity: select.dreamebot_d10_plus_room_7_order
+          - entity: select.dreamebot_d10_plus_room_7_cleaning_times
+          - entity: select.dreamebot_d10_plus_room_7_suction_level
+          - entity: select.dreamebot_d10_plus_room_7_water_volume
+        title: Salle de Bain
+        state_color: true
+      - type: entities
+        entities:
+          - entity: select.dreamebot_d10_plus_room_3_name
+          - entity: select.dreamebot_d10_plus_room_3_order
+          - entity: select.dreamebot_d10_plus_room_3_cleaning_times
+          - entity: select.dreamebot_d10_plus_room_3_suction_level
+          - entity: select.dreamebot_d10_plus_room_3_water_volume
+        title: Oscar
+        state_color: true
+      - type: entities
+        entities:
+          - entity: select.dreamebot_d10_plus_room_4_name
+          - entity: select.dreamebot_d10_plus_room_4_order
+          - entity: select.dreamebot_d10_plus_room_4_cleaning_times
+          - entity: select.dreamebot_d10_plus_room_4_suction_level
+          - entity: select.dreamebot_d10_plus_room_4_water_volume
+        title: Eliott
+        state_color: true
+  - type: grid
+    cards:
+      - type: entities
+        entities:
+          - entity: sensor.hp_envy_photo_7800_series
+            secondary_info: last-changed
+          - entity: sensor.hp_envy_photo_7800_series_uptime
+            name: Uptime
+            secondary_info: last-changed
+          - entity: sensor.hp_envy_photo_7800_series_tri_color_ink
+            name: Tri-color ink
+            secondary_info: last-changed
+          - entity: sensor.hp_envy_photo_7800_series_black_ink
+            name: Black ink
+            secondary_info: last-changed
+        title: HP ENVY Photo 7800 series
+        state_color: true
+      - type: entities
+        entities:
+          - entity: event.refrigerateur_notification
+            name: Notification
+            secondary_info: last-changed
+          - entity: binary_sensor.refrigerateur_porte
+            name: Porte
+            secondary_info: last-changed
+          - entity: switch.refrigerateur_ice_plus
+            secondary_info: last-changed
+            name: Express mode
+          - entity: number.refrigerateur_fridge_temperature
+            name: Temperature haut
+            secondary_info: last-changed
+          - entity: number.refrigerateur_freezer_temperature
+            name: Temperature bas
+            secondary_info: last-changed
+          - entity: binary_sensor.refrigerateur_eco_friendly
+            name: Eco friendly
+            secondary_info: last-changed
+        title: Réfrigérateur
+      - type: entities
+        entities:
+          - entity: fan.ikea_inspelning_smart_plug
+            secondary_info: last-changed
+          - entity: sensor.temperature_salon
+            secondary_info: last-changed
+          - entity: sensor.humidite_salon
+            secondary_info: last-changed
+          - entity: sensor.ikea_inspelning_smart_plug_power
+            secondary_info: last-changed
+            name: Puissance
+            icon: mdi:gauge
+          - entity: sensor.ikea_inspelning_smart_plug_energy
+            secondary_info: last-changed
+            name: Énergie
+            icon: mdi:lightning-bolt
+          - entity: sensor.ikea_inspelning_smart_plug_current
+            secondary_info: last-changed
+            name: Courant
+            icon: mdi:current-ac
+          - entity: sensor.ikea_inspelning_smart_plug_voltage
+            secondary_info: last-changed
+            name: Tension
+            icon: mdi:sine-wave
+          - entity: button.ikea_inspelning_smart_plug_identify
+            secondary_info: last-changed
+            name: Identifier
+            icon: mdi:bullseye
+          - entity: select.ikea_inspelning_smart_plug_power_on_behavior
+            secondary_info: last-changed
+            name: Comportement à la mise sous tension
+            icon: mdi:power-settings
+          - entity: update.ikea_inspelning_smart_plug
+            secondary_info: last-changed
+            name: Mise à jour
+            icon: mdi:update
+        title: Climatisation
+        state_color: true
+max_columns: 6
+dense_section_placement: true
+header:
+  layout: center
+  badges_position: bottom
+  badges_wrap: scroll

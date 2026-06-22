@@ -1,0 +1,257 @@
+type: sections
+path: eliott
+title: Eliott
+icon: mdi:teddy-bear
+visible:
+  - user: ca412b9f7b3347a3be648e26d11840ee
+  - user: c7447f6dbd744a97a1aafc8d1d5d6305
+  - user: 2e7b70c51f3e453cb5ec7131df051882
+  - user: 2ff2cdef1e4a45709c03849f9cf9420a
+sections:
+  - type: grid
+    cards:
+      - type: tile
+        entity: cover.volets_eliott_state
+        name: Volets
+        show_entity_picture: true
+        state_content:
+          - current_position
+          - last_changed
+        vertical: false
+        features:
+          - type: cover-open-close
+          - type: cover-position
+        features_position: bottom
+        grid_options:
+          columns: full
+      - type: media-control
+        entity: media_player.google_home_eliott
+      - type: custom:apexcharts-card
+        apex_config:
+          chart:
+            height: 170px
+        experimental:
+          color_threshold: true
+        graph_span: 7d
+        span:
+          end: day
+        show:
+          last_updated: true
+        header:
+          show: true
+          show_states: true
+          colorize_states: true
+          title: Utilisation Xbox
+        yaxis:
+          - min: 0
+            max: ~6
+            decimals: 0
+            apex_config:
+              tickAmount: 5
+        series:
+          - entity: sensor.blusy38_eliott_xbox
+            show:
+              header_color_threshold: true
+              extremas: true
+              as_duration: hour
+            type: column
+            name: Durée
+            group_by:
+              func: last
+              duration: 1d
+            color_threshold:
+              - value: 1
+                color: darkcyan
+              - value: 2
+                color: goldenrod
+              - value: 4
+                color: orangered
+              - value: 6
+                color: darkred
+    column_span: 1
+  - type: grid
+    cards:
+      - type: tile
+        grid_options:
+          columns: full
+        entity: input_boolean.mode_auto_eliott
+        name: Eclairage Automatique
+        show_entity_picture: true
+        state_content:
+          - state
+          - last_changed
+        vertical: false
+        features:
+          - type: toggle
+        features_position: inline
+      - type: tile
+        grid_options:
+          columns: full
+          rows: 4
+        entity: light.yeelight_color
+        state_content:
+          - state
+          - last_changed
+          - brightness
+          - color_temp_kelvin
+        vertical: false
+        features:
+          - type: toggle
+          - type: light-brightness
+          - type: light-color-temp
+        features_position: bottom
+      - type: tile
+        grid_options:
+          columns: 12
+          rows: 1
+        entity: light.ikea_tradfri_control_outlet
+        state_content:
+          - state
+          - last_changed
+        vertical: false
+        features:
+          - type: toggle
+        features_position: inline
+      - type: tile
+        grid_options:
+          columns: full
+          rows: 3
+        entity: light.plafonnier_couloir
+        state_content:
+          - state
+          - last_changed
+          - brightness
+        vertical: false
+        features:
+          - type: toggle
+          - type: light-brightness
+        features_position: bottom
+  - type: grid
+    cards:
+      - type: tile
+        grid_options:
+          columns: full
+        entity: sensor.poids_eliott
+        name: Poids
+        show_entity_picture: true
+        state_content:
+          - state
+          - last_changed
+        vertical: false
+        features_position: bottom
+      - type: tile
+        grid_options:
+          columns: full
+        entity: input_number.poids_eliott_difference
+        name: Différence
+        show_entity_picture: true
+        state_content:
+          - state
+          - last_changed
+        vertical: false
+        features_position: bottom
+      - type: tile
+        entity: sensor.imc_label_eliott
+        name: IMC
+        show_entity_picture: true
+        state_content: state
+        vertical: false
+        features_position: bottom
+      - type: tile
+        entity: sensor.imc_eliott
+        name: IMC Taux
+        show_entity_picture: true
+        state_content:
+          - state
+          - last_changed
+        vertical: false
+        features_position: bottom
+  - type: grid
+    cards:
+      - type: tile
+        grid_options:
+          columns: full
+        entity: input_boolean.histoire_du_soir
+        show_entity_picture: true
+        state_content:
+          - state
+          - last_changed
+        vertical: false
+        features_position: inline
+        features:
+          - type: toggle
+      - type: tile
+        grid_options:
+          columns: full
+        entity: timer.minuterie_couloir
+        show_entity_picture: true
+        state_content:
+          - remaining_time
+          - duration
+          - last_changed
+        vertical: false
+        tap_action:
+          action: perform-action
+          perform_action: switch.toggle
+          target:
+            entity_id: switch.minuterie_couloir
+          data: {}
+        features_position: inline
+badges:
+  - type: entity
+    show_name: true
+    show_state: true
+    show_icon: true
+    color: ""
+    entity: person.eliott
+    show_entity_picture: true
+    state_content: last_changed
+  - type: entity
+    show_name: false
+    show_state: true
+    show_icon: true
+    entity: binary_sensor.motion_eliott_occupancy
+    state_content:
+      - state
+      - last_changed
+    show_entity_picture: false
+  - type: entity
+    show_name: false
+    show_state: true
+    show_icon: true
+    entity: binary_sensor.magnet_eliott_contact
+    state_content:
+      - state
+      - last_changed
+  - type: entity
+    show_name: false
+    show_state: true
+    show_icon: true
+    entity: sensor.temperature_eliott_temperature
+    state_content:
+      - state
+      - last_changed
+  - type: entity
+    show_name: false
+    show_state: true
+    show_icon: true
+    entity: sensor.temperature_eliott_humidity
+    state_content:
+      - state
+      - last_changed
+  - type: entity
+    show_name: false
+    show_state: true
+    show_icon: true
+    entity: sensor.poids_eliott
+    state_content:
+      - state
+      - last_changed
+max_columns: 4
+dense_section_placement: false
+cards: []
+subview: true
+header:
+  layout: center
+  badges_position: bottom
+  badges_wrap: scroll

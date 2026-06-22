@@ -1,0 +1,343 @@
+theme: Backend-selected
+title: Multimédia
+path: multimedia
+icon: mdi:multimedia
+visible:
+  - user: c7447f6dbd744a97a1aafc8d1d5d6305
+  - user: 2e7b70c51f3e453cb5ec7131df051882
+  - user: 449e4cf9fbb6446c97735100446b1e09
+cards:
+  - type: vertical-stack
+    cards:
+      - type: entity
+        entity: input_select.modes_maison
+        state_color: true
+      - type: grid
+        columns: 3
+        square: false
+        cards:
+          - show_name: true
+            show_icon: true
+            type: button
+            entity: input_select.ampli_power_states
+            name: Power
+            icon: mdi:amplifier
+            show_state: true
+            tap_action:
+              action: perform-action
+              perform_action: input_button.press
+              target:
+                entity_id: input_button.ampli_power
+          - type: button
+            entity: input_select.ampli_audio
+            name: Dolby
+            icon: mdi:dolby
+            show_state: true
+            tap_action:
+              action: perform-action
+              perform_action: input_button.press
+              target:
+                entity_id: input_button.ampli_audio_dolby
+          - type: button
+            entity: input_select.ampli_audio
+            name: Surround
+            icon: mdi:surround-sound-5-1
+            show_state: true
+            tap_action:
+              action: perform-action
+              perform_action: input_button.press
+              target:
+                entity_id: input_button.ampli_audio_surround
+          - type: button
+            entity: input_select.ampli_source
+            name: Vidéo
+            icon: mdi:movie-open-play-outline
+            show_state: true
+            tap_action:
+              action: perform-action
+              perform_action: input_button.press
+              target:
+                entity_id: input_button.ampli_source_video
+          - type: button
+            entity: input_select.ampli_source
+            name: Game
+            icon: mdi:gamepad-variant-outline
+            show_state: true
+            tap_action:
+              action: perform-action
+              perform_action: input_button.press
+              target:
+                entity_id: input_button.ampli_source_game
+          - type: button
+            entity: input_select.ampli_source
+            name: Satellite
+            icon: mdi:satellite-uplink
+            show_state: true
+            tap_action:
+              action: perform-action
+              perform_action: input_button.press
+              target:
+                entity_id: input_button.ampli_source_satellite
+      - type: entities
+        title: 🛋️ Salon
+        show_header_toggle: false
+        state_color: true
+        entities:
+          - type: section
+            label: Freebox Pop
+          - entity: binary_sensor.freebox_player_pop_state
+            name: État Player Pop
+            secondary_info: last-changed
+          - entity: remote.freebox_player_pop
+            name: Télécommande Freebox
+            secondary_info: last-changed
+          - entity: device_tracker.freebox_player_pop_ethernet_2
+            name: Connexion Ethernet
+            secondary_info: last-changed
+          - type: section
+            label: Vidéoprojecteurs
+          - entity: device_tracker.videoprojecteur_2
+            secondary_info: last-changed
+          - entity: button.videoprojecteur_remote_toggle
+            secondary_info: last-changed
+            name: Contrôle vidéoprojecteur 2
+            icon: mdi:projector
+          - entity: remote.videoprojecteur
+            secondary_info: last-changed
+          - entity: remote.videoprojecteur_xgimi
+            name: Contrôle XGIMI
+            secondary_info: last-changed
+          - entity: device_tracker.xgimi_h2_2
+            name: Statut Réseau H2
+            secondary_info: last-changed
+          - type: section
+            label: Énergie Salon
+          - entity: switch.plug_living_room
+            name: Prise Salon
+            secondary_info: last-changed
+          - entity: sensor.plug_living_room_power
+            name: Consommation Actuelle
+            secondary_info: last-changed
+          - entity: sensor.plug_living_room_energy
+            name: Énergie Totale
+            secondary_info: last-changed
+      - type: entities
+        title: 🛏️ Chambre Parents
+        show_header_toggle: false
+        state_color: true
+        entities:
+          - type: section
+            label: Tv Samsung
+          - entity: remote.tele_chambre_parents
+            secondary_info: last-changed
+          - entity: device_tracker.tv_samsung
+            secondary_info: last-changed
+          - entity: media_player.tele_chambre_parents
+          - type: section
+            label: Mibox 3
+          - entity: remote.chambre_parents_mibox3_mi_box_3
+            secondary_info: last-changed
+          - entity: device_tracker.mi_box_3_2
+            secondary_info: last-changed
+            icon: mdi:television
+          - entity: media_player.chambre_parents_mibox3
+            secondary_info: last-changed
+            icon: mdi:television
+          - type: section
+            label: Mibox 4
+          - entity: remote.chambre_parents_mi_box_4
+            secondary_info: last-changed
+          - entity: device_tracker.beijing_xiaomi_electronics_2b_09_94
+            secondary_info: last-changed
+            icon: mdi:television
+          - entity: media_player.mi_box_4
+            secondary_info: last-changed
+            icon: mdi:television
+      - type: vertical-stack
+        cards:
+          - type: media-control
+            entity: media_player.tele_chambre_parents
+          - type: media-control
+            entity: media_player.chambre_parents_mibox3
+          - type: media-control
+            entity: media_player.chambre_parents_mi_box_4
+        visibility:
+          - condition: state
+            entity: device_tracker.tv_samsung
+            state: home
+      - type: entities
+        show_header_toggle: false
+        state_color: true
+        entities:
+          - entity: media_player.xbox
+            secondary_info: last-changed
+          - entity: sensor.xbox_on_today
+            name: Xbox Aujourd'hui
+            secondary_info: last-changed
+          - entity: sensor.blusy38_eliott_xbox
+            secondary_info: last-changed
+          - entity: sensor.oscope4908_oscar_xbox
+            secondary_info: last-changed
+          - entity: switch.xbox_extinction
+            secondary_info: last-changed
+          - entity: remote.xbox_remote
+            secondary_info: last-changed
+          - entity: device_tracker.console_xbox_wifi
+            secondary_info: last-changed
+          - entity: device_tracker.console_xbox_ethernet
+            secondary_info: last-changed
+          - type: divider
+          - entity: device_tracker.console_nintendo_switch
+            name: Nintendo Switch
+            secondary_info: last-changed
+        title: 🎮 Consoles
+  - type: vertical-stack
+    cards:
+      - type: media-control
+        entity: media_player.freebox_player_pop
+      - type: media-control
+        entity: media_player.freebox
+      - type: media-control
+        entity: media_player.freebox_3
+        name:
+          type: device
+      - type: media-control
+        entity: media_player.freebox_2
+        name:
+          type: device
+      - type: media-control
+        entity: media_player.videoprojecteur
+      - type: grid
+        square: true
+        columns: 3
+        cards:
+          - type: button
+            entity: button.videoprojecteur_remote_toggle
+            name: Power Toggle
+            icon: mdi:power-cycle
+          - type: button
+            entity: button.videoprojecteur_remote_arrow_up
+            name: Haut
+            icon: mdi:arrow-up-bold
+          - type: button
+            entity: button.videoprojecteur_remote_back
+            name: Retour
+            icon: mdi:arrow-left-top-bold
+          - type: button
+            entity: button.videoprojecteur_remote_arrow_left
+            name: Gauche
+            icon: mdi:arrow-left-bold
+          - type: button
+            entity: button.videoprojecteur_remote_select
+            name: OK
+            icon: mdi:checkbox-blank-circle
+          - type: button
+            entity: button.videoprojecteur_remote_arrow_right
+            name: Droite
+            icon: mdi:arrow-right-bold
+          - type: button
+            entity: button.videoprojecteur_remote_turn_on
+            name: "ON"
+            icon: mdi:power
+            icon_color: green
+          - type: button
+            entity: button.videoprojecteur_remote_arrow_down
+            name: Bas
+            icon: mdi:arrow-down-bold
+          - type: button
+            entity: button.videoprojecteur_remote_turn_off
+            name: "OFF"
+            icon: mdi:power-off
+            icon_color: red
+    visibility:
+      - condition: state
+        entity: binary_sensor.freebox_player_pop_state
+        state_not: "off"
+  - type: grid
+    square: false
+    columns: 1
+    cards:
+      - type: media-control
+        entity: media_player.xbox
+    visibility:
+      - condition: state
+        entity: media_player.xbox
+        state_not: "off"
+  - type: media-control
+    entity: media_player.nest_hub
+    visibility:
+      - condition: state
+        entity: media_player.nest_hub
+        state_not: "off"
+  - type: media-control
+    entity: media_player.mi_smart_home_salon
+    visibility:
+      - condition: state
+        entity: media_player.mi_smart_home_salon
+        state_not: "off"
+  - type: media-control
+    entity: media_player.google_home_parents
+    visibility:
+      - condition: state
+        entity: media_player.google_home_parents
+        state_not: "off"
+  - type: media-control
+    entity: media_player.salle_de_bain
+    visibility:
+      - condition: state
+        entity: media_player.salle_de_bain
+        state_not: "off"
+  - type: media-control
+    entity: media_player.google_home_oscar
+    visibility:
+      - condition: state
+        entity: media_player.google_home_oscar
+        state_not: "off"
+  - type: media-control
+    entity: media_player.google_home_eliott
+    visibility:
+      - condition: state
+        entity: media_player.google_home_eliott
+        state_not: "off"
+  - type: media-control
+    entity: media_player.sejour
+    visibility:
+      - condition: state
+        entity: media_player.sejour
+        state_not: "off"
+  - type: grid
+    square: false
+    columns: 1
+    cards:
+      - type: entities
+        entities:
+          - entity: binary_sensor.blusy38
+            secondary_info: last-changed
+          - entity: sensor.blusy38_follower
+            secondary_info: last-changed
+          - entity: sensor.blusy38_following
+            secondary_info: last-changed
+          - entity: sensor.blusy38_friends
+            secondary_info: last-changed
+          - entity: sensor.blusy38_gamer_score
+            secondary_info: last-changed
+          - entity: binary_sensor.blusy38_in_game
+            secondary_info: last-changed
+          - entity: sensor.blusy38_in_party
+            secondary_info: last-changed
+          - entity: sensor.blusy38_last_online
+            secondary_info: last-changed
+          - entity: sensor.blusy38_now_playing
+            secondary_info: last-changed
+          - entity: sensor.blusy38_party_join_restrictions
+            secondary_info: last-changed
+          - entity: sensor.blusy38_status
+            secondary_info: last-changed
+          - entity: binary_sensor.blusy38_subscribed_to_xbox_game_pass
+            secondary_info: last-changed
+      - type: picture
+        image_entity: image.blusy38_avatar
+      - type: picture
+        image_entity: image.blusy38_gamerpic
+      - type: picture
+        image_entity: image.blusy38_now_playing

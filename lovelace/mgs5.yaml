@@ -1,0 +1,386 @@
+type: sections
+max_columns: 4
+title: MG5 Complète
+path: mgs5
+icon: mdi:car-electric
+sections:
+  - type: grid
+    cards:
+      - graph: none
+        type: sensor
+        detail: 2
+        entity: sensor.lsjws4096sz653312_charging_finished
+        grid_options:
+          columns: 12
+          rows: 2
+        visibility:
+          - condition: state
+            entity: binary_sensor.lsjws4096sz653312_battery_charging
+            state: "on"
+        name: Fin de charge estimée
+      - type: tile
+        grid_options:
+          columns: 12
+          rows: 1
+        visibility:
+          - condition: numeric_state
+            entity: ""
+        entity: number.lsjws4096sz653312_target_soc
+        name: Cible
+        show_entity_picture: false
+        hide_state: false
+        state_content: last_changed
+        vertical: false
+        features:
+          - type: numeric-input
+            style: buttons
+        features_position: inline
+      - type: tile
+        entity: sensor.lsjws4096sz653312_power
+        name: Puissance
+        state_content:
+          - state
+          - last_changed
+        vertical: false
+        features:
+          - type: trend-graph
+            hours_to_show: 1
+            detail: true
+        features_position: inline
+      - type: gauge
+        entity: sensor.lsjws4096sz653312_soc
+        name: Batterie
+        needle: true
+        severity:
+          green: 20
+          yellow: 80
+          red: 0
+        max: 100
+        min: 0
+        visibility:
+          - condition: state
+            entity: binary_sensor.lsjws4096sz653312_battery_charging
+            state: "on"
+      - type: tile
+        entity: sensor.lsjws4096sz653312_range
+        name: Autonomie estimée
+        show_entity_picture: true
+        state_content: state
+        vertical: false
+        features:
+          - type: trend-graph
+            hours_to_show: 1
+            detail: true
+        features_position: inline
+    visibility:
+      - condition: state
+        entity: binary_sensor.lsjws4096sz653312_battery_charging
+        state: "on"
+  - type: grid
+    cards:
+      - type: heading
+        heading: 🚗 Sécurité & Ouvrants
+      - type: entities
+        title: 🚗 Portes & Coffres
+        show_header_toggle: false
+        entities:
+          - entity: lock.lsjws4096sz653312_doors_lock
+            name: Verrouillage central
+            secondary_info: last-changed
+          - entity: switch.lsjws4096sz653312_find_my_car
+            name: Localiser le véhicule
+            secondary_info: last-changed
+          - entity: binary_sensor.lsjws4096sz653312_bonnet
+            name: Capot
+            secondary_info: last-changed
+          - entity: binary_sensor.lsjws4096sz653312_boot
+            name: État du Coffre
+            secondary_info: last-changed
+          - entity: lock.lsjws4096sz653312_boot_lock
+            name: Verrou du Coffre
+            secondary_info: last-changed
+      - type: entities
+        title: 🛞 Pneus & Vitres & Éclairage
+        show_header_toggle: false
+        entities:
+          - entity: sensor.lsjws4096sz653312_tyres_front_left_pressure
+            name: Pression Avant Gauche
+            secondary_info: last-changed
+          - entity: sensor.lsjws4096sz653312_tyres_front_right_pressure
+            name: Pression Avant Droit
+            secondary_info: last-changed
+          - entity: sensor.lsjws4096sz653312_tyres_rear_left_pressure
+            name: Pression Arrière Gauche
+            secondary_info: last-changed
+          - entity: sensor.lsjws4096sz653312_tyres_rear_right_pressure
+            name: Pression Arrière Droite
+            secondary_info: last-changed
+          - entity: binary_sensor.lsjws4096sz653312_lights_dipped_beam
+            name: Feux de croisement
+            secondary_info: last-changed
+          - entity: binary_sensor.lsjws4096sz653312_lights_main_beam
+            name: Feux de route
+            secondary_info: last-changed
+          - entity: binary_sensor.lsjws4096sz653312_lights_side
+            name: Feux de position
+            secondary_info: last-changed
+        state_color: true
+  - type: grid
+    cards:
+      - type: heading
+        heading: 🌡️ Confort & Diagnostic
+      - type: entities
+        title: 🌡️ Confort & Climatisation
+        show_header_toggle: false
+        entities:
+          - entity: sensor.lsjws4096sz653312_interior_temperature
+            name: Temp. Habitacle
+            secondary_info: last-changed
+          - entity: sensor.lsjws4096sz653312_exterior_temperature
+            name: Temp. Extérieure
+            secondary_info: last-changed
+          - entity: sensor.lsjws4096sz653312_remote_climate_state
+            name: État Clim à distance
+            secondary_info: last-changed
+      - type: tile
+        entity: select.lsjws4096sz653312_heated_seat_front_left_level
+        name: Siège conducteur
+        show_entity_picture: true
+        hide_state: false
+        state_content:
+          - state
+          - last_changed
+        vertical: false
+        features_position: bottom
+      - type: tile
+        entity: select.lsjws4096sz653312_heated_seat_front_right_level
+        name: Siège passager
+        show_entity_picture: true
+        state_content:
+          - state
+          - last_changed
+        vertical: false
+        features_position: bottom
+      - type: markdown
+        content: >
+          ## 📡 Message MG
+
+          {{ states('sensor.lsjws4096sz653312_last_car_message') }}
+
+          **Reçu le :** {{
+          states.sensor.lsjws4096sz653312_last_car_message.last_changed |
+          as_timestamp(default=0) | timestamp_custom('%d/%m/%Y à %H:%M:%S') }}
+  - type: grid
+    cards:
+      - type: heading
+        heading: ⚡ Énergie & Propulsion
+      - type: entities
+        show_header_toggle: false
+        entities:
+          - entity: sensor.lsjws4096sz653312_range
+            name: Autonomie estimée
+            secondary_info: last-changed
+          - entity: sensor.lsjws4096sz653312_mileage
+            name: "Kilométrage "
+            secondary_info: last-changed
+          - entity: sensor.lsjws4096sz653312_vehicle_speed
+            name: Vitesse actuelle
+            secondary_info: last-changed
+          - entity: binary_sensor.lsjws4096sz653312_vehicle_running
+            name: Véhicule en marche
+            secondary_info: last-changed
+          - entity: sensor.lsjws4096sz653312_power
+            name: Puissance instantanée
+            secondary_info: last-changed
+          - entity: number.lsjws4096sz653312_target_soc
+            name: SOC cible (%)
+            secondary_info: last-changed
+          - entity: sensor.lsjws4096sz653312_heading
+            name: Cap / Direction
+            secondary_info: last-changed
+          - type: section
+            label: Détails Techniques Batterie
+          - entity: binary_sensor.lsjws4096sz653312_hv_battery_active
+            name: Batterie HT Active
+            secondary_info: last-changed
+          - entity: sensor.lsjws4096sz653312_voltage
+            name: Tension Batterie (V)
+            secondary_info: last-changed
+          - entity: sensor.lsjws4096sz653312_current
+            name: Intensité (A)
+            secondary_info: last-changed
+          - entity: sensor.lsjws4096sz653312_auxiliary_battery_voltage
+            name: Tension Batterie Aux (12V)
+            secondary_info: last-changed
+  - type: grid
+    cards:
+      - type: heading
+        heading: 🔌 Recharge & État
+      - type: entities
+        show_header_toggle: false
+        entities:
+          - entity: binary_sensor.lsjws4096sz653312_charger_connected
+            name: Câble branché
+            secondary_info: last-changed
+          - entity: binary_sensor.lsjws4096sz653312_battery_charging
+            name: En cours de charge
+            secondary_info: last-changed
+          - entity: switch.lsjws4096sz653312_charging
+            name: Contrôle de la charge
+            secondary_info: last-changed
+          - entity: lock.lsjws4096sz653312_charging_cable_lock
+            name: Verrou câble
+            secondary_info: last-changed
+          - entity: sensor.lsjws4096sz653312_bms_charge_status
+            name: État interne BMS
+            secondary_info: last-changed
+          - entity: sensor.lsjws4096sz653312_remaining_charging_time
+            name: Temps de charge restant
+            secondary_info: last-changed
+          - entity: sensor.lsjws4096sz653312_charging_finished
+            name: Fin de charge estimée
+            secondary_info: state
+          - entity: binary_sensor.lsjws4096sz653312_battery_heating
+            name: Préchauffage batterie actif
+            secondary_info: last-changed
+          - entity: switch.lsjws4096sz653312_battery_heating
+            name: Préchauffage batterie (contrôle)
+            secondary_info: last-changed
+          - entity: select.lsjws4096sz653312_charge_current_limit
+            name: Limite courant de charge
+            secondary_info: last-changed
+  - type: grid
+    cards:
+      - type: heading
+        heading: 🗓️ Planification & Préchauffage
+      - type: entities
+        show_header_toggle: false
+        entities:
+          - entity: select.lsjws4096sz653312_scheduled_charging_mode
+            name: Mode de charge planifié
+            secondary_info: last-changed
+          - entity: text.lsjws4096sz653312_scheduled_charging_start
+            name: Début charge planifiée
+            secondary_info: last-changed
+          - entity: text.lsjws4096sz653312_scheduled_charging_end
+            name: Fin charge planifiée
+            secondary_info: last-changed
+          - entity: sensor.lsjws4096sz653312_ccu_onboard_plug_status
+            name: Statut Prise Véhicule
+            secondary_info: last-changed
+          - entity: sensor.lsjws4096sz653312_ccu_offboard_plug_status
+            name: Statut Prise Borne
+            secondary_info: last-changed
+          - type: section
+            label: Préchauffage Batterie Planifié
+          - entity: binary_sensor.lsjws4096sz653312_scheduled_battery_heating
+            name: Préchauffage batterie planifié (état)
+            secondary_info: last-changed
+          - entity: select.lsjws4096sz653312_scheduled_battery_heating
+            name: Mode préchauffage planifié
+            secondary_info: last-changed
+          - entity: text.lsjws4096sz653312_scheduled_battery_heating_start
+            name: Début préchauffage planifié (saisie)
+            secondary_info: last-changed
+  - type: grid
+    cards:
+      - type: heading
+        heading: ⚙️ Système & Gateway
+      - type: entities
+        title: 🌐 Refresh & API
+        entities:
+          - entity: select.lsjws4096sz653312_gateway_refresh_mode
+            name: Mode Refresh API
+            secondary_info: last-changed
+          - entity: number.lsjws4096sz653312_gateway_active_refresh_period
+            name: Refresh Mode Actif (s)
+            secondary_info: last-changed
+          - entity: number.lsjws4096sz653312_gateway_inactive_refresh_period
+            name: Refresh Mode Repos (s)
+            secondary_info: last-changed
+          - entity: number.lsjws4096sz653312_gateway_refresh_period_after_car_shutdown
+            name: Refresh après arrêt (s)
+            secondary_info: last-changed
+          - entity: number.lsjws4096sz653312_gateway_grace_period_after_car_shutdown
+            name: Délai de grâce arrêt (s)
+            secondary_info: last-changed
+          - entity: sensor.lsjws4096sz653312_gateway_charging_refresh_period
+            name: Refresh en cours de charge (s)
+            secondary_info: last-changed
+          - entity: sensor.lsjws4096sz653312_gateway_error_refresh_period
+            name: Refresh en erreur (s)
+            secondary_info: last-changed
+          - entity: sensor.lsjws4096sz653312_last_car_activity
+            name: Dernière activité voiture
+            secondary_info: last-changed
+          - entity: sensor.lsjws4096sz653312_last_poll_error
+            name: Dernière erreur API
+            secondary_info: last-changed
+          - entity: sensor.lsjws4096sz653312_last_vehicle_state
+            name: État système véhicule
+            secondary_info: last-changed
+        grid_options:
+          columns: full
+          rows: auto
+    column_span: 2
+  - type: grid
+    cards:
+      - type: heading
+        heading: 📈 Consommation & Efficacité
+      - type: entities
+        title: 📊 Statistiques de Trajet
+        show_header_toggle: false
+        entities:
+          - entity: sensor.lsjws4096sz653312_mileage
+            name: Odomètre Total
+            secondary_info: last-changed
+          - entity: sensor.lsjws4096sz653312_mileage_of_journey
+            name: Distance du dernier trajet
+            secondary_info: last-changed
+      - type: history-graph
+        entities:
+          - entity: sensor.lsjws4096sz653312_soc
+            name: Batterie
+          - entity: sensor.lsjws4096sz653312_power
+            name: Puissance
+          - entity: sensor.lsjws4096sz653312_mileage
+            name: Kilométrage
+        title: Recharge
+        hours_to_show: 1
+badges:
+  - type: entity
+    show_name: true
+    show_state: true
+    show_icon: true
+    entity: device_tracker.lsjws4096sz653312_vehicle_position
+    name: Position GPS
+    show_entity_picture: true
+    state_content:
+      - state
+      - last_changed
+  - type: entity
+    show_name: true
+    show_state: true
+    show_icon: true
+    entity: sensor.lsjws4096sz653312_soc
+    name:
+      type: device
+    show_entity_picture: true
+    icon: mdi:car-battery
+    state_content:
+      - state
+      - last_changed
+  - type: entity
+    show_name: true
+    show_state: true
+    show_icon: true
+    entity: sensor.lsjws4096sz653312_mileage
+    name: Kilométrage
+    show_entity_picture: true
+    state_content:
+      - state
+      - last_changed
+visible:
+  - user: c7447f6dbd744a97a1aafc8d1d5d6305
+  - user: 2e7b70c51f3e453cb5ec7131df051882
+cards: []
