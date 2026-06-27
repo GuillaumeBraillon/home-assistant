@@ -1,0 +1,56 @@
+alias: "[Clim] Démarrage automatique à l'approche de la maison"
+description: >-
+  Allume la climatisation si détection d'un franchissement des 3 km  OU si un
+  déplacement vers la maison débute à l'intérieur du rayon de 3 km.
+triggers:
+  - trigger: numeric_state
+    entity_id:
+      - sensor.maison_distance_la_plus_proche
+    below: 3000
+conditions:
+  - condition: state
+    entity_id: group.persons
+    state:
+      - not_home
+    for:
+      hours: 0
+      minutes: 15
+      seconds: 0
+  - condition: state
+    entity_id: binary_sensor.fenetres_maison
+    state:
+      - "off"
+  - condition: state
+    entity_id: sensor.maison_nearest_direction_of_travel
+    state:
+      - towards
+    for:
+      hours: 0
+      minutes: 0
+      seconds: 0
+  - condition: state
+    entity_id: fan.ikea_inspelning_smart_plug
+    state:
+      - "off"
+    for:
+      hours: 0
+      minutes: 0
+      seconds: 0
+  - condition: numeric_state
+    entity_id: sensor.temperatures_maison
+    above: 25.5
+actions:
+  - action: fan.turn_on
+    target:
+      entity_id: fan.ikea_inspelning_smart_plug
+  - alias: Notifier Clim On
+    action: script.notify_send_notifications
+    data:
+      title: Climatisation
+      message: >-
+        Mise en marche de la climatisation.
+        ({{states('sensor.temperatures_maison') | float(0) }}°C)
+      icon: mdi:air-conditioner
+      target: Parents
+      channel: Default
+mode: single

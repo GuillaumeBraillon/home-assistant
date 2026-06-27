@@ -1,110 +1,161 @@
-type: sections
-path: eliott
 title: Eliott
 icon: mdi:teddy-bear
+path: eliott
+type: sections
+subview: false
+max_columns: 4
+dense_section_placement: true
 visible:
-  - user: ca412b9f7b3347a3be648e26d11840ee
   - user: c7447f6dbd744a97a1aafc8d1d5d6305
   - user: 2e7b70c51f3e453cb5ec7131df051882
-  - user: 2ff2cdef1e4a45709c03849f9cf9420a
+  - user: ca412b9f7b3347a3be648e26d11840ee
+badges:
+  - type: entity
+    show_name: false
+    show_state: true
+    show_icon: true
+    entity: binary_sensor.motion_eliott_occupancy
+    show_entity_picture: true
+    state_content:
+      - state
+      - last_changed
+  - type: entity
+    show_name: false
+    show_state: true
+    show_icon: true
+    entity: binary_sensor.magnet_eliott_contact
+    show_entity_picture: true
+    state_content:
+      - state
+      - last_changed
+  - type: entity
+    show_name: false
+    show_state: true
+    show_icon: true
+    entity: sensor.temperature_eliott_temperature
+    show_entity_picture: true
+    state_content:
+      - state
+      - last_changed
+  - type: entity
+    show_name: false
+    show_state: true
+    show_icon: true
+    entity: sensor.temperature_eliott_humidity
+    show_entity_picture: true
+    state_content:
+      - state
+      - last_changed
 sections:
   - type: grid
     cards:
+      - type: heading
+        heading: 👤 Statut & Santé
+      - type: entities
+        state_color: true
+        show_header_toggle: false
+        entities:
+          - entity: person.eliott
+            secondary_info: last-changed
+          - entity: device_tracker.gtr_presence
+            name: Montre Eliott
+            secondary_info: last-updated
+      - show_name: true
+        show_icon: true
+        show_state: true
+        type: glance
+        columns: 4
+        entities:
+          - entity: sensor.poids_eliott
+            name: Poids
+            icon: mdi:scale-bathroom
+          - entity: input_number.poids_eliott_difference
+            name: Écart
+            icon: mdi:arrow-left-right
+          - entity: sensor.imc_eliott
+            name: Valeur
+            icon: mdi:calculator
+          - entity: sensor.imc_label_eliott
+            name: Tranche
+            icon: mdi:label-outline
+      - type: map
+        grid_options:
+          rows: 5
+          columns: full
+        show_all: false
+        entities:
+          - entity: person.eliott
+        hours_to_show: 12
+        auto_fit: true
+        fit_zones: true
+        theme_mode: auto
+  - type: grid
+    cards:
+      - type: heading
+        heading: 🎛️ Équipements Chambre
       - type: tile
+        grid_options:
+          columns: full
+        entity: input_boolean.mode_auto_eliott
+        name: Mode Automatique
+        icon: mdi:robot
+        color: accent
+        show_entity_picture: false
+        hide_state: false
+        state_content:
+          - state
+          - last_changed
+        vertical: false
+        features:
+          - type: toggle
+        features_position: inline
+      - type: tile
+        grid_options:
+          columns: full
+        entity: light.yeelight_color
+        name: Plafonnier
+        show_entity_picture: false
+        hide_state: false
+        state_content:
+          - state
+          - last_changed
+        vertical: false
+        features:
+          - type: toggle
+          - type: light-brightness
+        features_position: bottom
+      - type: tile
+        grid_options:
+          columns: full
+        entity: light.ikea_tradfri_control_outlet
+        icon: mdi:desk-lamp
+        state_content:
+          - state
+          - last_changed
+        vertical: false
+        features:
+          - type: toggle
+        features_position: inline
+      - type: tile
+        grid_options:
+          columns: full
         entity: cover.volets_eliott_state
         name: Volets
-        show_entity_picture: true
         state_content:
           - current_position
           - last_changed
+          - state
         vertical: false
         features:
           - type: cover-open-close
           - type: cover-position
         features_position: bottom
-        grid_options:
-          columns: full
-      - type: media-control
-        entity: media_player.google_home_eliott
-      - type: custom:apexcharts-card
-        apex_config:
-          chart:
-            height: 170px
-        experimental:
-          color_threshold: true
-        graph_span: 7d
-        span:
-          end: day
-        show:
-          last_updated: true
-        header:
-          show: true
-          show_states: true
-          colorize_states: true
-          title: Utilisation Xbox
-        yaxis:
-          - min: 0
-            max: ~6
-            decimals: 0
-            apex_config:
-              tickAmount: 5
-        series:
-          - entity: sensor.blusy38_eliott_xbox
-            show:
-              header_color_threshold: true
-              extremas: true
-              as_duration: hour
-            type: column
-            name: Durée
-            group_by:
-              func: last
-              duration: 1d
-            color_threshold:
-              - value: 1
-                color: darkcyan
-              - value: 2
-                color: goldenrod
-              - value: 4
-                color: orangered
-              - value: 6
-                color: darkred
-    column_span: 1
-  - type: grid
-    cards:
-      - type: tile
-        grid_options:
-          columns: full
-        entity: input_boolean.mode_auto_eliott
-        name: Eclairage Automatique
-        show_entity_picture: true
-        state_content:
-          - state
-          - last_changed
-        vertical: false
-        features:
-          - type: toggle
-        features_position: inline
-      - type: tile
-        grid_options:
-          columns: full
-          rows: 4
-        entity: light.yeelight_color
-        state_content:
-          - state
-          - last_changed
-          - brightness
-          - color_temp_kelvin
-        vertical: false
-        features:
-          - type: toggle
-          - type: light-brightness
-          - type: light-color-temp
-        features_position: bottom
       - type: tile
         grid_options:
           columns: 12
           rows: 1
-        entity: light.ikea_tradfri_control_outlet
+        entity: input_boolean.mode_auto_chambre_enfants
+        name: Mode Auto Couloir
         state_content:
           - state
           - last_changed
@@ -112,62 +163,6 @@ sections:
         features:
           - type: toggle
         features_position: inline
-      - type: tile
-        grid_options:
-          columns: full
-          rows: 3
-        entity: light.plafonnier_couloir
-        state_content:
-          - state
-          - last_changed
-          - brightness
-        vertical: false
-        features:
-          - type: toggle
-          - type: light-brightness
-        features_position: bottom
-  - type: grid
-    cards:
-      - type: tile
-        grid_options:
-          columns: full
-        entity: sensor.poids_eliott
-        name: Poids
-        show_entity_picture: true
-        state_content:
-          - state
-          - last_changed
-        vertical: false
-        features_position: bottom
-      - type: tile
-        grid_options:
-          columns: full
-        entity: input_number.poids_eliott_difference
-        name: Différence
-        show_entity_picture: true
-        state_content:
-          - state
-          - last_changed
-        vertical: false
-        features_position: bottom
-      - type: tile
-        entity: sensor.imc_label_eliott
-        name: IMC
-        show_entity_picture: true
-        state_content: state
-        vertical: false
-        features_position: bottom
-      - type: tile
-        entity: sensor.imc_eliott
-        name: IMC Taux
-        show_entity_picture: true
-        state_content:
-          - state
-          - last_changed
-        vertical: false
-        features_position: bottom
-  - type: grid
-    cards:
       - type: tile
         grid_options:
           columns: full
@@ -197,60 +192,96 @@ sections:
             entity_id: switch.minuterie_couloir
           data: {}
         features_position: inline
-badges:
-  - type: entity
-    show_name: true
-    show_state: true
-    show_icon: true
-    color: ""
-    entity: person.eliott
-    show_entity_picture: true
-    state_content: last_changed
-  - type: entity
-    show_name: false
-    show_state: true
-    show_icon: true
-    entity: binary_sensor.motion_eliott_occupancy
-    state_content:
-      - state
-      - last_changed
-    show_entity_picture: false
-  - type: entity
-    show_name: false
-    show_state: true
-    show_icon: true
-    entity: binary_sensor.magnet_eliott_contact
-    state_content:
-      - state
-      - last_changed
-  - type: entity
-    show_name: false
-    show_state: true
-    show_icon: true
-    entity: sensor.temperature_eliott_temperature
-    state_content:
-      - state
-      - last_changed
-  - type: entity
-    show_name: false
-    show_state: true
-    show_icon: true
-    entity: sensor.temperature_eliott_humidity
-    state_content:
-      - state
-      - last_changed
-  - type: entity
-    show_name: false
-    show_state: true
-    show_icon: true
-    entity: sensor.poids_eliott
-    state_content:
-      - state
-      - last_changed
-max_columns: 4
-dense_section_placement: false
+  - type: grid
+    cards:
+      - type: heading
+        heading: 🎮 Gaming & Multimédia
+      - type: entities
+        state_color: true
+        show_header_toggle: false
+        entities:
+          - entity: binary_sensor.blusy38
+            name: En Ligne
+            secondary_info: last-changed
+          - entity: sensor.blusy38_last_online
+            name: Dernier vu le
+            secondary_info: last-changed
+          - entity: binary_sensor.blusy38_in_game
+            name: En Jeu
+            secondary_info: last-changed
+          - entity: sensor.blusy38_now_playing
+            name: Activité Actuelle
+            secondary_info: last-changed
+          - entity: sensor.blusy38_status
+            name: Statut Statisique
+            secondary_info: last-changed
+          - entity: sensor.blusy38_gamer_score
+            name: Gamerscore
+            secondary_info: last-changed
+          - entity: binary_sensor.blusy38_subscribed_to_xbox_game_pass
+            name: Abonnement Game Pass
+            secondary_info: last-changed
+      - type: custom:apexcharts-card
+        apex_config:
+          chart:
+            height: 170px
+        experimental:
+          color_threshold: true
+        graph_span: 7d
+        span:
+          end: day
+        show:
+          last_updated: true
+        header:
+          show: true
+          show_states: true
+          colorize_states: true
+          title: Utilisation Xbox
+        yaxis:
+          - min: 0
+            max: ~6
+            decimals: 0
+            apex_config:
+              tickAmount: 5
+        series:
+          - entity: sensor.blusy38_eliott_xbox
+            show:
+              header_color_threshold: true
+              extremas: true
+              as_duration: hour
+            type: column
+            name: Durée
+            group_by:
+              func: last
+              duration: 1d
+            color_threshold:
+              - value: 1
+                color: darkcyan
+              - value: 2
+                color: goldenrod
+              - value: 4
+                color: orangered
+              - value: 6
+                color: darkred
+      - type: media-control
+        entity: media_player.google_home_eliott
+        grid_options:
+          columns: full
+      - type: media-control
+        entity: media_player.xbox
+        grid_options:
+          columns: full
+      - type: custom:love-lock-card
+        popup: REMOVED
+        REMOVED: REMOVED
+        cards:
+          - type: tile
+            entity: automation.tts_notification_xbox_on_2
+            name: Limitation Parentale TTS
+            icon: mdi:bullhorn-variant-outline
+            tap_action:
+              action: toggle
 cards: []
-subview: true
 header:
   layout: center
   badges_position: bottom

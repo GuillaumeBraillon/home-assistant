@@ -1,9 +1,8 @@
-theme: Backend-selected
 title: Oscar
 icon: mdi:account
 path: oscar
 type: sections
-subview: true
+subview: false
 max_columns: 4
 dense_section_placement: true
 visible:
@@ -12,47 +11,52 @@ visible:
   - user: 2e7b70c51f3e453cb5ec7131df051882
 badges:
   - type: entity
-    entity: person.oscar
     show_name: false
     show_state: true
     show_icon: true
+    entity: binary_sensor.motion_oscar_occupancy
     show_entity_picture: true
     state_content:
       - state
       - last_changed
   - type: entity
-    entity: binary_sensor.motion_oscar_occupancy
     show_name: false
     show_state: true
     show_icon: true
+    entity: binary_sensor.magnet_oscar_contact
+    show_entity_picture: true
+    state_content:
+      - state
+      - last_changed
   - type: entity
+    show_name: false
+    show_state: true
+    show_icon: true
     entity: sensor.temperature_oscar_temperature
-    show_name: false
-    show_state: true
-    show_icon: true
+    show_entity_picture: true
+    state_content:
+      - state
+      - last_changed
   - type: entity
-    entity: sensor.temperature_oscar_humidity
     show_name: false
     show_state: true
     show_icon: true
+    entity: sensor.temperature_oscar_humidity
+    show_entity_picture: true
+    state_content:
+      - state
+      - last_changed
 sections:
   - type: grid
     cards:
       - type: heading
         heading: 👤 Statut & Santé
       - type: entities
-        title: Présence & Trackers
         state_color: true
         show_header_toggle: false
         entities:
           - entity: person.oscar
             secondary_info: last-changed
-          - entity: device_tracker.nut_vert_presence
-            name: Clés (Nut)
-            secondary_info: last-changed
-          - entity: button.change_presence_nut_oscar
-            name: Forcer présence Clés
-            icon: mdi:cellphone-key
           - entity: device_tracker.samsung_a55
             name: Téléphone (GPS)
             secondary_info: last-updated
@@ -62,12 +66,11 @@ sections:
           - entity: input_boolean.oscar_active
             name: Statut Actif
             secondary_info: last-changed
-      - type: glance
-        title: Suivi du Poids (IMC)
-        columns: 4
-        show_name: true
+      - show_name: true
         show_icon: true
         show_state: true
+        type: glance
+        columns: 4
         entities:
           - entity: sensor.poids_oscar
             name: Poids
@@ -97,54 +100,134 @@ sections:
       - type: heading
         heading: 🎛️ Équipements Chambre
       - type: tile
+        grid_options:
+          columns: full
         entity: input_boolean.mode_auto_oscar
         name: Mode Automatique
         icon: mdi:robot
         color: accent
+        show_entity_picture: false
+        hide_state: false
+        state_content:
+          - state
+          - last_changed
+        vertical: false
         features:
           - type: toggle
+        features_position: bottom
+      - type: tile
         grid_options:
           columns: full
-      - type: tile
         entity: light.yeelight_mono
         name: Plafonnier
+        show_entity_picture: false
+        hide_state: false
+        state_content:
+          - state
+          - last_changed
+        vertical: false
         features:
           - type: toggle
           - type: light-brightness
+        features_position: bottom
+      - type: tile
         grid_options:
           columns: full
-      - type: tile
         entity: light.atelier_smart_socket_4
         name: Bureau
         icon: mdi:desk-lamp
+        state_content:
+          - state
+          - last_changed
+        vertical: false
         features:
           - type: toggle
+        features_position: bottom
+      - type: tile
         grid_options:
           columns: full
-      - type: tile
         entity: cover.volets_oscar_state
         name: Volets
+        state_content:
+          - current_position
+          - last_changed
+        vertical: false
         features:
           - type: cover-open-close
           - type: cover-position
-        grid_options:
-          columns: full
+          - type: cover-position-favorite
+        features_position: bottom
   - type: grid
     cards:
       - type: heading
         heading: 🎮 Gaming & Multimédia
-      - type: grid
-        square: false
-        columns: 3
-        grid_options:
-          columns: full
-        cards:
-          - type: picture
-            image_entity: image.oscope4908_avatar
-          - type: picture
-            image_entity: image.oscope4908_gamerpic
-          - type: picture
-            image_entity: image.oscope4908_now_playing
+      - type: entities
+        state_color: true
+        show_header_toggle: false
+        entities:
+          - entity: binary_sensor.oscope4908
+            name: En Ligne
+            secondary_info: last-changed
+          - entity: binary_sensor.oscope4908_in_game
+            name: En Jeu
+            secondary_info: last-changed
+          - entity: sensor.oscope4908_now_playing
+            name: Activité Actuelle
+            secondary_info: last-changed
+          - entity: sensor.oscope4908_status
+            name: Statut Statisique
+            secondary_info: last-changed
+          - entity: sensor.oscope4908_gamer_score
+            name: Gamerscore
+            secondary_info: last-changed
+          - entity: binary_sensor.oscope4908_subscribed_to_xbox_game_pass
+            name: Abonnement Game Pass
+            secondary_info: last-changed
+          - entity: sensor.oscope4908_last_online
+            name: Dernier vu le
+            secondary_info: last-changed
+      - type: custom:apexcharts-card
+        apex_config:
+          chart:
+            height: 170px
+        experimental:
+          color_threshold: true
+        graph_span: 7d
+        span:
+          end: day
+        show:
+          last_updated: true
+        header:
+          show: true
+          show_states: true
+          colorize_states: true
+          title: Utilisation Xbox
+        yaxis:
+          - min: 0
+            max: ~6
+            decimals: 0
+            apex_config:
+              tickAmount: 5
+        series:
+          - entity: sensor.oscope4908_oscar_xbox
+            show:
+              header_color_threshold: true
+              extremas: true
+              as_duration: hour
+            type: column
+            name: Durée
+            group_by:
+              func: last
+              duration: 1d
+            color_threshold:
+              - value: 1
+                color: darkcyan
+              - value: 2
+                color: goldenrod
+              - value: 4
+                color: orangered
+              - value: 6
+                color: darkred
       - type: media-control
         entity: media_player.google_home_oscar
         grid_options:
@@ -153,56 +236,6 @@ sections:
         entity: media_player.xbox
         grid_options:
           columns: full
-      - type: custom:apexcharts-card
-        graph_span: 7d
-        span:
-          end: day
-        header:
-          show: true
-          title: Temps de jeu hebdomadaire
-          show_states: true
-          colorize_states: true
-        yaxis:
-          - min: 0
-            max: ~6
-            decimals: 0
-            apex_config:
-              tickAmount: 5
-        series:
-          - entity: sensor.xbox_on_today
-            type: column
-            name: Durée
-            group_by:
-              func: last
-              duration: 1d
-            color_threshold:
-              - value: 1
-                color: "#008b8b"
-              - value: 2
-                color: "#b8860b"
-              - value: 4
-                color: "#ff4500"
-              - value: 6
-                color: "#8b0000"
-      - type: entities
-        title: Métriques Xbox Live
-        state_color: true
-        show_header_toggle: false
-        entities:
-          - entity: binary_sensor.oscope4908
-            name: En Ligne
-          - entity: binary_sensor.oscope4908_in_game
-            name: En Jeu
-          - entity: sensor.oscope4908_now_playing
-            name: Activité Actuelle
-          - entity: sensor.oscope4908_status
-            name: Statut Statisique
-          - entity: sensor.oscope4908_gamer_score
-            name: Gamerscore
-          - entity: binary_sensor.oscope4908_subscribed_to_xbox_game_pass
-            name: Abonnement Game Pass
-          - entity: sensor.oscope4908_last_online
-            name: Dernier vu le
       - type: custom:love-lock-card
         popup: REMOVED
         REMOVED: REMOVED
@@ -217,8 +250,10 @@ sections:
     cards:
       - type: heading
         heading: 📱 Smartphone État
-      - type: glance
-        title: Matériel & Batterie
+      - show_name: true
+        show_icon: true
+        show_state: true
+        type: glance
         columns: 3
         entities:
           - entity: sensor.samsung_a55_battery_level
@@ -234,34 +269,51 @@ sections:
           - entity: sensor.samsung_a55_remaining_charge_time
             name: Restant
       - type: entities
-        title: Activité & Données Physiques
         show_header_toggle: false
         entities:
           - entity: sensor.samsung_a55_detected_activity
             name: Activité Détectée
+            secondary_info: last-changed
           - entity: sensor.samsung_a55_steps_sensor
             name: Nombre de Pas
+            secondary_info: last-changed
           - entity: sensor.samsung_a55_daily_distance
             name: Distance du jour
+            secondary_info: last-changed
           - entity: sensor.samsung_a55_sleep_confidence
             name: Indice Sommeil
+            secondary_info: last-changed
           - entity: sensor.samsung_a55_sleep_segment
             name: Cycle Sommeil
+            secondary_info: last-changed
+        state_color: true
       - type: entities
-        title: Réseau & Système
         show_header_toggle: false
         entities:
           - entity: sensor.samsung_a55_wi_fi_connection
             name: Point d'accès Wi-Fi
+            secondary_info: last-changed
           - entity: sensor.samsung_a55_wi_fi_signal_strength
             name: Signal Wi-Fi
+            secondary_info: last-changed
           - entity: binary_sensor.samsung_a55_mobile_data
             name: Data Mobile actives
+            secondary_info: last-changed
           - entity: sensor.samsung_a55_network_type
             name: Type de couverture
+            secondary_info: last-changed
           - entity: sensor.samsung_a55_ringer_mode
             name: Profil Sonnerie
+            secondary_info: last-changed
           - entity: sensor.samsung_a55_last_used_app
             name: Dernière application
+            secondary_info: last-changed
           - entity: sensor.samsung_a55_next_alarm
             name: Alarme programmée
+            secondary_info: last-changed
+        state_color: true
+cards: []
+header:
+  layout: center
+  badges_position: bottom
+  badges_wrap: scroll

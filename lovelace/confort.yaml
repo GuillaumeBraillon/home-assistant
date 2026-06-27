@@ -1,16 +1,69 @@
+path: confort
+title: Confort
+icon: mdi:home-thermometer-outline
 type: sections
 max_columns: 4
-title: Confort
-path: confort
-icon: mdi:home-thermometer-outline
+visible:
+  - user: c7447f6dbd744a97a1aafc8d1d5d6305
+  - user: 2e7b70c51f3e453cb5ec7131df051882
+header:
+  layout: center
+  badges_position: bottom
+  badges_wrap: scroll
+badges:
+  - type: entity
+    show_name: true
+    show_state: true
+    show_icon: true
+    entity: input_select.modes_maison
+    state_content:
+      - state
+      - last_changed
+  - type: entity
+    show_name: true
+    show_state: true
+    show_icon: true
+    entity: group.persons
+    state_content:
+      - state
+      - last_changed
+  - type: entity
+    show_name: false
+    show_state: true
+    show_icon: true
+    entity: person.guillaume
+    show_entity_picture: true
+    state_content:
+      - state
+      - last_changed
+  - type: entity
+    show_name: false
+    show_state: true
+    show_icon: true
+    entity: person.nelly
+    show_entity_picture: true
+    state_content:
+      - state
+      - last_changed
+  - type: entity
+    show_name: false
+    show_state: true
+    show_icon: true
+    entity: person.oscar
+    show_entity_picture: true
+    state_content:
+      - state
+      - last_changed
 sections:
-  - type: grid
+  - icon: mdi:weather-windy
     cards:
+      - type: heading
+        heading: 🌬️ Ventilation
+        heading_style: title
       - show_name: true
         show_icon: true
         show_state: true
         type: glance
-        title: 🌬️ Gestion Aération
         columns: 2
         state_color: true
         entities:
@@ -18,6 +71,7 @@ sections:
             name: Active
           - entity: binary_sensor.fenetres_maison
             name: Fenêtres
+        theme: macOS Theme
         card_mod:
           style:
             div.entity:
@@ -40,30 +94,6 @@ sections:
               }
               div.entity:nth-child(2)::after {
                 content: "{% set t = (now() - as_local(states.binary_sensor.fenetres_maison.last_changed | default(now()))).total_seconds() %}{% if t < 60 %}Maintenant{% elif t < 3600 %}{{ (t / 60) | int }} min{% elif t < 86400 %}{{ (t / 3600) | int }} h{% else %}{{ (t / 86400) | int }} j{% endif %}";
-                font-size: 10px; color: var(--secondary-text-color); display: block; text-align: center; margin-top: 2px;
-              }
-              div.entity:nth-child(3)::after {
-                content: "{% set t = (now() - as_local(states.input_number.temp_reference_aeration.last_changed | default(now()))).total_seconds() %}{% if t < 60 %}Maintenant{% elif t < 3600 %}{{ (t / 60) | int }} min{% elif t < 86400 %}{{ (t / 3600) | int }} h{% else %}{{ (t / 86400) | int }} j{% endif %}";
-                font-size: 10px; color: var(--secondary-text-color); display: block; text-align: center; margin-top: 2px;
-              }
-              div.entity:nth-child(4)::after {
-                content: "{% set t = (now() - as_local(states.input_number.temp_min_aeration.last_changed | default(now()))).total_seconds() %}{% if t < 60 %}Maintenant{% elif t < 3600 %}{{ (t / 60) | int }} min{% elif t < 86400 %}{{ (t / 3600) | int }} h{% else %}{{ (t / 86400) | int }} j{% endif %}";
-                font-size: 10px; color: var(--secondary-text-color); display: block; text-align: center; margin-top: 2px;
-              }
-              div.entity:nth-child(5)::after {
-                content: "{% set t = (now() - as_local(states.sensor.temperatures_maison.last_changed | default(now()))).total_seconds() %}{% if t < 60 %}Maintenant{% elif t < 3600 %}{{ (t / 60) | int }} min{% elif t < 86400 %}{{ (t / 3600) | int }} h{% else %}{{ (t / 86400) | int }} j{% endif %}";
-                font-size: 10px; color: var(--secondary-text-color); display: block; text-align: center; margin-top: 2px;
-              }
-              div.entity:nth-child(6)::after {
-                content: "{% set t = (now() - as_local(states.input_number.humid_reference_aeration.last_changed | default(now()))).total_seconds() %}{% if t < 60 %}Maintenant{% elif t < 3600 %}{{ (t / 60) | int }} min{% elif t < 86400 %}{{ (t / 3600) | int }} h{% else %}{{ (t / 86400) | int }} j{% endif %}";
-                font-size: 10px; color: var(--secondary-text-color); display: block; text-align: center; margin-top: 2px;
-              }
-              div.entity:nth-child(7)::after {
-                content: "{% set t = (now() - as_local(states.input_number.humid_min_aeration.last_changed | default(now()))).total_seconds() %}{% if t < 60 %}Maintenant{% elif t < 3600 %}{{ (t / 60) | int }} min{% elif t < 86400 %}{{ (t / 3600) | int }} h{% else %}{{ (t / 86400) | int }} j{% endif %}";
-                font-size: 10px; color: var(--secondary-text-color); display: block; text-align: center; margin-top: 2px;
-              }
-              div.entity:nth-child(8)::after {
-                content: "{% set t = (now() - as_local(states.sensor.humidite_maison.last_changed | default(now()))).total_seconds() %}{% if t < 60 %}Maintenant{% elif t < 3600 %}{{ (t / 60) | int }} min{% elif t < 86400 %}{{ (t / 3600) | int }} h{% else %}{{ (t / 86400) | int }} j{% endif %}";
                 font-size: 10px; color: var(--secondary-text-color); display: block; text-align: center; margin-top: 2px;
               }
       - show_name: true
@@ -103,26 +133,15 @@ sections:
                 {%- elif t < 86400 -%}{{ (t / 3600) | int }} h
                 {%- else -%}{{ (t / 86400) | int }} j
                 {%- endif -%}
-              {%- endmacro %}
-
-
-              div.entity:nth-child(1)::after { content: "{{
+              {%- endmacro %} div.entity:nth-child(1)::after { content: "{{
               get_time('input_number.temp_reference_aeration') | trim }}"; }
-
               div.entity:nth-child(2)::after { content: "{{
               get_time('input_number.temp_min_aeration') | trim }}"; }
-
               div.entity:nth-child(3)::after { content: "{{
               get_time('sensor.temperatures_maison') | trim }}"; }
-
-
-              div.entity::after {
-                font-size: 10px;
-                color: var(--secondary-text-color);
-                display: block;
-                text-align: center;
-                margin-top: 2px;
-              }
+              div.entity::after { font-size: 10px; color:
+              var(--secondary-text-color); display: block; text-align: center;
+              margin-top: 2px; }
       - show_name: true
         show_icon: true
         show_state: true
@@ -162,133 +181,238 @@ sections:
                 {%- elif t < 86400 -%}{{ (t / 3600) | int }} h
                 {%- else -%}{{ (t / 86400) | int }} j
                 {%- endif -%}
-              {%- endmacro %}
-
-
-              div.entity:nth-child(1)::after { content: "{{
+              {%- endmacro %} div.entity:nth-child(1)::after { content: "{{
               get_time('input_number.humid_reference_aeration') | trim }}"; }
-
               div.entity:nth-child(2)::after { content: "{{
               get_time('input_number.humid_min_aeration') | trim }}"; }
-
               div.entity:nth-child(3)::after { content: "{{
-              get_time('sensor.humidite_maison') | trim }}"; }
-
-
-              div.entity::after {
-                font-size: 10px;
-                color: var(--secondary-text-color);
-                display: block;
-                text-align: center;
-                margin-top: 2px;
-              }
-      - type: entities
-        title: 🪟 Gestion des Volets
-        state_color: true
-        show_header_toggle: false
-        entities:
-          - type: section
-            label: Pièces à vivre
-          - entity: cover.volets_salon_state
-            name: Salon
-            secondary_info: position
-          - entity: input_boolean.volets_salon_auto
-            name: Automatisation Salon
-            secondary_info: last-changed
-          - type: section
-            label: Chambres
-          - entity: cover.volets_parents_state
-            name: Parents
-            secondary_info: position
-          - entity: cover.volets_oscar_state
-            name: Oscar
-            secondary_info: position
-          - entity: cover.volets_eliott_state
-            name: Eliott
-            secondary_info: position
-  - type: grid
+              get_time('sensor.humidite_maison') | trim }}"; } div.entity::after
+              { font-size: 10px; color: var(--secondary-text-color); display:
+              block; text-align: center; margin-top: 2px; }
+  - icon: mdi:thermometer
     cards:
-      - type: entities
-        entities:
-          - entity: sensor.temperatures_maison
-            secondary_info: last-changed
-          - entity: sensor.humidite_maison
-            secondary_info: last-changed
-          - entity: sensor.vindstyrka_air_quality_temperature
-            secondary_info: last-changed
-            name: Température cuisine
-          - entity: sensor.vindstyrka_air_quality_humidity
-            name: Humidité cuisine
-            secondary_info: last-changed
-          - entity: sensor.temperature_salon
-            secondary_info: last-changed
-            name: Salon
-          - entity: sensor.humidite_salon
-            secondary_info: last-changed
-            name: "Humidité "
-          - entity: sensor.temperature_parents_temperature
-            secondary_info: last-changed
-            name: Parents
-          - entity: sensor.temperature_parents_humidity
-            secondary_info: last-changed
-            name: "Humidité "
-          - entity: sensor.temperature_oscar_temperature
-            secondary_info: last-changed
-            name: "Oscar "
-          - entity: sensor.temperature_oscar_humidity
-            name: Humidité
-            secondary_info: last-changed
-          - entity: sensor.temperature_eliott_temperature
-            secondary_info: last-changed
-            name: "Éliott "
-          - entity: sensor.temperature_eliott_humidity
-            secondary_info: last-changed
-            name: Humidité
-          - entity: sensor.xiaomi_wleak_aq1_device_temperature
-            secondary_info: last-changed
-            name: "Salle de bain "
-        title: Températures & humidité
-        state_color: true
-  - type: grid
+      - type: heading
+        heading: 🌡️ Températures & Humidité
+        heading_style: title
+      - type: tile
+        grid_options:
+          columns: 12
+          rows: 1
+        entity: sensor.temperatures_maison
+        name: Température
+        state_content:
+          - state
+          - last_changed
+        vertical: false
+        features:
+          - type: trend-graph
+        features_position: inline
+      - type: tile
+        grid_options:
+          columns: 12
+          rows: 1
+        entity: sensor.humidite_maison
+        name: Humidité
+        state_content:
+          - state
+          - last_changed
+        vertical: false
+        features:
+          - type: trend-graph
+        features_position: inline
+      - type: heading
+        icon: mdi:account-multiple
+        heading: Parents
+        heading_style: title
+      - type: tile
+        grid_options:
+          columns: 12
+          rows: 1
+        entity: sensor.temperature_parents_temperature
+        name: Température
+        state_content:
+          - state
+          - last_changed
+        vertical: false
+        features:
+          - type: trend-graph
+        features_position: inline
+      - type: tile
+        grid_options:
+          columns: 12
+          rows: 1
+        entity: sensor.temperature_parents_humidity
+        name: Humidité
+        state_content:
+          - state
+          - last_changed
+        vertical: false
+        features:
+          - type: trend-graph
+        features_position: inline
+      - type: heading
+        icon: mdi:stove
+        heading: Cuisine
+        heading_style: subtitle
+      - type: tile
+        grid_options:
+          columns: 12
+          rows: 1
+        entity: sensor.vindstyrka_air_quality_temperature
+        name: Température
+        state_content:
+          - state
+          - last_changed
+        vertical: false
+        features:
+          - type: trend-graph
+        features_position: inline
+      - type: tile
+        grid_options:
+          columns: 12
+          rows: 1
+        entity: sensor.vindstyrka_air_quality_humidity
+        name: Humidité
+        state_content:
+          - state
+          - last_changed
+        vertical: false
+        features:
+          - type: trend-graph
+        features_position: inline
+      - type: heading
+        icon: mdi:sofa
+        heading: Salon
+        heading_style: subtitle
+      - type: tile
+        grid_options:
+          columns: 12
+          rows: 1
+        entity: sensor.temperature_salon
+        name: Température
+        state_content:
+          - state
+          - last_changed
+        vertical: false
+        features:
+          - type: trend-graph
+        features_position: inline
+      - type: tile
+        grid_options:
+          columns: 12
+          rows: 1
+        entity: sensor.humidite_salon
+        name: Humidité
+        state_content:
+          - state
+          - last_changed
+        vertical: false
+        features:
+          - type: trend-graph
+        features_position: inline
+      - type: heading
+        icon: mdi:bed
+        heading: Chambre d'Oscar
+        heading_style: subtitle
+      - type: tile
+        grid_options:
+          columns: 12
+          rows: 1
+        entity: sensor.temperature_oscar_temperature
+        name: Température
+        state_content:
+          - state
+          - last_changed
+        vertical: false
+        features:
+          - type: trend-graph
+        features_position: inline
+      - type: tile
+        grid_options:
+          columns: 12
+          rows: 1
+        entity: sensor.temperature_oscar_humidity
+        name: Humidité
+        state_content:
+          - state
+          - last_changed
+        vertical: false
+        features:
+          - type: trend-graph
+        features_position: inline
+      - type: heading
+        icon: mdi:bed
+        heading: Chambre d'Eliott
+        heading_style: subtitle
+      - type: tile
+        grid_options:
+          columns: 12
+          rows: 1
+        entity: sensor.temperature_eliott_temperature
+        name: Température
+        state_content:
+          - state
+          - last_changed
+        vertical: false
+        features:
+          - type: trend-graph
+        features_position: inline
+      - type: tile
+        grid_options:
+          columns: 12
+          rows: 1
+        entity: sensor.temperature_eliott_humidity
+        name: Humidité
+        state_content:
+          - state
+          - last_changed
+        vertical: false
+        features:
+          - type: trend-graph
+        features_position: inline
+  - icon: mdi:chart-timeline-variant
     cards:
+      - type: heading
+        heading: 📊 Historiques
       - type: history-graph
-        entities:
-          - entity: sensor.temperatures_maison
-          - entity: sensor.temperature_salon
-          - entity: sensor.vindstyrka_air_quality_temperature
-            name:
-              - type: entity
-              - type: area
-          - entity: sensor.temperature_parents_temperature
-          - entity: sensor.temperature_oscar_temperature
-            name:
-              type: device
-          - entity: sensor.temperature_eliott_temperature
-            name:
-              type: device
-        title: Températures
+        title: 🌡️ Températures (5h)
         hours_to_show: 5
         logarithmic_scale: false
+        entities:
+          - entity: sensor.temperatures_maison
+            name: Moyenne maison
+          - entity: sensor.temperature_parents_temperature
+            name: Parents
+          - entity: sensor.vindstyrka_air_quality_temperature
+            name: Cuisine
+          - entity: sensor.temperature_salon
+            name: Salon
+          - entity: sensor.temperature_oscar_temperature
+            name: Chambre d'Oscar
+          - entity: sensor.temperature_eliott_temperature
+            name: Chambre d'Eliott
       - type: history-graph
+        title: 💧 Humidité (5h)
+        hours_to_show: 5
+        logarithmic_scale: false
         entities:
           - entity: sensor.humidite_maison
-          - entity: sensor.humidite_salon
-          - entity: sensor.vindstyrka_air_quality_humidity
-            name:
-              - type: entity
-              - type: text
-                text: Cuisine
+            name: Humidité moyenne
           - entity: sensor.temperature_parents_humidity
             name: Humidité Parents
+          - entity: sensor.vindstyrka_air_quality_humidity
+            name: Humidité Cuisine
+          - entity: sensor.humidite_salon
+            name: Humidité Salon
           - entity: sensor.temperature_oscar_humidity
             name: Humidité Oscar
           - entity: sensor.temperature_eliott_humidity
             name: Humidité Eliott
-        title: Humidité
-        hours_to_show: 5
-        logarithmic_scale: false
-  - type: grid
+  - icon: mdi:weather-partly-cloudy
     cards:
+      - type: heading
+        heading: 🌤️ Météo
+        heading_style: title
       - show_current: true
         show_forecast: true
         type: weather-forecast
@@ -302,8 +426,3 @@ sections:
         name: Open Météo
         forecast_type: daily
 cards: []
-visible:
-  - user: ca412b9f7b3347a3be648e26d11840ee
-  - user: c7447f6dbd744a97a1aafc8d1d5d6305
-  - user: 2e7b70c51f3e453cb5ec7131df051882
-  - user: 2ff2cdef1e4a45709c03849f9cf9420a

@@ -2,489 +2,516 @@ theme: Backend-selected
 title: Lumières
 path: lumieres
 icon: mdi:ceiling-light-multiple
+type: sections
+max_columns: 4
 subview: false
 visible:
   - user: c7447f6dbd744a97a1aafc8d1d5d6305
   - user: 2e7b70c51f3e453cb5ec7131df051882
+header:
+  layout: center
+  badges_position: bottom
+  badges_wrap: scroll
 badges:
   - type: entity
+    show_name: true
+    show_state: true
+    show_icon: true
     entity: input_select.modes_maison
-    display_type: complete
+    state_content:
+      - state
+      - last_changed
   - type: entity
+    show_name: true
+    show_state: true
+    show_icon: true
     entity: group.persons
-    display_type: complete
+    state_content:
+      - state
+      - last_changed
   - type: entity
+    show_name: false
+    show_state: true
+    show_icon: true
     entity: person.guillaume
     show_entity_picture: true
+    state_content:
+      - state
+      - last_changed
   - type: entity
+    show_name: false
+    show_state: true
+    show_icon: true
     entity: person.nelly
     show_entity_picture: true
+    state_content:
+      - state
+      - last_changed
   - type: entity
+    show_name: false
+    show_state: true
+    show_icon: true
     entity: person.oscar
     show_entity_picture: true
-cards:
-  - type: entities
-    title: 💡 Gestion des Lumières
-    state_color: true
-    show_header_toggle: true
-    entities:
-      - type: section
-        label: Entrée et toilettes
-      - entity: light.prise_entree
-        secondary_info: last-changed
-        name: Petite lampe
-      - entity: light.enki_lexman_e27_led_white_hall_1
-        name: Plafonnier
-        type: custom:multiple-entity-row
-        secondary_info: last-changed
-        toggle: true
-        entities:
-          - attribute: brightness
-            name: Int.
-            format: brightness
-            hide_if: 0
-            hide_unavailable: true
-          - attribute: color_temp_kelvin
-            name: T°
-            unit: K
-            hide_if: 0
-            hide_unavailable: true
-      - entity: light.enki_lexman_e27_led_white_hall_2
-        name: Plafonnier porte
-        type: custom:multiple-entity-row
-        secondary_info: last-changed
-        toggle: true
-        entities:
-          - attribute: brightness
-            name: Int.
-            format: brightness
-            hide_if: 0
-            hide_unavailable: true
-          - attribute: color_temp_kelvin
-            name: T°
-            unit: K
-            hide_if: 0
-            hide_unavailable: true
-      - entity: light.livarno_lux_gu10
-        type: custom:multiple-entity-row
-        secondary_info: last-changed
-        toggle: true
-        entities:
-          - attribute: brightness
-            name: Int.
-            format: brightness
-            hide_if: 0
-            hide_unavailable: true
-          - attribute: color_temp_kelvin
-            name: T°
-            unit: K
-            hide_if: 0
-            hide_unavailable: true
-      - type: section
-        label: Chambre parentale
-      - entity: light.light_parents
-        name: Plafonnier
-        type: custom:multiple-entity-row
-        secondary_info: last-changed
-        toggle: true
-        entities:
-          - attribute: brightness
-            name: Int.
-            format: brightness
-            hide_if: 0
-            hide_unavailable: true
-          - attribute: color_temp_kelvin
-            name: T°
-            unit: K
-            hide_if: 0
-            hide_unavailable: true
-      - entity: light.yeelight_bslamp1
-        name: Chevet Nelly
-        icon: mdi:desk-lamp
-        type: custom:multiple-entity-row
-        secondary_info: last-changed
-        toggle: true
-        entities:
-          - attribute: brightness
-            name: Int.
-            format: brightness
-            hide_if: 0
-            hide_unavailable: true
-          - attribute: color_temp_kelvin
-            name: T°
-            unit: K
-            hide_if: 0
-            hide_unavailable: true
-      - entity: light.mibedsidelamp2
-        type: custom:multiple-entity-row
-        secondary_info: last-changed
-        toggle: true
-        entities:
-          - attribute: brightness
-            name: Int.
-            format: brightness
-            hide_if: 0
-      - type: section
-        label: Cuisine
-      - entity: sensor.snzb_06p_zigbee_occupancy_sensor_illumination
-        secondary_info: last-changed
-        name: Luminosité
-      - entity: light.enki_lexman_e27_led_white_bulb_kitchen
-        name: Plafonnier
-        type: custom:multiple-entity-row
-        secondary_info: last-changed
-        toggle: true
-        entities:
-          - attribute: brightness
-            format: brightness
-            hide_if: 0
-            hide_unavailable: true
-          - attribute: color_temp_kelvin
-            unit: K
-            hide_if: 0
-            hide_unavailable: true
-      - entity: light.yeelight_ct_bulb
-        type: custom:multiple-entity-row
-        secondary_info: last-changed
-        toggle: true
-        entities:
-          - attribute: brightness
-            format: brightness
-            hide_if: 0
-            hide_unavailable: true
-          - attribute: color_temp_kelvin
-            unit: K
-            hide_if: 0
-            hide_unavailable: true
-      - entity: light.ptitlampe
-        type: custom:multiple-entity-row
-        secondary_info: last-changed
-        toggle: true
-        entities:
-          - attribute: brightness
-            format: brightness
-            hide_if: 0
-            hide_unavailable: true
-      - type: section
-        label: Salon
-      - entity: sensor.living_room_illuminance_old
-        name: Luminosité
-        secondary_info: last-changed
-      - entity: input_number.luminosite_min
-        name: Luminosité mini
-        secondary_info: last-changed
-      - entity: light.tradfri_bulb_e27_ww_g95_cl_470lm
-        name: Plafonnier
-        type: custom:multiple-entity-row
-        secondary_info: last-changed
-        toggle: true
-        entities:
-          - attribute: brightness
-            name: Int.
-            format: brightness
-            hide_if: 0
-            hide_unavailable: true
-          - attribute: color_temp_kelvin
-            name: T°
-            unit: K
-            hide_if: 0
-            hide_unavailable: true
-      - entity: light.ikea_tradfri_e27_1055lm_2
-        type: custom:multiple-entity-row
-        secondary_info: last-changed
-        toggle: true
-        entities:
-          - attribute: brightness
-            format: brightness
-            hide_if: 0
-            hide_unavailable: true
-          - attribute: color_temp_kelvin
-            unit: K
-            hide_if: 0
-            hide_unavailable: true
-      - entity: light.sapin_local
-        secondary_info: last-changed
-      - type: section
-        label: Terrasse
-      - entity: light.yeelight_stripe_local
-        type: custom:multiple-entity-row
-        secondary_info: last-changed
-        toggle: true
-        entities:
-          - attribute: brightness
-            format: brightness
-            hide_if: 0
-            hide_unavailable: true
-          - attribute: color_temp_kelvin
-            unit: K
-            hide_if: 0
-            hide_unavailable: true
-      - entity: light.yeelight_terrasse
-        type: custom:multiple-entity-row
-        secondary_info: last-changed
-        toggle: true
-        entities:
-          - attribute: brightness
-            format: brightness
-            hide_if: 0
-            hide_unavailable: true
-          - attribute: color_temp_kelvin
-            unit: K
-            hide_if: 0
-            hide_unavailable: true
-      - type: section
-        label: Couloir chambres
-      - entity: light.plafonnier_couloir
-        name: Plafonnier
-        type: custom:multiple-entity-row
-        secondary_info: last-changed
-        toggle: true
-        entities:
-          - attribute: brightness
-            format: brightness
-            hide_if: 0
-            hide_unavailable: true
-      - entity: switch.minuterie_couloir
-        secondary_info: last-changed
-      - entity: timer.minuterie_couloir
-        secondary_info: none
-        name: Durée
-      - type: section
-        label: Chambre d'Oscar
-      - entity: light.yeelight_mono
-        name: Plafonnier
-        type: custom:multiple-entity-row
-        secondary_info: last-changed
-        toggle: true
-        entities:
-          - attribute: brightness
-            format: brightness
-            hide_if: 0
-            hide_unavailable: true
-          - attribute: color_temp_kelvin
-            unit: K
-            hide_if: 0
-            hide_unavailable: true
-      - entity: light.atelier_smart_socket_4
-        secondary_info: last-changed
-        name: Bureau Oscar
-      - type: section
-        label: Chambre d'Eliott
-      - entity: light.yeelight_color
-        name: Plafonnier
-        type: custom:multiple-entity-row
-        secondary_info: last-changed
-        toggle: true
-        entities:
-          - attribute: brightness
-            format: brightness
-            hide_if: 0
-            hide_unavailable: true
-          - attribute: color_temp_kelvin
-            unit: K
-            hide_if: 0
-            hide_unavailable: true
-      - entity: light.ikea_tradfri_control_outlet
-        secondary_info: last-changed
-  - type: entities
-    title: 🪟 Gestion des Volets
-    state_color: true
-    show_header_toggle: false
-    entities:
-      - type: section
-        label: Pièces à vivre
-      - entity: input_boolean.volets_salon_auto
-        name: Automatisation Salon
-        secondary_info: last-changed
-      - entity: cover.volets_salon_state
-        name: Salon
-        secondary_info: position
-      - type: section
-        label: Chambres
-      - entity: cover.volets_parents_state
-        name: Parents
-        secondary_info: position
-      - entity: cover.volets_oscar_state
-        name: Oscar
-        secondary_info: position
-      - entity: cover.volets_eliott_state
-        name: Eliott
-        secondary_info: position
-  - type: vertical-stack
+    state_content:
+      - state
+      - last_changed
+sections:
+  - icon: mdi:lightbulb
     cards:
+      - type: heading
+        heading: 💡 Gestion des Lumières
+        badges: []
+        heading_style: title
+        icon: ""
       - type: entities
-        entities:
-          - entity: input_boolean.histoire_du_soir
-            secondary_info: last-changed
-          - entity: input_boolean.mode_automatique
-            secondary_info: last-changed
         state_color: true
+        show_header_toggle: true
+        entities:
+          - type: section
+            label: Entrée et toilettes
+          - entity: light.prise_entree
+            secondary_info: last-changed
+            name: Petite lampe
+          - entity: light.enki_lexman_e27_led_white_hall_1
+            name: Plafonnier
+            type: custom:multiple-entity-row
+            secondary_info: last-changed
+            toggle: true
+            entities:
+              - attribute: brightness
+                name: Int.
+                format: brightness
+                hide_if: 0
+                hide_unavailable: true
+              - attribute: color_temp_kelvin
+                name: T°
+                unit: K
+                hide_if: 0
+                hide_unavailable: true
+          - entity: light.enki_lexman_e27_led_white_hall_2
+            name: Plafonnier porte
+            type: custom:multiple-entity-row
+            secondary_info: last-changed
+            toggle: true
+            entities:
+              - attribute: brightness
+                name: Int.
+                format: brightness
+                hide_if: 0
+                hide_unavailable: true
+              - attribute: color_temp_kelvin
+                name: T°
+                unit: K
+                hide_if: 0
+                hide_unavailable: true
+          - entity: light.livarno_lux_gu10
+            type: custom:multiple-entity-row
+            secondary_info: last-changed
+            toggle: true
+            entities:
+              - attribute: brightness
+                name: Int.
+                format: brightness
+                hide_if: 0
+                hide_unavailable: true
+              - attribute: color_temp_kelvin
+                name: T°
+                unit: K
+                hide_if: 0
+                hide_unavailable: true
+          - type: section
+            label: Chambre parentale
+          - entity: light.light_parents
+            name: Plafonnier
+            type: custom:multiple-entity-row
+            secondary_info: last-changed
+            toggle: true
+            entities:
+              - attribute: brightness
+                name: Int.
+                format: brightness
+                hide_if: 0
+                hide_unavailable: true
+              - attribute: color_temp_kelvin
+                name: T°
+                unit: K
+                hide_if: 0
+                hide_unavailable: true
+          - entity: light.yeelight_bslamp1
+            name: Chevet Nelly
+            icon: mdi:desk-lamp
+            type: custom:multiple-entity-row
+            secondary_info: last-changed
+            toggle: true
+            entities:
+              - attribute: brightness
+                name: Int.
+                format: brightness
+                hide_if: 0
+                hide_unavailable: true
+              - attribute: color_temp_kelvin
+                name: T°
+                unit: K
+                hide_if: 0
+                hide_unavailable: true
+          - entity: light.mibedsidelamp2
+            type: custom:multiple-entity-row
+            secondary_info: last-changed
+            toggle: true
+            entities:
+              - attribute: brightness
+                name: Int.
+                format: brightness
+                hide_if: 0
+          - type: section
+            label: Cuisine
+          - entity: sensor.snzb_06p_zigbee_occupancy_sensor_illumination
+            secondary_info: last-changed
+            name: Luminosité
+          - entity: light.enki_lexman_e27_led_white_bulb_kitchen
+            name: Plafonnier
+            type: custom:multiple-entity-row
+            secondary_info: last-changed
+            toggle: true
+            entities:
+              - attribute: brightness
+                format: brightness
+                hide_if: 0
+                hide_unavailable: true
+              - attribute: color_temp_kelvin
+                unit: K
+                hide_if: 0
+                hide_unavailable: true
+          - entity: light.yeelight_ct_bulb
+            type: custom:multiple-entity-row
+            secondary_info: last-changed
+            toggle: true
+            entities:
+              - attribute: brightness
+                format: brightness
+                hide_if: 0
+                hide_unavailable: true
+              - attribute: color_temp_kelvin
+                unit: K
+                hide_if: 0
+                hide_unavailable: true
+          - entity: light.ptitlampe
+            type: custom:multiple-entity-row
+            secondary_info: last-changed
+            toggle: true
+            entities:
+              - attribute: brightness
+                format: brightness
+                hide_if: 0
+                hide_unavailable: true
+          - type: section
+            label: Salon
+          - entity: sensor.living_room_illuminance_old
+            name: Luminosité
+            secondary_info: last-changed
+          - entity: input_number.luminosite_min
+            name: Luminosité mini
+            secondary_info: last-changed
+          - entity: light.tradfri_bulb_e27_ww_g95_cl_470lm
+            name: Plafonnier
+            type: custom:multiple-entity-row
+            secondary_info: last-changed
+            toggle: true
+            entities:
+              - attribute: brightness
+                name: Int.
+                format: brightness
+                hide_if: 0
+                hide_unavailable: true
+              - attribute: color_temp_kelvin
+                name: T°
+                unit: K
+                hide_if: 0
+                hide_unavailable: true
+          - entity: light.ikea_tradfri_e27_1055lm_2
+            type: custom:multiple-entity-row
+            secondary_info: last-changed
+            toggle: true
+            entities:
+              - attribute: brightness
+                format: brightness
+                hide_if: 0
+                hide_unavailable: true
+              - attribute: color_temp_kelvin
+                unit: K
+                hide_if: 0
+                hide_unavailable: true
+          - entity: light.sapin_local
+            secondary_info: last-changed
+          - type: section
+            label: Terrasse
+          - entity: light.yeelight_stripe_local
+            type: custom:multiple-entity-row
+            secondary_info: last-changed
+            toggle: true
+            entities:
+              - attribute: brightness
+                format: brightness
+                hide_if: 0
+                hide_unavailable: true
+              - attribute: color_temp_kelvin
+                unit: K
+                hide_if: 0
+                hide_unavailable: true
+          - entity: light.yeelight_terrasse
+            type: custom:multiple-entity-row
+            secondary_info: last-changed
+            toggle: true
+            entities:
+              - attribute: brightness
+                format: brightness
+                hide_if: 0
+                hide_unavailable: true
+              - attribute: color_temp_kelvin
+                unit: K
+                hide_if: 0
+                hide_unavailable: true
+          - type: section
+            label: Couloir chambres
+          - entity: light.plafonnier_couloir
+            name: Plafonnier
+            type: custom:multiple-entity-row
+            secondary_info: last-changed
+            toggle: true
+            entities:
+              - attribute: brightness
+                format: brightness
+                hide_if: 0
+                hide_unavailable: true
+          - entity: switch.minuterie_couloir
+            secondary_info: last-changed
+          - entity: timer.minuterie_couloir
+            secondary_info: none
+            name: Durée
+          - type: section
+            label: Chambre d'Oscar
+          - entity: light.yeelight_mono
+            name: Plafonnier
+            type: custom:multiple-entity-row
+            secondary_info: last-changed
+            toggle: true
+            entities:
+              - attribute: brightness
+                format: brightness
+                hide_if: 0
+                hide_unavailable: true
+              - attribute: color_temp_kelvin
+                unit: K
+                hide_if: 0
+                hide_unavailable: true
+          - entity: light.atelier_smart_socket_4
+            secondary_info: last-changed
+            name: Bureau Oscar
+          - type: section
+            label: Chambre d'Eliott
+          - entity: light.yeelight_color
+            name: Plafonnier
+            type: custom:multiple-entity-row
+            secondary_info: last-changed
+            toggle: true
+            entities:
+              - attribute: brightness
+                format: brightness
+                hide_if: 0
+                hide_unavailable: true
+              - attribute: color_temp_kelvin
+                unit: K
+                hide_if: 0
+                hide_unavailable: true
+          - entity: light.ikea_tradfri_control_outlet
+            secondary_info: last-changed
+  - icon: mdi:robot
+    cards:
+      - type: heading
+        heading: 🤖 Éclairage Automatique
+      - type: vertical-stack
+        cards:
+          - type: entities
+            entities:
+              - entity: input_boolean.histoire_du_soir
+                secondary_info: last-changed
+              - entity: input_boolean.mode_automatique
+                secondary_info: last-changed
+            state_color: true
+          - type: entities
+            entities:
+              - entity: input_boolean.mode_auto_entree
+                secondary_info: last-changed
+                name: Entrée
+              - entity: input_boolean.mode_auto_parents
+                name: Chambre Parents
+                secondary_info: last-changed
+              - entity: input_boolean.mode_auto_cuisine
+                secondary_info: last-changed
+                name: Cuisine
+              - entity: input_boolean.mode_auto_salon
+                name: Salon
+                secondary_info: last-changed
+              - entity: input_boolean.mode_auto_exterieur
+                name: Extérieur
+                secondary_info: last-changed
+              - entity: input_boolean.mode_auto_chambre_enfants
+                secondary_info: last-changed
+                name: Chambre Enfants
+              - entity: input_boolean.mode_auto_eliott
+                secondary_info: last-changed
+                name: Chambre Eliott
+              - entity: input_boolean.mode_auto_oscar
+                name: Chambre Oscar
+                secondary_info: last-changed
+            state_color: true
+  - icon: mdi:power-plug
+    cards:
+      - type: heading
+        heading: 🔌 Prises
       - type: entities
         entities:
-          - entity: input_boolean.mode_auto_entree
+          - entity: switch.tuya_jpi_socket_1
             secondary_info: last-changed
-            name: Entrée
-          - entity: input_boolean.mode_auto_parents
-            name: Chambre Parents
+          - entity: sensor.batterie_jpi
             secondary_info: last-changed
-          - entity: input_boolean.mode_auto_cuisine
+          - entity: sensor.batterie_jpi_info
             secondary_info: last-changed
-            name: Cuisine
-          - entity: input_boolean.mode_auto_salon
+            icon: mdi:battery-unknown
+            name: JPI
+          - entity: sensor.bluetooth_connect_jpi
+            secondary_info: last-changed
+            name: Bluetooth Connect
+          - entity: device_tracker.smartphone_xiaomi_mi_a2
+            secondary_info: last-changed
+            name: "JPI Online "
+            icon: mdi:cellphone-wireless
+          - entity: switch.plug_living_room
             name: Salon
             secondary_info: last-changed
-          - entity: input_boolean.mode_auto_exterieur
-            name: Extérieur
+            icon: mdi:multimedia
+          - entity: sensor.plug_living_room_power
             secondary_info: last-changed
-          - entity: input_boolean.mode_auto_chambre_enfants
+            name: Puissance
+          - entity: sensor.plug_living_room_energy
             secondary_info: last-changed
-            name: Chambre Enfants
-          - entity: input_boolean.mode_auto_eliott
-            secondary_info: last-changed
-            name: Chambre Eliott
-          - entity: input_boolean.mode_auto_oscar
-            name: Chambre Oscar
+            name: Consommation
+          - entity: sensor.plug_living_room_device_temperature
+            secondary_info: none
+          - entity: fan.ikea_inspelning_smart_plug
             secondary_info: last-changed
         state_color: true
-        title: Éclairage Automatique
-  - type: entities
-    entities:
-      - entity: switch.tuya_jpi_socket_1
-        secondary_info: last-changed
-      - entity: sensor.batterie_jpi
-        secondary_info: last-changed
-      - entity: sensor.batterie_jpi_info
-        secondary_info: last-changed
-        icon: mdi:battery-unknown
-        name: JPI
-      - entity: sensor.bluetooth_connect_jpi
-        secondary_info: last-changed
-        name: Bluetooth Connect
-      - entity: device_tracker.smartphone_xiaomi_mi_a2
-        secondary_info: last-changed
-        name: "JPI Online "
-        icon: mdi:cellphone-wireless
-      - entity: switch.plug_living_room
-        name: Salon
-        secondary_info: last-changed
-        icon: mdi:multimedia
-      - entity: sensor.plug_living_room_power
-        secondary_info: last-changed
-        name: Puissance
-      - entity: sensor.plug_living_room_energy
-        secondary_info: last-changed
-        name: Consommation
-      - entity: sensor.plug_living_room_device_temperature
-        secondary_info: none
-      - entity: fan.ikea_inspelning_smart_plug
-        secondary_info: last-changed
-    state_color: true
-    show_header_toggle: false
-    title: Prises
-  - type: vertical-stack
+        show_header_toggle: false
+  - icon: mdi:flash
     cards:
-      - type: entities
-        title: 📊 Enedis
-        show_header_toggle: false
-        state_color: true
-        entities:
-          - entity: sensor.cout_electricite
-            name: Tarif électricité actuel
-            secondary_info: last-changed
-          - type: section
-            label: Suivi Journalier
+      - type: heading
+        heading: 📊 Énergie & Suivi
+      - type: vertical-stack
+        cards:
+          - type: entities
+            title: 📊 Enedis
+            show_header_toggle: false
+            state_color: true
+            entities:
+              - entity: sensor.cout_electricite
+                name: Tarif électricité actuel
+                secondary_info: last-changed
+              - type: section
+                label: Suivi Journalier
+              - entity: sensor.consommation_jour
+                name: Consommation Jour
+                secondary_info: last-changed
+              - entity: sensor.cout_consommation_jour
+                name: Coût Consommation Jour
+                secondary_info: last-changed
+              - type: section
+                label: Suivi Mentionnel
+              - entity: sensor.consommation_mois
+                name: Consommation Mois
+                secondary_info: last-changed
+              - entity: sensor.cout_consommation_mois
+                name: Coût Consommation Mois
+                secondary_info: last-changed
+              - type: section
+                label: Suivi Annuel
+              - entity: sensor.consommation_annee
+                name: Consommation Année
+                secondary_info: last-changed
+              - entity: sensor.cout_consommation_annee
+                name: Coût Année
+                secondary_info: last-changed
+          - type: entities
+            title: ❄️ Climatisation
+            show_header_toggle: false
+            state_color: true
+            entities:
+              - type: section
+                label: Temps Réel
+              - entity: sensor.ikea_inspelning_smart_plug_power
+                name: Puissance instantanée
+                secondary_info: last-changed
+              - type: section
+                label: Analyse des Coûts
+              - entity: sensor.salle_de_bain_energie_aujourd_hui
+                name: Consommation Jour
+                secondary_info: last-changed
+              - entity: sensor.cout_salle_de_bain_energie_aujourd_hui
+                name: Coût Jour
+                secondary_info: last-changed
+              - entity: sensor.ikea_inspelning_smart_plug_energy
+                name: Consommation total
+                secondary_info: last-changed
+              - entity: sensor.cout_salle_de_bain
+                name: Coût Total
+                secondary_info: last-changed
+      - type: custom:apexcharts-card
+        apex_config:
+          chart:
+            height: 300px
+        graph_span: 15d
+        span:
+          end: day
+        show:
+          last_updated: true
+        header:
+          show: true
+          title: Consommation Électrique et Coût Journalier
+          show_states: true
+          colorize_states: true
+        yaxis:
+          - id: consommation_axis
+            align_to: 1
+            decimals: 2
+            apex_config:
+              tickAmount: 5
+          - id: cout_axis
+            opposite: true
+            align_to: 1
+            decimals: 2
+            apex_config:
+              tickAmount: 5
+        series:
           - entity: sensor.consommation_jour
-            name: Consommation Jour
-            secondary_info: last-changed
+            yaxis_id: consommation_axis
+            type: column
+            name: Consommation
+            group_by:
+              func: last
+              duration: 1d
+            statistics:
+              type: state
+            show:
+              extremas: true
           - entity: sensor.cout_consommation_jour
-            name: Coût Consommation Jour
-            secondary_info: last-changed
-          - type: section
-            label: Suivi Mensuel
-          - entity: sensor.consommation_mois
-            name: Consommation Mois
-            secondary_info: last-changed
-          - entity: sensor.cout_consommation_mois
-            name: Coût Consommation Mois
-            secondary_info: last-changed
-          - type: section
-            label: Suivi Annuel
-          - entity: sensor.consommation_annee
-            name: Consommation Année
-            secondary_info: last-changed
-          - entity: sensor.cout_consommation_annee
-            name: Coût Année
-            secondary_info: last-changed
-      - type: entities
-        title: ❄️ Climatisation
-        show_header_toggle: false
-        state_color: true
-        entities:
-          - type: section
-            label: Temps Réel
-          - entity: sensor.ikea_inspelning_smart_plug_power
-            name: Puissance instantanée
-            secondary_info: last-changed
-          - type: section
-            label: Analyse des Coûts
-          - entity: sensor.salle_de_bain_energie_aujourd_hui
-            name: Consommation Jour
-            secondary_info: last-changed
-          - entity: sensor.cout_salle_de_bain_energie_aujourd_hui
-            name: Coût Jour
-            secondary_info: last-changed
-          - entity: sensor.ikea_inspelning_smart_plug_energy
-            name: Consommation total
-            secondary_info: last-changed
-          - entity: sensor.cout_salle_de_bain
-            name: Coût Total
-            secondary_info: last-changed
-  - type: custom:apexcharts-card
-    apex_config:
-      chart:
-        height: 300px
-    graph_span: 15d
-    span:
-      end: day
-    show:
-      last_updated: true
-    header:
-      show: true
-      title: Consommation Électrique et Coût Journalier
-      show_states: true
-      colorize_states: true
-    yaxis:
-      - id: consommation_axis
-        align_to: 1
-        decimals: 2
-        apex_config:
-          tickAmount: 5
-      - id: cout_axis
-        opposite: true
-        align_to: 1
-        decimals: 2
-        apex_config:
-          tickAmount: 5
-    series:
-      - entity: sensor.consommation_jour
-        yaxis_id: consommation_axis
-        type: column
-        name: Consommation
-        group_by:
-          func: last
-          duration: 1d
-        statistics:
-          type: state
-        show:
-          extremas: true
-      - entity: sensor.cout_consommation_jour
-        yaxis_id: cout_axis
-        type: line
-        name: Coût
-        group_by:
-          func: last
-          duration: 1d
-        statistics:
-          type: state
-        show:
-          extremas: true
+            yaxis_id: cout_axis
+            type: line
+            name: Coût
+            group_by:
+              func: last
+              duration: 1d
+            statistics:
+              type: state
+            show:
+              extremas: true
+cards: []

@@ -1,5 +1,7 @@
 theme: Backend-selected
 title: Famille
+max_columns: 4
+path: famille
 icon: mdi:human-male-female-child
 visible:
   - user: c7447f6dbd744a97a1aafc8d1d5d6305
@@ -7,69 +9,102 @@ visible:
   - user: 2ff2cdef1e4a45709c03849f9cf9420a
 badges:
   - type: entity
+    show_name: true
+    show_state: true
+    show_icon: true
     entity: input_select.modes_maison
-    display_type: complete
+    state_content:
+      - state
+      - last_changed
   - type: entity
+    show_name: true
+    show_state: true
+    show_icon: true
     entity: group.persons
-    display_type: complete
+    state_content:
+      - state
+      - last_changed
   - type: entity
+    show_name: false
+    show_state: true
+    show_icon: true
     entity: person.guillaume
     show_entity_picture: true
+    state_content:
+      - state
+      - last_changed
   - type: entity
+    show_name: false
+    show_state: true
+    show_icon: true
     entity: person.nelly
     show_entity_picture: true
+    state_content:
+      - state
+      - last_changed
   - type: entity
+    show_name: false
+    show_state: true
+    show_icon: true
     entity: person.oscar
     show_entity_picture: true
+    state_content:
+      - state
+      - last_changed
 cards: []
 type: sections
 sections:
   - type: grid
     cards:
-      - type: vertical-stack
-        cards:
-          - features:
-              - type: area-controls
-                controls:
-                  - light
-                  - cover-blind
-            alert_classes:
-              - window
-              - motion
-            sensor_classes:
-              - temperature
-              - humidity
-            display_type: compact
-            type: area
-            area: chambre_d_oscar
-            name: Oscar
-            features_position: inline
-            tap_action:
-              action: navigate
-              navigation_path: /lovelace/oscar
-            vertical: false
-          - features:
-              - type: area-controls
-                controls:
-                  - light
-                  - cover-blind
-            alert_classes:
-              - window
-              - motion
-            sensor_classes:
-              - temperature
-              - humidity
-            display_type: compact
-            type: area
-            area: chambre_d_eliott
-            features_position: inline
-            vertical: false
-            name: "Eliott "
-            tap_action:
-              action: navigate
-              navigation_path: /lovelace/eliott
+      - type: heading
+        heading: 🏠 Accès Chambres
+        heading_style: title
+      - type: area
+        area: chambre_d_eliott
+        name: "Eliott "
+        display_type: compact
+        features_position: inline
+        vertical: false
+        features:
+          - type: area-controls
+            controls:
+              - light
+              - cover-blind
+        alert_classes:
+          - window
+          - motion
+        sensor_classes:
+          - temperature
+          - humidity
+        tap_action:
+          action: navigate
+          navigation_path: /lovelace/eliott
+      - type: area
+        area: chambre_d_oscar
+        name: Oscar
+        display_type: compact
+        features_position: inline
+        vertical: false
+        features:
+          - type: area-controls
+            controls:
+              - light
+              - cover-blind
+        alert_classes:
+          - window
+          - motion
+        sensor_classes:
+          - temperature
+          - humidity
+        tap_action:
+          action: navigate
+          navigation_path: /lovelace/oscar
+  - type: grid
+    cards:
+      - type: heading
+        heading: ⚙️ Système
+        heading_style: title
       - type: entities
-        title: ⚙️ Système
         show_header_toggle: false
         state_color: true
         entities:
@@ -82,11 +117,15 @@ sections:
             icon: mdi:sync
             secondary_info: state
           - entity: button.change_presence_nut_oscar
-            name:
-              type: entity
+            name: État Nut Oscar
             secondary_info: state
           - entity: input_boolean.oscar_trace_zone
             secondary_info: last-changed
+  - type: grid
+    cards:
+      - type: heading
+        heading: 🧭 Proximité
+        heading_style: title
       - type: entities
         show_header_toggle: false
         state_color: true
@@ -97,7 +136,27 @@ sections:
             name: Distance
           - entity: sensor.maison_nearest_direction_of_travel
             name: Direction
-    column_span: 4
+  - type: grid
+    column_span: 1
+    cards:
+      - type: heading
+        heading: 📊 Analyse Smartphones
+      - type: history-graph
+        entities:
+          - entity: sensor.oneplus_8t_battery_level
+            name: Guillaume
+          - entity: sensor.samsung_e10_battery_level
+            name: Nelly
+          - entity: sensor.samsung_a55_battery_level
+            name: Oscar
+          - entity: sensor.lewis_battery
+          - entity: binary_sensor.oneplus_8t_device_locked
+            name: Guillaume (Lock)
+          - entity: binary_sensor.samsung_e10_device_locked
+            name: Nelly (Lock)
+          - entity: binary_sensor.samsung_a55_device_locked
+            name: Oscar (Lock)
+        hours_to_show: 12
   - type: grid
     cards:
       - type: vertical-stack
@@ -303,88 +362,6 @@ sections:
       - type: vertical-stack
         cards:
           - type: entities
-            show_header_toggle: false
-            state_color: true
-            entities:
-              - entity: person.oscar
-                secondary_info: last-changed
-              - entity: input_boolean.oscar_active
-                name: Clés Actives
-                secondary_info: last-changed
-              - type: section
-                label: ⚖️ Santé
-              - show_name: true
-                show_icon: false
-                show_state: true
-                type: custom:hui-glance-card
-                entities:
-                  - entity: sensor.poids_oscar
-                    name: Poids
-                  - entity: input_number.poids_oscar_difference
-                    name: Écart
-                  - entity: sensor.imc_label_oscar
-                    name: IMC
-                  - entity: sensor.imc_oscar
-                    name: IMC (val)
-                columns: 4
-              - type: section
-                label: 📍 Localisation
-              - entity: device_tracker.samsung_a55
-                name: Smartphone (GPS)
-                secondary_info: last-changed
-              - entity: sensor.samsung_a55_geocoded_location
-                name: Adresse actuelle
-                secondary_info: last-changed
-              - entity: sensor.maison_distance_oscar
-                name: Distance maison
-                secondary_info: last-changed
-              - entity: input_boolean.oscar_trace_zone
-                name: Activer Tracking Oscar
-                secondary_info: last-changed
-              - type: section
-                label: 📲 État du Smartphone
-              - entity: sensor.samsung_a55_battery_level
-                name: Batterie
-                secondary_info: last-changed
-              - entity: sensor.samsung_a55_battery_state
-                name: État de charge
-                secondary_info: last-changed
-              - entity: sensor.samsung_a55_detected_activity
-                name: Activité détectée
-                secondary_info: last-changed
-              - type: section
-                label: ⚙️ Accessoires
-              - entity: device_tracker.nut_vert_presence
-                name: Nut Vert (Présence)
-                secondary_info: last-changed
-              - entity: button.change_presence_nut_oscar
-                name: Forcer état Nut Vert
-                icon: mdi:sync
-          - type: map
-            entities:
-              - entity: person.oscar
-            hours_to_show: 27
-            theme_mode: auto
-          - type: history-graph
-            entities:
-              - entity: sensor.oneplus_8t_battery_level
-                name: Guillaume
-              - entity: sensor.samsung_e10_battery_level
-                name: Nelly
-              - entity: sensor.samsung_a55_battery_level
-                name: Oscar
-              - entity: sensor.lewis_battery
-              - entity: binary_sensor.oneplus_8t_device_locked
-                name: Guillaume
-              - entity: binary_sensor.samsung_e10_device_locked
-                name: Nelly
-              - entity: binary_sensor.samsung_a55_device_locked
-                name: Oscar
-            hours_to_show: 12
-            title: Smartphones
-      - type: vertical-stack
-        cards:
-          - type: entities
             title: 🐈‍⬛ Lewis
             show_header_toggle: false
             state_color: true
@@ -462,7 +439,3 @@ sections:
                 name: N° Téléphone
             title: 🫥 Invités
     column_span: 4
-  - type: grid
-    cards: []
-max_columns: 4
-path: famille

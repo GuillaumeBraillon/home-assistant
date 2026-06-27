@@ -1,137 +1,100 @@
 title: Informations
 path: informations
 icon: mdi:information-box-outline
+type: sections
+max_columns: 4
 visible:
   - user: c7447f6dbd744a97a1aafc8d1d5d6305
   - user: 2e7b70c51f3e453cb5ec7131df051882
+header:
+  layout: center
+  badges_position: bottom
+  badges_wrap: scroll
 badges:
   - type: entity
+    show_name: true
+    show_state: true
+    show_icon: true
     entity: input_select.modes_maison
-    display_type: complete
+    state_content:
+      - state
+      - last_changed
   - type: entity
+    show_name: true
+    show_state: true
+    show_icon: true
     entity: group.persons
-    display_type: complete
-    show_entity_picture: false
+    state_content:
+      - state
+      - last_changed
   - type: entity
+    show_name: false
+    show_state: true
+    show_icon: true
     entity: person.guillaume
     show_entity_picture: true
+    state_content:
+      - state
+      - last_changed
   - type: entity
+    show_name: false
+    show_state: true
+    show_icon: true
     entity: person.nelly
     show_entity_picture: true
+    state_content:
+      - state
+      - last_changed
   - type: entity
+    show_name: false
+    show_state: true
+    show_icon: true
     entity: person.oscar
     show_entity_picture: true
-cards:
-  - type: vertical-stack
+    state_content:
+      - state
+      - last_changed
+sections:
+  - icon: mdi:calendar-clock
     cards:
-      - type: entities
-        entities:
-          - entity: automation.tts_agenda_famille_vacances
-            secondary_info: last-triggered
-            name: "[TTS] Agenda Famille Salon "
-          - entity: automation.tts_agenda_famille_aujourd_hui_2
-            secondary_info: last-triggered
-            name: "[TTS] Agenda (Parents)"
-          - entity: automation.reveil_guillaume_2
-            secondary_info: last-triggered
-      - type: conditional
-        conditions:
-          - condition: state
-            entity: input_text.notifications
-            state_not: unknown
-        card:
-          type: markdown
-          content: "{{ states('input_text.notifications') }}"
       - type: markdown
+        theme: macOS Theme
         content: >-
           {% set calendar_state = states('calendar.calendrier_scolaire_zone_a')
-          %}
-
-          {% if calendar_state != 'unavailable' and calendar_state !=
-          'unknown'%}
-
-          {% set school_calendar =
+          %} {% if calendar_state != 'unavailable' and calendar_state !=
+          'unknown'%} {% set school_calendar =
           state_attr('calendar.calendrier_scolaire_zone_a', 'message') |
-          default('') %}
-
-          {% set school_start_time =
+          default('') %} {% set school_start_time =
           as_timestamp(state_attr('calendar.calendrier_scolaire_zone_a',
-          'start_time')) | default(0) %}
-
-          {% set school_end_time =
+          'start_time')) | default(0) %} {% set school_end_time =
           as_timestamp(state_attr('calendar.calendrier_scolaire_zone_a',
-          'end_time')) | default(0) %}
-
-          {% set holiday_calendar =
+          'end_time')) | default(0) %} {% set holiday_calendar =
           state_attr('calendar.jours_feries_en_france', 'message') | default('')
-          %}
-
-          {% set holiday_start_time =
+          %} {% set holiday_start_time =
           as_timestamp(state_attr('calendar.jours_feries_en_france',
-          'start_time')) | default(0) %}
-
-          {% set holiday_end_time =
+          'start_time')) | default(0) %} {% set holiday_end_time =
           as_timestamp(state_attr('calendar.jours_feries_en_france',
-          'end_time')) | default(0) %}
-
-          {% set family_calendar = state_attr('calendar.famille', 'message') |
-          default('') %}
-
-          {% set family_start_time = as_timestamp(state_attr('calendar.famille',
-          'start_time')) | default(0) %}
-
-          {% set family_end_time = as_timestamp(state_attr('calendar.famille',
-          'end_time')) | default(0) %}
-
-          {% set current_time = as_timestamp(now()) | default(0) %}
-
-          {% set family_start_time_formatted = 
-
+          'end_time')) | default(0) %} {% set family_calendar =
+          state_attr('calendar.famille', 'message') | default('') %} {% set
+          family_start_time = as_timestamp(state_attr('calendar.famille',
+          'start_time')) | default(0) %} {% set family_end_time =
+          as_timestamp(state_attr('calendar.famille', 'end_time')) | default(0)
+          %} {% set current_time = as_timestamp(now()) | default(0) %} {% set
+          family_start_time_formatted =
           as_timestamp(state_attr('calendar.famille', 'start_time')) |
-          timestamp_custom('%A %-d %B') | 
-
-          replace('Monday', 'Lundi') | 
-
-          replace('Tuesday', 'Mardi') | 
-
-          replace('Wednesday', 'Mercredi') | 
-
-          replace('Thursday', 'Jeudi') | 
-
-          replace('Friday', 'Vendredi') | 
-
-          replace('Saturday', 'Samedi') | 
-
-          replace('Sunday', 'Dimanche') | 
-
-          replace('January', 'janvier') | 
-
-          replace('February', 'février') | 
-
-          replace('March', 'mars') | 
-
-          replace('April', 'avril') | 
-
-          replace('May', 'mai') | 
-
-          replace('June', 'juin') | 
-
-          replace('July', 'juillet') | 
-
-          replace('August', 'août') | 
-
-          replace('September', 'septembre') | 
-
-          replace('October', 'octobre') | 
-
-          replace('November', 'novembre') | 
-
+          timestamp_custom('%A %-d %B') | replace('Monday', 'Lundi') |
+          replace('Tuesday', 'Mardi') | replace('Wednesday', 'Mercredi') |
+          replace('Thursday', 'Jeudi') | replace('Friday', 'Vendredi') |
+          replace('Saturday', 'Samedi') | replace('Sunday', 'Dimanche') |
+          replace('January', 'janvier') | replace('February', 'février') |
+          replace('March', 'mars') | replace('April', 'avril') | replace('May',
+          'mai') | replace('June', 'juin') | replace('July', 'juillet') |
+          replace('August', 'août') | replace('September', 'septembre') |
+          replace('October', 'octobre') | replace('November', 'novembre') |
           replace('December', 'décembre') %}     
 
-
           # Agenda
-
-          **{{ family_calendar }}**, {% if is_state('calendar.famille', 'on')
+           **{{ family_calendar }}**, {% if is_state('calendar.famille', 'on')
           %}{% set remaining_time = family_end_time - current_time %}{% if
           state_attr('calendar.famille', 'all_day') %}{% if (remaining_time /
           86400) | int == 0 %}toute la journée{% else %}se termine dans {{
@@ -164,53 +127,239 @@ cards:
           {{ holiday_start_time | timestamp_custom('%d/%m/%Y') }}.{% else %} se
           terminent dans {{ ((holiday_end_time - current_time) / 86400) | int }}
           jours, le {{ holiday_end_time | timestamp_custom('%d/%m/%Y') }}.{%
-          endif %}
-
-          {% endif %}
-        theme: macOS Theme
-      - show_name: true
-        show_icon: true
-        type: button
-        entity: button.dashboard
-        show_state: true
-        tap_action:
-          action: toggle
-      - show_name: true
-        show_icon: true
-        type: button
-        tap_action:
-          action: more-info
-        entity: automation.tts_agenda_famille_aujourd_hui_2
-        name: Agenda Guillaume (Parents)
-        show_state: true
-        icon: mdi:calendar-account
-        icon_height: 50px
-      - show_name: true
-        show_icon: true
-        type: button
-        icon: mdi:chat
-        show_state: true
-        name: Agenda du jour (Séjour)
+          endif %} {% endif %}
+      - type: conditional
+        conditions:
+          - condition: state
+            entity: input_text.notifications
+            state_not: unknown
+          - condition: state
+            entity: input_text.notifications
+            state_not: unavailable
+        card:
+          type: markdown
+          content: "{{ states('input_text.notifications') }}"
+      - type: grid
+        columns: 3
+        square: false
+        cards:
+          - type: button
+            entity: button.dashboard
+            name: Dashboard
+            show_name: true
+            show_icon: true
+            show_state: false
+            tap_action:
+              action: toggle
+          - type: button
+            entity: automation.tts_agenda_famille_aujourd_hui_2
+            name: Parents
+            icon: mdi:calendar-account
+            show_name: true
+            show_icon: true
+            show_state: false
+            tap_action:
+              action: more-info
+          - type: button
+            entity: automation.tts_agenda_famille_vacances
+            name: Séjour
+            icon: mdi:chat
+            show_name: true
+            show_icon: true
+            show_state: false
+            tap_action:
+              action: more-info
+  - icon: mdi:calendar-clock
+    cards:
+      - type: heading
+        icon: ""
+        heading: 🗣️ Annonces
+        heading_style: title
+      - type: tile
+        grid_options:
+          columns: 12
+          rows: 1
         entity: automation.tts_agenda_famille_vacances
-        icon_height: 50px
-        tap_action:
-          action: more-info
-      - type: entities
-        entities:
-          - entity: calendar.calendrier_scolaire_zone_a
-            secondary_info: last-changed
-          - entity: binary_sensor.tomorrow_holidays_zone_a
-            secondary_info: last-changed
-          - entity: binary_sensor.today_is_holiday
-            secondary_info: last-changed
-          - entity: binary_sensor.tomorrow_is_holiday
-            secondary_info: last-changed
-          - entity: binary_sensor.today_is_weekend
-            secondary_info: last-changed
-          - entity: binary_sensor.tomorrow_is_weekend
-            secondary_info: last-changed
-          - entity: sensor.prochain_jour_ferie
-            name: Prochain Jour férié
-            secondary_info: last-changed
-        title: Calendrier
-        state_color: true
+        name: Agenda Famille
+        icon: mdi:volume-high
+        vertical: false
+        icon_tap_action:
+          action: perform-action
+          perform_action: automation.trigger
+          target:
+            entity_id: automation.tts_agenda_famille_vacances
+          data:
+            skip_condition: true
+        features:
+          - type: toggle
+        features_position: inline
+      - type: tile
+        grid_options:
+          columns: 12
+          rows: 1
+        entity: automation.tts_agenda_famille_aujourd_hui_2
+        name: Agenda Parents
+        icon: mdi:volume-high
+        vertical: false
+        icon_tap_action:
+          action: perform-action
+          perform_action: automation.trigger
+          target:
+            entity_id: automation.tts_agenda_famille_aujourd_hui_2
+          data:
+            skip_condition: true
+        features:
+          - type: toggle
+        features_position: inline
+      - type: tile
+        grid_options:
+          columns: 12
+          rows: 1
+        entity: input_boolean.diner
+        icon: mdi:silverware-fork-knife
+        state_content:
+          - state
+          - last_changed
+        vertical: false
+        features:
+          - type: toggle
+        features_position: inline
+      - type: tile
+        grid_options:
+          columns: 12
+          rows: 1
+        entity: input_boolean.shower
+        name: Douche
+        icon: mdi:shower
+        state_content:
+          - state
+          - last_changed
+        vertical: false
+        features:
+          - type: toggle
+        features_position: inline
+      - type: tile
+        grid_options:
+          columns: 12
+          rows: 1
+        entity: input_boolean.school
+        name: École
+        icon: mdi:school
+        state_content:
+          - state
+          - last_changed
+        vertical: false
+        features:
+          - type: toggle
+        features_position: inline
+      - type: tile
+        grid_options:
+          columns: 12
+          rows: 1
+        entity: input_boolean.sleeping
+        name: Sommeil
+        icon: mdi:bed
+        state_content:
+          - state
+          - last_changed
+        vertical: false
+        features:
+          - type: toggle
+        features_position: inline
+      - type: tile
+        grid_options:
+          columns: 12
+          rows: 1
+        entity: automation.reveil_guillaume_2
+        name: Réveil Guillaume
+        icon: mdi:alarm
+        vertical: false
+        icon_tap_action:
+          action: perform-action
+          perform_action: automation.trigger
+          target:
+            entity_id: automation.reveil_guillaume_2
+          data:
+            skip_condition: true
+        features:
+          - type: toggle
+        features_position: inline
+  - icon: mdi:calendar-month
+    cards:
+      - type: heading
+        heading: 📆 Calendriers & Éphémérides
+        heading_style: title
+      - type: tile
+        grid_options:
+          columns: 12
+          rows: 1
+        entity: calendar.calendrier_scolaire_zone_a
+        name: Zone A
+        state_content:
+          - start_time
+          - description
+        vertical: false
+        features_position: bottom
+      - type: tile
+        grid_options:
+          columns: 12
+          rows: 1
+        entity: sensor.prochain_jour_ferie
+        name: Prochain Férié
+        state_content: state
+        vertical: false
+        features:
+          - type: bar-gauge
+        features_position: inline
+      - type: tile
+        grid_options:
+          columns: 12
+          rows: 1
+        entity: binary_sensor.tomorrow_holidays_zone_a
+        name: Vacances demain
+        state_content:
+          - state
+          - last_changed
+        vertical: false
+      - type: tile
+        grid_options:
+          columns: 12
+          rows: 1
+        entity: binary_sensor.today_is_holiday
+        name: Férié aujourd'hui
+        state_content:
+          - state
+          - last_changed
+        vertical: false
+      - type: tile
+        grid_options:
+          columns: 12
+          rows: 1
+        entity: binary_sensor.tomorrow_is_holiday
+        name: Férié demain
+        state_content:
+          - state
+          - last_changed
+        vertical: false
+      - type: tile
+        grid_options:
+          columns: 12
+          rows: 1
+        entity: binary_sensor.today_is_weekend
+        name: Week-end aujourd'hui
+        state_content:
+          - state
+          - last_changed
+        vertical: false
+      - type: tile
+        grid_options:
+          columns: 12
+          rows: 1
+        entity: binary_sensor.tomorrow_is_weekend
+        name: Week-end demain
+        state_content:
+          - state
+          - last_changed
+        vertical: false
+    column_span: 1
+cards: []
