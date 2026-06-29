@@ -384,3 +384,7 @@ visible:
   - user: c7447f6dbd744a97a1aafc8d1d5d6305
   - user: 2e7b70c51f3e453cb5ec7131df051882
 cards: []
+header:
+  layout: center
+  badges_position: bottom
+  badges_wrap: scroll

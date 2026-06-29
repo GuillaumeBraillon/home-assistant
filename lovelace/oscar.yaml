@@ -48,53 +48,81 @@ badges:
       - last_changed
 sections:
   - type: grid
+    column_span: 1
     cards:
       - type: heading
-        heading: 👤 Statut & Santé
-      - type: entities
-        state_color: true
-        show_header_toggle: false
-        entities:
-          - entity: person.oscar
-            secondary_info: last-changed
-          - entity: device_tracker.samsung_a55
-            name: Téléphone (GPS)
-            secondary_info: last-updated
-          - entity: sensor.samsung_a55_geocoded_location
-            name: Adresse actuelle
-            secondary_info: last-changed
-          - entity: input_boolean.oscar_active
-            name: Statut Actif
-            secondary_info: last-changed
+        heading: 👤 Oscar
+      - type: tile
+        grid_options:
+          columns: 12
+          rows: 1
+        entity: person.oscar
+        show_entity_picture: true
+        state_content:
+          - state
+          - last_changed
+        vertical: false
+        features_position: bottom
+      - type: tile
+        grid_options:
+          columns: 12
+          rows: 1
+        entity: input_boolean.oscar_active
+        name: Statut Actif
+        state_content:
+          - state
+          - last_changed
+        vertical: false
+        features:
+          - type: toggle
+        features_position: inline
+      - type: heading
+        heading: ⚖️ Santé
       - show_name: true
-        show_icon: true
+        show_icon: false
         show_state: true
-        type: glance
-        columns: 4
+        type: custom:hui-glance-card
         entities:
           - entity: sensor.poids_oscar
             name: Poids
-            icon: mdi:scale-bathroom
           - entity: input_number.poids_oscar_difference
             name: Écart
-            icon: mdi:arrow-left-right
-          - entity: sensor.imc_oscar
-            name: Valeur
-            icon: mdi:calculator
           - entity: sensor.imc_label_oscar
-            name: Tranche
-            icon: mdi:label-outline
-      - type: map
+            name: IMC
+          - entity: sensor.imc_oscar
+            name: IMC (val)
+        state_color: true
+        columns: 4
+      - type: heading
+        heading: 📍 Localisation
+      - type: tile
         grid_options:
-          rows: 5
-          columns: full
-        show_all: false
+          columns: 12
+          rows: 1
+        entity: device_tracker.samsung_a55
+        name: Téléphone (GPS)
+        state_content:
+          - state
+          - last_changed
+        vertical: false
+        features_position: bottom
+      - type: tile
+        grid_options:
+          columns: 12
+          rows: 1
+        entity: sensor.samsung_a55_geocoded_location
+        name: Adresse
+        state_content:
+          - state
+          - last_changed
+        vertical: false
+        features_position: bottom
+      - type: map
+        auto_fit: true
         entities:
           - entity: person.oscar
-        hours_to_show: 12
-        auto_fit: true
-        fit_zones: true
         theme_mode: auto
+        hours_to_show: 12
   - type: grid
     cards:
       - type: heading
@@ -114,7 +142,7 @@ sections:
         vertical: false
         features:
           - type: toggle
-        features_position: bottom
+        features_position: inline
       - type: tile
         grid_options:
           columns: full
@@ -142,7 +170,7 @@ sections:
         vertical: false
         features:
           - type: toggle
-        features_position: bottom
+        features_position: inline
       - type: tile
         grid_options:
           columns: full
@@ -155,37 +183,78 @@ sections:
         features:
           - type: cover-open-close
           - type: cover-position
-          - type: cover-position-favorite
         features_position: bottom
   - type: grid
+    column_span: 1
     cards:
       - type: heading
-        heading: 🎮 Gaming & Multimédia
-      - type: entities
-        state_color: true
-        show_header_toggle: false
-        entities:
-          - entity: binary_sensor.oscope4908
-            name: En Ligne
-            secondary_info: last-changed
-          - entity: binary_sensor.oscope4908_in_game
-            name: En Jeu
-            secondary_info: last-changed
-          - entity: sensor.oscope4908_now_playing
-            name: Activité Actuelle
-            secondary_info: last-changed
-          - entity: sensor.oscope4908_status
-            name: Statut Statisique
-            secondary_info: last-changed
-          - entity: sensor.oscope4908_gamer_score
-            name: Gamerscore
-            secondary_info: last-changed
-          - entity: binary_sensor.oscope4908_subscribed_to_xbox_game_pass
-            name: Abonnement Game Pass
-            secondary_info: last-changed
-          - entity: sensor.oscope4908_last_online
-            name: Dernier vu le
-            secondary_info: last-changed
+        heading: 🎮 Xbox Statut
+      - type: tile
+        grid_options:
+          columns: 6
+          rows: 1
+        entity: binary_sensor.oscope4908
+        name: En Ligne
+        show_entity_picture: true
+        state_content:
+          - state
+          - last_changed
+        vertical: false
+        features_position: bottom
+      - type: tile
+        grid_options:
+          columns: 6
+          rows: 1
+        entity: binary_sensor.oscope4908_in_game
+        name: En Jeu
+        show_entity_picture: false
+        state_content:
+          - state
+          - last_changed
+        vertical: false
+        features_position: bottom
+      - type: tile
+        grid_options:
+          columns: 12
+          rows: 1
+        entity: sensor.oscope4908_now_playing
+        name: Activité Actuelle
+        state_content:
+          - state
+          - last_changed
+        vertical: false
+        features_position: bottom
+      - type: tile
+        grid_options:
+          columns: 12
+          rows: 1
+        entity: sensor.oscope4908_status
+        show_entity_picture: false
+        hide_state: false
+        vertical: false
+        features_position: bottom
+      - type: tile
+        grid_options:
+          columns: 6
+          rows: 1
+        entity: sensor.oscope4908_gamer_score
+        name: Gamerscore
+        state_content:
+          - state
+          - last_changed
+        vertical: false
+        features_position: bottom
+      - type: tile
+        grid_options:
+          columns: 6
+          rows: 1
+        entity: sensor.oscope4908_last_online
+        name: Dernier vu
+        state_content:
+          - state
+          - last_changed
+        vertical: false
+        features_position: bottom
       - type: custom:apexcharts-card
         apex_config:
           chart:
@@ -215,7 +284,7 @@ sections:
               extremas: true
               as_duration: hour
             type: column
-            name: Durée
+            name: Durée
             group_by:
               func: last
               duration: 1d
@@ -228,17 +297,21 @@ sections:
                 color: orangered
               - value: 6
                 color: darkred
+      - type: heading
+        heading: 📺 Multimédia & Contrôle
       - type: media-control
         entity: media_player.google_home_oscar
         grid_options:
-          columns: full
+          columns: 12
       - type: media-control
         entity: media_player.xbox
         grid_options:
-          columns: full
+          columns: 12
       - type: custom:love-lock-card
         popup: REMOVED
         REMOVED: REMOVED
+        grid_options:
+          columns: 12
         cards:
           - type: tile
             entity: automation.tts_notification_xbox_on_2
@@ -246,72 +319,215 @@ sections:
             icon: mdi:bullhorn-variant-outline
             tap_action:
               action: toggle
+            vertical: false
+            features_position: bottom
   - type: grid
+    column_span: 1
     cards:
       - type: heading
-        heading: 📱 Smartphone État
-      - show_name: true
-        show_icon: true
-        show_state: true
-        type: glance
-        columns: 3
-        entities:
-          - entity: sensor.samsung_a55_battery_level
-            name: Batterie
-          - entity: binary_sensor.samsung_a55_is_charging
-            name: En Charge
-          - entity: sensor.samsung_a55_internal_storage
-            name: Stockage
-          - entity: sensor.samsung_a55_battery_temperature
-            name: Temp. Batt
-          - entity: sensor.samsung_a55_battery_health
-            name: Santé
-          - entity: sensor.samsung_a55_remaining_charge_time
-            name: Restant
-      - type: entities
-        show_header_toggle: false
-        entities:
-          - entity: sensor.samsung_a55_detected_activity
-            name: Activité Détectée
-            secondary_info: last-changed
-          - entity: sensor.samsung_a55_steps_sensor
-            name: Nombre de Pas
-            secondary_info: last-changed
-          - entity: sensor.samsung_a55_daily_distance
-            name: Distance du jour
-            secondary_info: last-changed
-          - entity: sensor.samsung_a55_sleep_confidence
-            name: Indice Sommeil
-            secondary_info: last-changed
-          - entity: sensor.samsung_a55_sleep_segment
-            name: Cycle Sommeil
-            secondary_info: last-changed
-        state_color: true
-      - type: entities
-        show_header_toggle: false
-        entities:
-          - entity: sensor.samsung_a55_wi_fi_connection
-            name: Point d'accès Wi-Fi
-            secondary_info: last-changed
-          - entity: sensor.samsung_a55_wi_fi_signal_strength
-            name: Signal Wi-Fi
-            secondary_info: last-changed
-          - entity: binary_sensor.samsung_a55_mobile_data
-            name: Data Mobile actives
-            secondary_info: last-changed
-          - entity: sensor.samsung_a55_network_type
-            name: Type de couverture
-            secondary_info: last-changed
-          - entity: sensor.samsung_a55_ringer_mode
-            name: Profil Sonnerie
-            secondary_info: last-changed
-          - entity: sensor.samsung_a55_last_used_app
-            name: Dernière application
-            secondary_info: last-changed
-          - entity: sensor.samsung_a55_next_alarm
-            name: Alarme programmée
-            secondary_info: last-changed
-        state_color: true
+        heading: 📲 État du Smartphone
+      - type: tile
+        grid_options:
+          columns: 6
+          rows: 1
+        entity: sensor.samsung_a55_battery_level
+        name: Batterie
+        state_content:
+          - state
+          - last_changed
+        vertical: false
+        features_position: bottom
+      - type: tile
+        grid_options:
+          columns: 6
+          rows: 1
+        entity: binary_sensor.samsung_a55_is_charging
+        name: En Charge
+        state_content:
+          - state
+          - last_changed
+        vertical: false
+        features_position: bottom
+      - type: tile
+        grid_options:
+          columns: 6
+          rows: 1
+        entity: sensor.samsung_a55_remaining_charge_time
+        name: Restant
+        state_content:
+          - state
+          - last_changed
+        vertical: false
+        features_position: bottom
+      - type: tile
+        grid_options:
+          columns: 6
+          rows: 1
+        entity: sensor.samsung_a55_battery_temperature
+        name: Temp. Batt
+        state_content:
+          - state
+          - last_changed
+        vertical: false
+        features_position: bottom
+      - type: tile
+        grid_options:
+          columns: 6
+          rows: 1
+        entity: sensor.samsung_a55_battery_health
+        name: Santé
+        state_content:
+          - state
+          - last_changed
+        vertical: false
+        features_position: bottom
+      - type: tile
+        grid_options:
+          columns: 6
+          rows: 1
+        entity: sensor.samsung_a55_internal_storage
+        name: Stockage
+        state_content:
+          - state
+          - last_changed
+        vertical: false
+        features_position: bottom
+      - type: heading
+        heading: 🏃 Activité & Sommeil
+      - type: tile
+        grid_options:
+          columns: 12
+          rows: 1
+        entity: sensor.samsung_a55_detected_activity
+        name: Activité Détectée
+        state_content:
+          - state
+          - last_changed
+        vertical: false
+        features_position: bottom
+      - type: tile
+        grid_options:
+          columns: 6
+          rows: 1
+        entity: sensor.samsung_a55_steps_sensor
+        name: Nombre de Pas
+        state_content:
+          - state
+          - last_changed
+        vertical: false
+        features_position: bottom
+      - type: tile
+        grid_options:
+          columns: 6
+          rows: 1
+        entity: sensor.samsung_a55_daily_distance
+        name: Distance du jour
+        state_content:
+          - state
+          - last_changed
+        vertical: false
+        features_position: bottom
+      - type: tile
+        grid_options:
+          columns: 6
+          rows: 1
+        entity: sensor.samsung_a55_sleep_confidence
+        name: Indice Sommeil
+        state_content:
+          - state
+          - last_changed
+        vertical: false
+        features_position: bottom
+      - type: tile
+        grid_options:
+          columns: 6
+          rows: 1
+        entity: sensor.samsung_a55_sleep_segment
+        name: Cycle Sommeil
+        state_content:
+          - state
+          - last_changed
+        vertical: false
+        features_position: bottom
+      - type: heading
+        heading: 🌐 Réseau & Système
+      - type: tile
+        grid_options:
+          columns: 12
+          rows: 1
+        entity: sensor.samsung_a55_wi_fi_connection
+        name: Point d'accès Wi-Fi
+        state_content:
+          - state
+          - last_changed
+        vertical: false
+        features_position: bottom
+      - type: tile
+        grid_options:
+          columns: 6
+          rows: 1
+        entity: sensor.samsung_a55_wi_fi_signal_strength
+        name: Signal Wi-Fi
+        state_content:
+          - state
+          - last_changed
+        vertical: false
+        features_position: bottom
+      - type: tile
+        grid_options:
+          columns: 6
+          rows: 1
+        entity: binary_sensor.samsung_a55_mobile_data
+        name: Data Mobile
+        state_content:
+          - state
+          - last_changed
+        vertical: false
+        features_position: bottom
+      - type: tile
+        grid_options:
+          columns: 6
+          rows: 1
+        entity: sensor.samsung_a55_network_type
+        name: Reseau
+        state_content:
+          - state
+          - last_changed
+        vertical: false
+        features_position: bottom
+      - type: tile
+        grid_options:
+          columns: 6
+          rows: 1
+        entity: sensor.samsung_a55_ringer_mode
+        name: Profil Sonnerie
+        state_content:
+          - state
+          - last_changed
+        vertical: false
+        features_position: bottom
+      - type: tile
+        grid_options:
+          columns: 12
+          rows: 1
+        entity: sensor.samsung_a55_last_used_app
+        name: Dernière application
+        state_content:
+          - state
+          - last_changed
+        vertical: false
+        features_position: bottom
+      - type: tile
+        grid_options:
+          columns: 12
+          rows: 1
+        entity: sensor.samsung_a55_next_alarm
+        name: Alarme programmée
+        state_content:
+          - state
+          - last_changed
+        vertical: false
+        features_position: bottom
 cards: []
 header:
   layout: center

@@ -48,47 +48,57 @@ badges:
       - last_changed
 sections:
   - type: grid
+    column_span: 1
     cards:
       - type: heading
-        heading: 👤 Statut & Santé
-      - type: entities
-        state_color: true
-        show_header_toggle: false
-        entities:
-          - entity: person.eliott
-            secondary_info: last-changed
-          - entity: device_tracker.gtr_presence
-            name: Montre Eliott
-            secondary_info: last-updated
+        heading: 👤 Eliott
+      - type: tile
+        grid_options:
+          columns: 12
+          rows: 1
+        entity: person.eliott
+        show_entity_picture: true
+        state_content:
+          - state
+          - last_changed
+        vertical: false
+        features_position: bottom
+      - type: tile
+        grid_options:
+          columns: 12
+          rows: 1
+        entity: device_tracker.gtr_presence
+        name: Montre Eliott
+        state_content:
+          - state
+          - last_changed
+        vertical: false
+        features_position: bottom
+      - type: heading
+        heading: ⚖️ Santé
       - show_name: true
-        show_icon: true
+        show_icon: false
         show_state: true
-        type: glance
-        columns: 4
+        type: custom:hui-glance-card
         entities:
           - entity: sensor.poids_eliott
             name: Poids
-            icon: mdi:scale-bathroom
           - entity: input_number.poids_eliott_difference
             name: Écart
-            icon: mdi:arrow-left-right
-          - entity: sensor.imc_eliott
-            name: Valeur
-            icon: mdi:calculator
           - entity: sensor.imc_label_eliott
-            name: Tranche
-            icon: mdi:label-outline
+            name: IMC
+          - entity: sensor.imc_eliott
+            name: IMC (val)
+        state_color: true
+        columns: 4
+      - type: heading
+        heading: 📍 Localisation
       - type: map
-        grid_options:
-          rows: 5
-          columns: full
-        show_all: false
+        auto_fit: true
         entities:
           - entity: person.eliott
-        hours_to_show: 12
-        auto_fit: true
-        fit_zones: true
         theme_mode: auto
+        hours_to_show: 12
   - type: grid
     cards:
       - type: heading
@@ -193,34 +203,87 @@ sections:
           data: {}
         features_position: inline
   - type: grid
+    column_span: 1
     cards:
       - type: heading
-        heading: 🎮 Gaming & Multimédia
-      - type: entities
-        state_color: true
-        show_header_toggle: false
-        entities:
-          - entity: binary_sensor.blusy38
-            name: En Ligne
-            secondary_info: last-changed
-          - entity: sensor.blusy38_last_online
-            name: Dernier vu le
-            secondary_info: last-changed
-          - entity: binary_sensor.blusy38_in_game
-            name: En Jeu
-            secondary_info: last-changed
-          - entity: sensor.blusy38_now_playing
-            name: Activité Actuelle
-            secondary_info: last-changed
-          - entity: sensor.blusy38_status
-            name: Statut Statisique
-            secondary_info: last-changed
-          - entity: sensor.blusy38_gamer_score
-            name: Gamerscore
-            secondary_info: last-changed
-          - entity: binary_sensor.blusy38_subscribed_to_xbox_game_pass
-            name: Abonnement Game Pass
-            secondary_info: last-changed
+        heading: 🎮 Xbox Statut
+      - type: tile
+        grid_options:
+          columns: 6
+          rows: 1
+        entity: binary_sensor.blusy38
+        name: En Ligne
+        state_content:
+          - state
+          - last_changed
+        vertical: false
+        features_position: bottom
+      - type: tile
+        grid_options:
+          columns: 6
+          rows: 1
+        entity: binary_sensor.blusy38_in_game
+        name: En Jeu
+        state_content:
+          - state
+          - last_changed
+        vertical: false
+        features_position: bottom
+      - type: tile
+        grid_options:
+          columns: 12
+          rows: 1
+        entity: sensor.blusy38_now_playing
+        name: Activité Actuelle
+        state_content:
+          - state
+          - last_changed
+        vertical: false
+        features_position: bottom
+      - type: tile
+        grid_options:
+          columns: 6
+          rows: 1
+        entity: sensor.blusy38_status
+        name: Statut
+        state_content:
+          - state
+          - last_changed
+        vertical: false
+        features_position: bottom
+      - type: tile
+        grid_options:
+          columns: 6
+          rows: 1
+        entity: sensor.blusy38_gamer_score
+        name: Gamerscore
+        state_content:
+          - state
+          - last_changed
+        vertical: false
+        features_position: bottom
+      - type: tile
+        grid_options:
+          columns: 6
+          rows: 1
+        entity: binary_sensor.blusy38_subscribed_to_xbox_game_pass
+        name: Game Pass
+        state_content:
+          - state
+          - last_changed
+        vertical: false
+        features_position: bottom
+      - type: tile
+        grid_options:
+          columns: 6
+          rows: 1
+        entity: sensor.blusy38_last_online
+        name: Dernier vu
+        state_content:
+          - state
+          - last_changed
+        vertical: false
+        features_position: bottom
       - type: custom:apexcharts-card
         apex_config:
           chart:
@@ -250,7 +313,7 @@ sections:
               extremas: true
               as_duration: hour
             type: column
-            name: Durée
+            name: Durée
             group_by:
               func: last
               duration: 1d
@@ -263,17 +326,21 @@ sections:
                 color: orangered
               - value: 6
                 color: darkred
+      - type: heading
+        heading: 📺 Multimédia & Contrôle
       - type: media-control
         entity: media_player.google_home_eliott
         grid_options:
-          columns: full
+          columns: 12
       - type: media-control
         entity: media_player.xbox
         grid_options:
-          columns: full
+          columns: 12
       - type: custom:love-lock-card
         popup: REMOVED
         REMOVED: REMOVED
+        grid_options:
+          columns: 12
         cards:
           - type: tile
             entity: automation.tts_notification_xbox_on_2
@@ -281,6 +348,8 @@ sections:
             icon: mdi:bullhorn-variant-outline
             tap_action:
               action: toggle
+            vertical: false
+            features_position: bottom
 cards: []
 header:
   layout: center
