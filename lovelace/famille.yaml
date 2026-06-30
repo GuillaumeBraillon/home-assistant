@@ -99,42 +99,103 @@ sections:
           action: navigate
           navigation_path: /lovelace/eliott
   - type: grid
+    column_span: 1
     cards:
       - type: heading
         heading: ⚙️ Système
-        heading_style: title
-      - type: entities
-        show_header_toggle: false
-        state_color: true
-        entities:
-          - entity: automation.zone_custom
-            name: Notifications Parents
-            icon: mdi:shield-lock-outline
-            secondary_info: last-triggered
-          - entity: button.refresh_jeedom_mqtt
-            name: Sync Jeedom
-            icon: mdi:sync
-            secondary_info: state
-          - entity: button.change_presence_nut_oscar
-            name: État Nut Oscar
-            secondary_info: state
-          - entity: input_boolean.oscar_trace_zone
-            secondary_info: last-changed
+      - type: tile
+        grid_options:
+          columns: 12
+          rows: 1
+        entity: automation.zone_custom
+        name: Notifications Parents
+        icon: mdi:shield-lock-outline
+        state_content:
+          - state
+          - last_changed
+        vertical: false
+        features:
+          - type: toggle
+        features_position: inline
+      - type: tile
+        grid_options:
+          columns: 12
+          rows: 1
+        entity: input_boolean.oscar_trace_zone
+        name:
+          - type: entity
+          - type: text
+            text: Oscar
+        state_content:
+          - state
+          - last_changed
+        vertical: false
+        features:
+          - type: toggle
+        features_position: inline
+      - type: tile
+        grid_options:
+          columns: 6
+          rows: 1
+        entity: button.refresh_jeedom_mqtt
+        name: Sync Jeedom
+        icon: mdi:sync
+        state_content:
+          - state
+        vertical: false
+        features:
+          - type: button
+        features_position: inline
+      - type: tile
+        grid_options:
+          columns: 6
+          rows: 1
+        entity: button.change_presence_nut_oscar
+        name: Changer État Nut Oscar
+        state_content:
+          - state
+        vertical: false
+        features:
+          - type: button
+        features_position: inline
   - type: grid
+    column_span: 1
     cards:
       - type: heading
         heading: 🧭 Proximité
-        heading_style: title
-      - type: entities
-        show_header_toggle: false
-        state_color: true
-        entities:
-          - entity: sensor.maison_appareil_le_plus_proche
-            name: Le plus proche
-          - entity: sensor.maison_distance_la_plus_proche
-            name: Distance
-          - entity: sensor.maison_nearest_direction_of_travel
-            name: Direction
+      - type: tile
+        grid_options:
+          columns: 12
+          rows: 1
+        entity: sensor.maison_appareil_le_plus_proche
+        name: Le plus proche
+        state_content:
+          - state
+          - last_changed
+        vertical: false
+        features_position: bottom
+      - type: tile
+        grid_options:
+          columns: 6
+          rows: 1
+        entity: sensor.maison_distance_la_plus_proche
+        name: Distance
+        state_content:
+          - state
+          - last_changed
+        vertical: false
+        features_position: bottom
+      - type: tile
+        grid_options:
+          columns: 6
+          rows: 1
+        entity: sensor.maison_nearest_direction_of_travel
+        name: Direction
+        state_content:
+          - state
+          - last_changed
+        vertical: false
+        features_position: bottom
   - type: grid
     column_span: 1
     cards:
@@ -174,10 +235,12 @@ sections:
         features_position: bottom
       - type: heading
         heading: ⚖️ Santé
-      - show_name: true
+      - type: glance
+        show_name: true
         show_icon: false
         show_state: true
-        type: custom:hui-glance-card
+        columns: 4
+        state_color: true
         entities:
           - entity: sensor.poids_guillaume
             name: Poids
@@ -187,12 +250,11 @@ sections:
             name: IMC
           - entity: sensor.imc_guillaume
             name: IMC (val)
-        state_color: true
-        columns: 4
-      - show_name: true
+      - type: glance
+        show_name: true
         show_icon: false
         show_state: true
-        type: custom:hui-glance-card
+        columns: 4
         entities:
           - entity: input_number.poids_guillaume_min
             name: Min
@@ -202,7 +264,64 @@ sections:
             name: Max
           - entity: sensor.poids_guillaume_perte
             name: Perte
-        columns: 4
+      - type: custom:apexcharts-card
+        header:
+          show: true
+          show_states: true
+          colorize_states: true
+        graph_span: 1y
+        update_interval: 1h
+        locale: fr
+        span:
+          end: day
+        series:
+          - entity: sensor.poids_guillaume
+            name: Poids
+            type: line
+            color: "#c2410c"
+            stroke_width: 3.5
+            curve: smooth
+            extend_to: now
+            statistics:
+              type: mean
+              period: day
+            show:
+              datalabels: true
+        apex_config:
+          chart:
+            toolbar:
+              show: false
+          dataLabels:
+            enabled: true
+            style:
+              colors:
+                - "#c2410c"
+            formatter: |
+              EVAL:function(val, opts) {
+                return opts.dataPointIndex % 50 === 0 ? val.toFixed(1) : '';
+              }
+          tooltip:
+            enabled: true
+          grid:
+            borderColor: "#9ca3af"
+            strokeDashArray: 4
+          xaxis:
+            labels:
+              show: true
+              datetimeUTC: false
+            tickAmount: 12
+          yaxis:
+            decimalsInFloat: 1
+          annotations:
+            yaxis:
+              - "y": 87
+                borderColor: "#1e3a8a"
+                strokeDashArray: 4
+                label:
+                  text: Objectif
+                  style:
+                    color: "#fff"
+                    background: "#1e3a8a"
       - type: heading
         heading: 📍 Localisation
       - type: tile
@@ -450,6 +569,64 @@ sections:
           - entity: sensor.poids_nelly_perte
             name: Perte
         columns: 4
+      - type: custom:apexcharts-card
+        header:
+          show: true
+          show_states: true
+          colorize_states: true
+        graph_span: 1y
+        update_interval: 1h
+        locale: fr
+        span:
+          end: day
+        series:
+          - entity: sensor.poids_nelly
+            name: Poids
+            type: line
+            color: "#c2410c"
+            stroke_width: 3.5
+            curve: smooth
+            extend_to: now
+            statistics:
+              type: mean
+              period: day
+            show:
+              datalabels: true
+        apex_config:
+          chart:
+            toolbar:
+              show: false
+          dataLabels:
+            enabled: true
+            style:
+              colors:
+                - "#c2410c"
+            formatter: |
+              EVAL:function(val, opts) {
+                return opts.dataPointIndex % 50 === 0 ? val.toFixed(1) : '';
+              }
+          tooltip:
+            enabled: true
+          grid:
+            borderColor: "#9ca3af"
+            strokeDashArray: 4
+          xaxis:
+            labels:
+              show: true
+              datetimeUTC: false
+            tickAmount: 12
+          yaxis:
+            decimalsInFloat: 1
+          annotations:
+            yaxis:
+              - "y": 69
+                borderColor: "#1e3a8a"
+                strokeDashArray: 4
+                label:
+                  text: Objectif
+                  style:
+                    color: "#fff"
+                    background: "#1e3a8a"
       - type: heading
         heading: 📍 Localisation
       - type: tile
