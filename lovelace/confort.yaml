@@ -64,42 +64,6 @@ sections:
         show_icon: true
         show_state: true
         type: glance
-        columns: 2
-        state_color: true
-        entities:
-          - entity: input_boolean.aeration_active
-            name: Active
-          - entity: binary_sensor.fenetres_maison
-            name: Fenêtres
-        theme: macOS Theme
-        card_mod:
-          style:
-            div.entity:
-              $: |
-                div {
-                  display: flex !important;
-                  flex-direction: column !important;
-                  align-items: center !important;
-                }
-                span.state {
-                  font-size: 14px !important;
-                  font-weight: bold !important;
-                  margin-top: 4px !important;
-                  display: block !important;
-                }
-            .: |
-              div.entity:nth-child(1)::after {
-                content: "{% set t = (now() - as_local(states.input_boolean.aeration_active.last_changed | default(now()))).total_seconds() %}{% if t < 60 %}Maintenant{% elif t < 3600 %}{{ (t / 60) | int }} min{% elif t < 86400 %}{{ (t / 3600) | int }} h{% else %}{{ (t / 86400) | int }} j{% endif %}";
-                font-size: 10px; color: var(--secondary-text-color); display: block; text-align: center; margin-top: 2px;
-              }
-              div.entity:nth-child(2)::after {
-                content: "{% set t = (now() - as_local(states.binary_sensor.fenetres_maison.last_changed | default(now()))).total_seconds() %}{% if t < 60 %}Maintenant{% elif t < 3600 %}{{ (t / 60) | int }} min{% elif t < 86400 %}{{ (t / 3600) | int }} h{% else %}{{ (t / 86400) | int }} j{% endif %}";
-                font-size: 10px; color: var(--secondary-text-color); display: block; text-align: center; margin-top: 2px;
-              }
-      - show_name: true
-        show_icon: true
-        show_state: true
-        type: glance
         title: 🌡️ Températures
         columns: 3
         state_color: true
@@ -189,10 +153,46 @@ sections:
               get_time('sensor.humidite_maison') | trim }}"; } div.entity::after
               { font-size: 10px; color: var(--secondary-text-color); display:
               block; text-align: center; margin-top: 2px; }
+      - show_name: true
+        show_icon: true
+        show_state: true
+        type: glance
+        columns: 2
+        state_color: true
+        entities:
+          - entity: input_boolean.aeration_active
+            name: Active
+          - entity: binary_sensor.fenetres_maison
+            name: Fenêtres
+        theme: macOS Theme
+        card_mod:
+          style:
+            div.entity:
+              $: |
+                div {
+                  display: flex !important;
+                  flex-direction: column !important;
+                  align-items: center !important;
+                }
+                span.state {
+                  font-size: 14px !important;
+                  font-weight: bold !important;
+                  margin-top: 4px !important;
+                  display: block !important;
+                }
+            .: |
+              div.entity:nth-child(1)::after {
+                content: "{% set t = (now() - as_local(states.input_boolean.aeration_active.last_changed | default(now()))).total_seconds() %}{% if t < 60 %}Maintenant{% elif t < 3600 %}{{ (t / 60) | int }} min{% elif t < 86400 %}{{ (t / 3600) | int }} h{% else %}{{ (t / 86400) | int }} j{% endif %}";
+                font-size: 10px; color: var(--secondary-text-color); display: block; text-align: center; margin-top: 2px;
+              }
+              div.entity:nth-child(2)::after {
+                content: "{% set t = (now() - as_local(states.binary_sensor.fenetres_maison.last_changed | default(now()))).total_seconds() %}{% if t < 60 %}Maintenant{% elif t < 3600 %}{{ (t / 60) | int }} min{% elif t < 86400 %}{{ (t / 3600) | int }} h{% else %}{{ (t / 86400) | int }} j{% endif %}";
+                font-size: 10px; color: var(--secondary-text-color); display: block; text-align: center; margin-top: 2px;
+              }
   - icon: mdi:thermometer
     cards:
       - type: heading
-        heading: 🌡️ Températures & Humidité
+        heading: 🌡️ Maison
         heading_style: title
       - type: tile
         grid_options:
@@ -252,7 +252,7 @@ sections:
         features_position: inline
       - type: heading
         icon: mdi:stove
-        heading: Cuisine
+        heading: Cuisine (pas de décimale)
         heading_style: subtitle
       - type: tile
         grid_options:
@@ -374,6 +374,194 @@ sections:
     cards:
       - type: heading
         heading: 📊 Historiques
+      - type: custom:trend-analysis-card
+        header: Température maison
+        entity: sensor.temperatures_maison
+        preset: 1
+        showSettings: false
+        showPresets: true
+        showDatePickers: false
+        showGraph: false
+        showPercentage: false
+        card_mod:
+          style: >-
+            ha-card {
+              padding: 12px !important;
+              box-sizing: border-box !important;
+              --trend-primary: var(--primary-color, #6366f1);
+              --trend-secondary: var(--secondary-color, #8b5cf6);
+
+              --trend-bg: var(--card-background-color, #ffffff);
+              --trend-surface: var(--secondary-background-color, #f8fafc);
+
+              --trend-text-primary: var(--secondary-text-color, #64748b);
+              --trend-text-secondary: var(--primary-text-color, #0f172a);
+
+              --trend-border-color: var(--divider-color, transparent);
+            }
+
+
+            ha-card * {
+              box-sizing: border-box !important;
+            }
+
+
+            /* Titre sur une seule ligne */
+
+            .card-header, .header-text, [class*="header"] {
+              padding: 0 0 8px 0 !important;
+              font-size: 14px !important;
+              font-weight: 500 !important;
+              white-space: nowrap !important;
+              overflow: hidden !important;
+              text-overflow: ellipsis !important;
+            }
+
+
+            .card-content {
+              padding: 12px !important;
+              max-width: 100% !important;
+            }
+
+
+            /* Masquer complètement les cartes d'augmentation et de diminution
+            */
+
+            stat-card, .stat-card, [class*="stat-card"], 
+
+            div[style*="background-color: var(--trend-increase"], 
+
+            div[style*="background-color: var(--trend-decrease"] {
+              display: none !important;
+            }
+
+
+            /* Ajustement et réduction du bloc Variation Nette restant */
+
+            .net-change, [class*="net-change"] {
+              padding: 8px !important;
+              width: 100% !important;
+            }
+
+
+            .card-content div {
+              max-width: 100% !important;
+            }
+
+
+            div[style*="display: flex"] > div,
+
+            .card-content > div > div {
+              min-width: 0 !important;
+              flex-shrink: 1 !important;
+            }
+
+
+            .card-content h3, [style*="font-size: 14"] {
+              font-size: 11px !important;
+              font-weight: 600 !important;
+              letter-spacing: 0.3px !important;
+            }
+
+
+            .card-content h2, [style*="font-size: 4"], [style*="font-size: 3"] {
+              font-size: 22px !important;
+              line-height: 1.2 !important;
+            }
+      - type: custom:trend-analysis-card
+        header: Humidité maison
+        entity: sensor.humidite_maison
+        preset: 1
+        showSettings: false
+        showPresets: true
+        showDatePickers: false
+        showGraph: false
+        showPercentage: false
+        card_mod:
+          style: >-
+            ha-card {
+              padding: 12px !important;
+              box-sizing: border-box !important;
+              --trend-primary: var(--primary-color, #6366f1);
+              --trend-secondary: var(--secondary-color, #8b5cf6);
+
+              --trend-bg: var(--card-background-color, #ffffff);
+              --trend-surface: var(--secondary-background-color, #f8fafc);
+
+              --trend-text-primary: var(--secondary-text-color, #64748b);
+              --trend-text-secondary: var(--primary-text-color, #0f172a);
+
+              --trend-border-color: var(--divider-color, transparent);
+            }
+
+
+            ha-card * {
+              box-sizing: border-box !important;
+            }
+
+
+            /* Titre sur une seule ligne */
+
+            .card-header, .header-text, [class*="header"] {
+              padding: 0 0 8px 0 !important;
+              font-size: 14px !important;
+              font-weight: 500 !important;
+              white-space: nowrap !important;
+              overflow: hidden !important;
+              text-overflow: ellipsis !important;
+            }
+
+
+            .card-content {
+              padding: 12px !important;
+              max-width: 100% !important;
+            }
+
+
+            /* Masquer complètement les cartes d'augmentation et de diminution
+            */
+
+            stat-card, .stat-card, [class*="stat-card"], 
+
+            div[style*="background-color: var(--trend-increase"], 
+
+            div[style*="background-color: var(--trend-decrease"] {
+              display: none !important;
+            }
+
+
+            /* Ajustement et réduction du bloc Variation Nette restant */
+
+            .net-change, [class*="net-change"] {
+              padding: 8px !important;
+              width: 100% !important;
+            }
+
+
+            .card-content div {
+              max-width: 100% !important;
+            }
+
+
+            div[style*="display: flex"] > div,
+
+            .card-content > div > div {
+              min-width: 0 !important;
+              flex-shrink: 1 !important;
+            }
+
+
+            .card-content h3, [style*="font-size: 14"] {
+              font-size: 11px !important;
+              font-weight: 600 !important;
+              letter-spacing: 0.3px !important;
+            }
+
+
+            .card-content h2, [style*="font-size: 4"], [style*="font-size: 3"] {
+              font-size: 22px !important;
+              line-height: 1.2 !important;
+            }
       - type: history-graph
         title: 🌡️ Températures (5h)
         hours_to_show: 5
