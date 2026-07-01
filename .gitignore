@@ -1,0 +1,19 @@
+# Ignore the configuration file
+configuration.yaml
+
+# ignore the automations with personal data
+automatisations/tts-agenda-famille-aujourd-hui.md
+automatisations/tts-agenda-famille-aujourd-hui.yaml
+automatisations/tts-agenda-parents.md
+automatisations/tts-agenda-parents.yaml
+automatisations/tts-agenda-generate.md
+
+# Ignore the includes files with personal data
+includes/rest_command.yaml
+
+# Ignore the lovelace files with personal data
+lovelace/dashboard.yaml
+lovelace/hardware.yaml
+lovelace/securite.yaml
+workflows/*
+automatisations/tts-agenda-famille-aujourd-hui.md
