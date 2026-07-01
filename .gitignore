@@ -9,8 +9,6 @@ automatisations/tts-agenda-parents.yaml
 automatisations/tts-agenda-generate.md
 automatisations/tts-agenda-famille-aujourd-hui.md
 automatisations/presence-notify-oscar-in-out-zones.yaml
-automatisations/presence-notify-oscar-in-out-zones.yaml
-automatisations/presence-notify-oscar-in-out-zones.yaml
 
 # Ignore the includes files with personal data
 includes/rest_command.yaml
@@ -24,6 +22,5 @@ lovelace/securite.yaml
 workflows/*
 
 # Ignore the scripts with personal data
-scripts/mqtt-send-topics.md
 scripts/mqtt-send-topics.md
 scripts/mqtt-send-topics.yaml
