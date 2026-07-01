@@ -9,6 +9,7 @@ automatisations/tts-agenda-parents.yaml
 automatisations/tts-agenda-generate.md
 automatisations/tts-agenda-famille-aujourd-hui.md
 automatisations/presence-notify-oscar-in-out-zones.yaml
+automatisations/tts-budget-n8n.md
 
 # Ignore the includes files with personal data
 includes/rest_command.yaml
