@@ -4,7 +4,7 @@ Configuration Home Assistant complète d'un foyer à Lyon : automatisations, scr
 
 > Une maison qui s'occupe des détails, pour que la famille n'ait pas à y penser.
 
----
+## ![Aperçu Desktop](public/home-assistant.png)
 
 ## 📑 Table des matières
 
