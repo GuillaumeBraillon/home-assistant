@@ -2,7 +2,7 @@ path: confort
 title: Confort
 icon: mdi:home-thermometer-outline
 type: sections
-max_columns: 4
+max_columns: 3
 visible:
   - user: c7447f6dbd744a97a1aafc8d1d5d6305
   - user: 2e7b70c51f3e453cb5ec7131df051882
@@ -19,6 +19,7 @@ badges:
     state_content:
       - state
       - last_changed
+    time_format: datetime
   - type: entity
     show_name: true
     show_state: true
@@ -27,6 +28,7 @@ badges:
     state_content:
       - state
       - last_changed
+    time_format: datetime
   - type: entity
     show_name: false
     show_state: true
@@ -36,6 +38,7 @@ badges:
     state_content:
       - state
       - last_changed
+    time_format: datetime
   - type: entity
     show_name: false
     show_state: true
@@ -45,6 +48,7 @@ badges:
     state_content:
       - state
       - last_changed
+    time_format: datetime
   - type: entity
     show_name: false
     show_state: true
@@ -54,141 +58,8 @@ badges:
     state_content:
       - state
       - last_changed
+    time_format: datetime
 sections:
-  - icon: mdi:weather-windy
-    cards:
-      - type: heading
-        heading: 🌬️ Ventilation
-        heading_style: title
-      - show_name: true
-        show_icon: true
-        show_state: true
-        type: glance
-        title: 🌡️ Températures
-        columns: 3
-        state_color: true
-        entities:
-          - entity: input_number.temp_reference_aeration
-            name: Ouverture
-          - entity: input_number.temp_min_aeration
-            name: Minimale
-          - entity: sensor.temperatures_maison
-            name: Actuelle
-        card_mod:
-          style:
-            div.entity:
-              $: |
-                div {
-                  display: flex !important;
-                  flex-direction: column !important;
-                  align-items: center !important;
-                }
-                span.state {
-                  font-size: 14px !important;
-                  font-weight: bold !important;
-                  margin-top: 4px !important;
-                  display: block !important;
-                }
-            .: >
-              {% macro get_time(entity_id) -%}
-                {%- set t = (now() - as_local(states[entity_id].last_changed | default(now()))).total_seconds() -%}
-                {%- if t < 60 -%}Maintenant
-                {%- elif t < 3600 -%}{{ (t / 60) | int }} min
-                {%- elif t < 86400 -%}{{ (t / 3600) | int }} h
-                {%- else -%}{{ (t / 86400) | int }} j
-                {%- endif -%}
-              {%- endmacro %} div.entity:nth-child(1)::after { content: "{{
-              get_time('input_number.temp_reference_aeration') | trim }}"; }
-              div.entity:nth-child(2)::after { content: "{{
-              get_time('input_number.temp_min_aeration') | trim }}"; }
-              div.entity:nth-child(3)::after { content: "{{
-              get_time('sensor.temperatures_maison') | trim }}"; }
-              div.entity::after { font-size: 10px; color:
-              var(--secondary-text-color); display: block; text-align: center;
-              margin-top: 2px; }
-      - show_name: true
-        show_icon: true
-        show_state: true
-        type: glance
-        title: 💧 Humidités
-        columns: 3
-        state_color: true
-        entities:
-          - entity: input_number.humid_reference_aeration
-            name: Ouverture
-            icon: mdi:home-percent-outline
-          - entity: input_number.humid_min_aeration
-            name: Minimale
-            icon: mdi:cloud-percent-outline
-          - entity: sensor.humidite_maison
-            name: Actuelle
-        card_mod:
-          style:
-            div.entity:
-              $: |
-                div {
-                  display: flex !important;
-                  flex-direction: column !important;
-                  align-items: center !important;
-                }
-                span.state {
-                  font-size: 14px !important;
-                  font-weight: bold !important;
-                  margin-top: 4px !important;
-                  display: block !important;
-                }
-            .: >
-              {% macro get_time(entity_id) -%}
-                {%- set t = (now() - as_local(states[entity_id].last_changed | default(now()))).total_seconds() -%}
-                {%- if t < 60 -%}Maintenant
-                {%- elif t < 3600 -%}{{ (t / 60) | int }} min
-                {%- elif t < 86400 -%}{{ (t / 3600) | int }} h
-                {%- else -%}{{ (t / 86400) | int }} j
-                {%- endif -%}
-              {%- endmacro %} div.entity:nth-child(1)::after { content: "{{
-              get_time('input_number.humid_reference_aeration') | trim }}"; }
-              div.entity:nth-child(2)::after { content: "{{
-              get_time('input_number.humid_min_aeration') | trim }}"; }
-              div.entity:nth-child(3)::after { content: "{{
-              get_time('sensor.humidite_maison') | trim }}"; } div.entity::after
-              { font-size: 10px; color: var(--secondary-text-color); display:
-              block; text-align: center; margin-top: 2px; }
-      - show_name: true
-        show_icon: true
-        show_state: true
-        type: glance
-        columns: 2
-        state_color: true
-        entities:
-          - entity: input_boolean.aeration_active
-            name: Active
-          - entity: binary_sensor.fenetres_maison
-            name: Fenêtres
-        theme: macOS Theme
-        card_mod:
-          style:
-            div.entity:
-              $: |
-                div {
-                  display: flex !important;
-                  flex-direction: column !important;
-                  align-items: center !important;
-                }
-                span.state {
-                  font-size: 14px !important;
-                  font-weight: bold !important;
-                  margin-top: 4px !important;
-                  display: block !important;
-                }
-            .: |
-              div.entity:nth-child(1)::after {
-                content: "{% set t = (now() - as_local(states.input_boolean.aeration_active.last_changed | default(now()))).total_seconds() %}{% if t < 60 %}Maintenant{% elif t < 3600 %}{{ (t / 60) | int }} min{% elif t < 86400 %}{{ (t / 3600) | int }} h{% else %}{{ (t / 86400) | int }} j{% endif %}";
-                font-size: 10px; color: var(--secondary-text-color); display: block; text-align: center; margin-top: 2px;
-              }
-              div.entity:nth-child(2)::after {
-                content: "{% set t = (now() - as_local(states.binary_sensor.fenetres_maison.last_changed | default(now()))).total_seconds() %}{% if t < 60 %}Maintenant{% elif t < 3600 %}{{ (t / 60) | int }} min{% elif t < 86400 %}{{ (t / 3600) | int }} h{% else %}{{ (t / 86400) | int }} j{% endif %}";
-                font-size: 10px; color: var(--secondary-text-color); display: block; text-align: center; margin-top: 2px;
-              }
   - icon: mdi:thermometer
     cards:
       - type: heading
@@ -207,6 +78,7 @@ sections:
         features:
           - type: trend-graph
         features_position: inline
+        time_format: time
       - type: tile
         grid_options:
           columns: 12
@@ -220,6 +92,7 @@ sections:
         features:
           - type: trend-graph
         features_position: inline
+        time_format: time
       - type: heading
         icon: mdi:account-multiple
         heading: Parents
@@ -237,6 +110,7 @@ sections:
         features:
           - type: trend-graph
         features_position: inline
+        time_format: time
       - type: tile
         grid_options:
           columns: 12
@@ -250,6 +124,7 @@ sections:
         features:
           - type: trend-graph
         features_position: inline
+        time_format: time
       - type: heading
         icon: mdi:stove
         heading: Cuisine (pas de décimale)
@@ -267,6 +142,7 @@ sections:
         features:
           - type: trend-graph
         features_position: inline
+        time_format: time
       - type: tile
         grid_options:
           columns: 12
@@ -280,6 +156,7 @@ sections:
         features:
           - type: trend-graph
         features_position: inline
+        time_format: time
       - type: heading
         icon: mdi:sofa
         heading: Salon
@@ -297,6 +174,7 @@ sections:
         features:
           - type: trend-graph
         features_position: inline
+        time_format: time
       - type: tile
         grid_options:
           columns: 12
@@ -310,6 +188,7 @@ sections:
         features:
           - type: trend-graph
         features_position: inline
+        time_format: time
       - type: heading
         icon: mdi:bed
         heading: Chambre d'Oscar
@@ -327,6 +206,7 @@ sections:
         features:
           - type: trend-graph
         features_position: inline
+        time_format: time
       - type: tile
         grid_options:
           columns: 12
@@ -340,6 +220,7 @@ sections:
         features:
           - type: trend-graph
         features_position: inline
+        time_format: time
       - type: heading
         icon: mdi:bed
         heading: Chambre d'Eliott
@@ -357,6 +238,7 @@ sections:
         features:
           - type: trend-graph
         features_position: inline
+        time_format: time
       - type: tile
         grid_options:
           columns: 12
@@ -370,6 +252,7 @@ sections:
         features:
           - type: trend-graph
         features_position: inline
+        time_format: time
   - icon: mdi:chart-timeline-variant
     cards:
       - type: heading
@@ -596,6 +479,176 @@ sections:
             name: Humidité Oscar
           - entity: sensor.temperature_eliott_humidity
             name: Humidité Eliott
+  - type: grid
+    cards:
+      - type: heading
+        heading: 🌿 Qualité de l'air
+      - type: tile
+        entity: sensor.vindstyrka_air_quality_pm25
+        name: PM2.5
+        show_entity_picture: false
+        state_content:
+          - state
+          - last_changed
+        vertical: false
+        features:
+          - type: trend-graph
+            detail: false
+            hours_to_show: 12
+        features_position: inline
+        time_format: time
+      - type: tile
+        entity: sensor.vindstyrka_air_quality_voc_index
+        name: VOC index
+        show_entity_picture: false
+        state_content:
+          - state
+          - last_changed
+        vertical: false
+        features:
+          - type: trend-graph
+        features_position: inline
+        time_format: time
+      - type: custom:apexcharts-card
+        graph_span: 24h
+        show:
+          last_updated: true
+        header:
+          show: true
+          title: Qualité de l'air (24h)
+        yaxis:
+          - id: pm25
+            apex_config:
+              forceNiceScale: true
+              tickAmount: 7
+          - id: voc
+            opposite: true
+            apex_config:
+              forceNiceScale: true
+              tickAmount: 7
+        series:
+          - entity: sensor.vindstyrka_air_quality_pm25
+            name: PM2.5
+            type: column
+            group_by:
+              func: max
+              duration: 5m
+            stroke_width: 2
+            yaxis_id: pm25
+          - entity: sensor.vindstyrka_air_quality_voc_index
+            name: VOC Index
+            type: line
+            group_by:
+              func: max
+              duration: 5m
+            stroke_width: 2
+            yaxis_id: voc
+  - type: grid
+    column_span: 1
+    cards:
+      - type: heading
+        heading: 🌬️ Ventilation
+        heading_style: title
+      - type: tile
+        grid_options:
+          columns: 12
+          rows: 1
+        entity: input_boolean.aeration_active
+        name: Active
+        state_content: last_changed
+        vertical: false
+        features:
+          - type: toggle
+        features_position: inline
+        time_format: time
+      - type: tile
+        grid_options:
+          columns: 12
+          rows: 1
+        entity: binary_sensor.fenetres_maison
+        show_entity_picture: true
+        state_content: last_changed
+        vertical: false
+        features_position: bottom
+        time_format: time
+      - type: heading
+        heading: 🌡️ Températures references
+        heading_style: title
+      - type: tile
+        grid_options:
+          columns: 12
+          rows: 1
+        entity: input_number.temp_reference_aeration
+        name: Ouverture
+        state_content:
+          - state
+          - last_changed
+        vertical: false
+        features_position: bottom
+        time_format: time
+      - type: tile
+        grid_options:
+          columns: 12
+          rows: 1
+        entity: input_number.temp_min_aeration
+        name: Minimale
+        state_content:
+          - state
+          - last_changed
+        vertical: false
+        features_position: bottom
+        time_format: time
+      - type: tile
+        grid_options:
+          columns: 12
+          rows: 1
+        entity: sensor.temperatures_maison
+        name: Actuelle
+        state_content:
+          - state
+          - last_changed
+        vertical: false
+        features_position: bottom
+        time_format: time
+      - type: heading
+        heading: 💧 Humidités references
+        heading_style: title
+      - type: tile
+        grid_options:
+          columns: 12
+          rows: 1
+        entity: input_number.humid_reference_aeration
+        name: Ouverture
+        state_content:
+          - state
+          - last_changed
+        vertical: false
+        features_position: bottom
+        time_format: time
+      - type: tile
+        grid_options:
+          columns: 12
+          rows: 1
+        entity: input_number.humid_min_aeration
+        name: Minimale
+        state_content:
+          - state
+          - last_changed
+        vertical: false
+        features_position: bottom
+        time_format: time
+      - type: tile
+        grid_options:
+          columns: 12
+          rows: 1
+        entity: sensor.humidite_maison
+        name: Actuelle
+        state_content:
+          - state
+          - last_changed
+        vertical: false
+        features_position: bottom
+        time_format: time
   - icon: mdi:weather-partly-cloudy
     cards:
       - type: heading
@@ -605,8 +658,17 @@ sections:
         show_forecast: true
         type: weather-forecast
         entity: weather.lyon
-        name: Météo France
+        forecast_type: hourly
+        round_temperature: false
+        secondary_info_attribute: wind_speed
+        forecast_slots: 7
+      - show_current: false
+        show_forecast: true
+        type: weather-forecast
+        entity: weather.lyon
         forecast_type: daily
+        secondary_info_attribute: humidity
+        forecast_slots: 10
       - show_current: true
         show_forecast: true
         type: weather-forecast
@@ -614,3 +676,4 @@ sections:
         name: Open Météo
         forecast_type: daily
 cards: []
+footer: {}

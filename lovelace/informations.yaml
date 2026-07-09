@@ -19,6 +19,7 @@ badges:
     state_content:
       - state
       - last_changed
+    time_format: datetime
   - type: entity
     show_name: true
     show_state: true
@@ -27,6 +28,7 @@ badges:
     state_content:
       - state
       - last_changed
+    time_format: datetime
   - type: entity
     show_name: false
     show_state: true
@@ -36,6 +38,7 @@ badges:
     state_content:
       - state
       - last_changed
+    time_format: datetime
   - type: entity
     show_name: false
     show_state: true
@@ -45,6 +48,7 @@ badges:
     state_content:
       - state
       - last_changed
+    time_format: datetime
   - type: entity
     show_name: false
     show_state: true
@@ -54,6 +58,7 @@ badges:
     state_content:
       - state
       - last_changed
+    time_format: datetime
 sections:
   - icon: mdi:calendar-clock
     cards:
